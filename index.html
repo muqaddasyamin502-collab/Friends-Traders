@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends Trader - Premium Kitchen Utensils | Multan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --primary: #c62828;
+            --primary-dark: #8e0000;
+            --secondary: #ff8f00;
+            --accent: #2e7d32;
+            --dark: #263238;
+            --light: #f5f5f5;
+            --gray: #757575;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark);
+            background-color: #f9f9f9;
+            line-height: 1.6;
+        }
+        
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* Header Styles */
+        
+        header {
+            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9)), url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .logo h1 {
+            font-size: 2.2rem;
+            color: white;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .logo span {
+            font-size: 1rem;
+            color: var(--secondary);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        nav ul li a:hover {
+            color: var(--secondary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        /* Hero Section */
+        
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .experience-badge {
+            display: inline-block;
+            background: var(--secondary);
+            color: var(--dark);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(255, 143, 0, 0.3);
+        }
+        
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(198, 40, 40, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--dark);
+        }
+        
+        .btn-secondary:hover {
+            background: #ff9800;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 143, 0, 0.3);
+        }
+        
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+        
+        .btn-whatsapp:hover {
+            background: #128C7E;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+        }
+        /* Products Section */
+        
+        .products-section {
+            background: white;
+            padding: 80px 0;
+        }
+        
+        .products-filter {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+        
+        .filter-btn {
+            padding: 10px 25px;
+            background: var(--light);
+            border: none;
+            border-radius: 30px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid #eee;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-img {
+            height: 220px;
+            overflow: hidden;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .product-img img {
+            max-width: 100%;
+            max-height: 180px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-img img {
+            transform: scale(1.1);
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-category {
+            display: inline-block;
+            background: var(--light);
+            color: var(--primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .product-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .product-price {
+            color: var(--primary);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .product-price span {
+            color: var(--gray);
+            text-decoration: line-through;
+            font-size: 1rem;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+        
+        .product-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        
+        .product-features li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .product-features li i {
+            color: var(--accent);
+            margin-right: 8px;
+        }
+        
+        .product-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .product-btn:hover {
+            background: var(--primary-dark);
+        }
+        /* Reviews Section */
+        
+        .reviews-section {
+            background: var(--light);
+            padding: 80px 0;
+        }
+        
+        .reviews-slider {
+            position: relative;
+            overflow: hidden;
+            padding: 20px 0;
+        }
+        
+        .reviews-container {
+            display: flex;
+            transition: transform 0.5s ease;
+            gap: 30px;
+        }
+        
+        .review-card {
+            min-width: 100%;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .review-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .review-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-right: 20px;
+        }
+        
+        .review-info h4 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        .review-rating {
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+        
+        .review-date {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .review-content {
+            font-style: italic;
+            line-height: 1.8;
+            color: var(--dark);
+        }
+        
+        .slider-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+        }
+        
+        .slider-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .slider-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .review-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-weight: 500;
+        }
+        /* About Section */
+        
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-title h2 {
+            font-size: 2.8rem;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+        
+        .section-title h2:after {
+            content: '';
+            position: absolute;
+            width: 70px;
+            height: 4px;
+            background: var(--primary);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+        
+        .about-text {
+            flex: 1;
+        }
+        
+        .about-text h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .owner-info {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+        
+        .owner-info h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .about-image {
+            flex: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .about-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+        /* Features Section */
+        
+        .features {
+            background: var(--light);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        /* Contact Section */
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .contact-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .contact-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.5rem;
+        }
+        
+        .contact-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--dark);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .social-icon:hover {
+            transform: translateY(-5px);
+        }
+        
+        .social-icon.facebook {
+            background: #1877F2;
+        }
+        
+        .social-icon.instagram {
+            background: linear-gradient(45deg, #405DE6, #E1306C, #F77737);
+        }
+        
+        .social-icon.email {
+            background: var(--primary);
+        }
+        /* Map Section */
+        
+        .map-section {
+            padding: 0 0 80px;
+        }
+        
+        .map-container {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            height: 400px;
+        }
+        
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        /* Footer */
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+            bottom: 0;
+            left: 0;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--secondary);
+            padding-left: 5px;
+        }
+        
+        .business-hours li {
+            display: flex;
+            justify-content: space-between;
+            color: #ccc;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #444;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        /* Responsive Design */
+        
+        @media (min-width: 768px) {
+            .review-card {
+                min-width: calc(50% - 15px);
+            }
+            .reviews-container {
+                gap: 30px;
+                padding: 0 15px;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .review-card {
+                min-width: calc(33.333% - 20px);
+            }
+            .hero h2 {
+                font-size: 2.8rem;
+            }
+            .about-content {
+                flex-direction: column;
+            }
+            .about-image {
+                order: -1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav {
+                width: 100%;
+                margin-top: 20px;
+                display: none;
+            }
+            nav.active {
+                display: block;
+            }
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+            }
+            nav ul li {
+                margin: 0 0 10px 0;
+            }
+            .mobile-menu-btn {
+                display: block;
+                position: absolute;
+                top: 25px;
+                right: 20px;
+            }
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            .review-card {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <h1>Friends Trader</h1>
+                <span>Premium Kitchen Utensils & Cookware</span>
+            </div>
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#reviews">Reviews</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#map">Location</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container hero-content">
+            <h2>Premium Kitchenware For Your Home</h2>
+            <p>For over 25 years, we've been providing the finest kitchen utensils and cookware to homes across Multan and beyond.</p>
+
+            <div class="experience-badge">
+                <i class="fas fa-award"></i> 25+ Years of Experience
+            </div>
+
+            <div class="cta-buttons">
+                <a href="tel:03007195451" class="btn btn-primary">
+                    <i class="fas fa-phone-alt"></i> Call Now: 0300-7195451
+                </a>
+                <a href="https://wa.me/923007195451" target="_blank" class="btn btn-whatsapp">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+                <a href="#map" class="btn btn-secondary">
+                    <i class="fas fa-map-marker-alt"></i> Visit Our Store
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section" id="products">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Premium Products</h2>
+                <p>Explore our wide range of high-quality kitchenware</p>
+            </div>
+
+            <div class="products-filter">
+                <button class="filter-btn active" data-filter="all">All Products</button>
+                <button class="filter-btn" data-filter="rosepetal">Rose Petal</button>
+                <button class="filter-btn" data-filter="chef">Chef Brand</button>
+                <button class="filter-btn" data-filter="electronics">Electronics</button>
+                <button class="filter-btn" data-filter="cookware">Cookware</button>
+                <button class="filter-btn" data-filter="utensils">Utensils</button>
+                <button class="filter-btn" data-filter="cutlery">Cutlery</button>
+                <button class="filter-btn" data-filter="bakeware">Bakeware</button>
+                <button class="filter-btn" data-filter="dinnerware">Dinnerware</button>
+                <button class="filter-btn" data-filter="storage">Storage</button>
+                <button class="filter-btn" data-filter="appliances">Appliances</button>
+            </div>
+
+            <div class="products-grid">
+
+                <!-- ===== ROSE PETAL PRODUCTS ===== -->
+                <!-- Product 1 - Rose Petal Non-Stick Pan -->
+                <div class="product-card" data-category="rosepetal">
+                    <div class="product-img">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ-wTr88a5QHnjy8ofXoEqjD2VhGiWm8N89Q&s" alt="Rose Petal Non-Stick Pan">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Rose Petal</span>
+                        <h3 class="product-title">Rose Petal Non-Stick Fry Pan 28cm</h3>
+                        <div class="product-price">₨ 2,800 <span>₨ 3,500</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 5-Layer Non-Stick Coating</li>
+                            <li><i class="fas fa-check"></i> Induction Compatible</li>
+                            <li><i class="fas fa-check"></i> Heat-Resistant Handle</li>
+                            <li><i class="fas fa-check"></i> 3 Years Warranty</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Rose Petal Non-Stick Fry Pan 28cm')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 2 - Rose Petal Cooking Pot -->
+                <div class="product-card" data-category="rosepetal">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rose Petal Cooking Pot">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Rose Petal</span>
+                        <h3 class="product-title">Rose Petal Non-Stick Cooking Pot Set</h3>
+                        <div class="product-price">₨ 6,500 <span>₨ 8,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 5-Piece Set</li>
+                            <li><i class="fas fa-check"></i> German Technology</li>
+                            <li><i class="fas fa-check"></i> Marble Coating</li>
+                            <li><i class="fas fa-check"></i> Gas & Induction</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Rose Petal Non-Stick Cooking Pot Set')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 3 - Rose Petal Wok -->
+                <div class="product-card" data-category="rosepetal">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rose Petal Wok Pan">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Rose Petal</span>
+                        <h3 class="product-title">Rose Petal Granite Wok Pan 32cm</h3>
+                        <div class="product-price">₨ 3,200 <span>₨ 4,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Granite Stone Coating</li>
+                            <li><i class="fas fa-check"></i> Deep Design for Stir Fry</li>
+                            <li><i class="fas fa-check"></i> Bakelite Handle</li>
+                            <li><i class="fas fa-check"></i> PFOA Free</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Rose Petal Granite Wok Pan 32cm')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 4 - Rose Petal Casserole -->
+                <div class="product-card" data-category="rosepetal">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rose Petal Casserole">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Rose Petal</span>
+                        <h3 class="product-title">Rose Petal Casserole with Glass Lid</h3>
+                        <div class="product-price">₨ 4,500 <span>₨ 5,500</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 24cm Non-Stick</li>
+                            <li><i class="fas fa-check"></i> Tempered Glass Lid</li>
+                            <li><i class="fas fa-check"></i> Even Heat Distribution</li>
+                            <li><i class="fas fa-check"></i> Easy Clean</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Rose Petal Casserole with Glass Lid')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== CHEF BRAND PRODUCTS ===== -->
+                <!-- Product 5 - Chef Knife Set -->
+                <div class="product-card" data-category="chef">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1594736797933-d0b64c8fd7c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Chef Knife Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Chef Brand</span>
+                        <h3 class="product-title">Chef Professional Knife Set 7-Piece</h3>
+                        <div class="product-price">₨ 8,900 <span>₨ 11,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> German Stainless Steel</li>
+                            <li><i class="fas fa-check"></i> Ergonomic Handle</li>
+                            <li><i class="fas fa-check"></i> Razor Sharp Edge</li>
+                            <li><i class="fas fa-check"></i> Wooden Block Included</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Chef Professional Knife Set 7-Piece')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 6 - Chef Cookware Set -->
+                <div class="product-card" data-category="chef">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1670421922405-47e4eca0e9ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Chef Cookware Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Chef Brand</span>
+                        <h3 class="product-title">Chef Non-Stick Cookware Set 9-Piece</h3>
+                        <div class="product-price">₨ 14,500 <span>₨ 18,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Titanium Reinforced</li>
+                            <li><i class="fas fa-check"></i> Oven Safe 220°C</li>
+                            <li><i class="fas fa-check"></i> Induction Ready</li>
+                            <li><i class="fas fa-check"></i> 5 Years Warranty</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Chef Non-Stick Cookware Set 9-Piece')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 7 - Chef Pressure Cooker -->
+                <div class="product-card" data-category="chef">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1541976590-7139416811af?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Chef Pressure Cooker">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Chef Brand</span>
+                        <h3 class="product-title">Chef Stainless Steel Pressure Cooker 8L</h3>
+                        <div class="product-price">₨ 5,500 <span>₨ 6,500</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 8-Liter Capacity</li>
+                            <li><i class="fas fa-check"></i> Triple Safety Valve</li>
+                            <li><i class="fas fa-check"></i> 3-Ply Thick Base</li>
+                            <li><i class="fas fa-check"></i> 10 Years Warranty</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Chef Stainless Steel Pressure Cooker 8L')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 8 - Chef Grill Pan -->
+                <div class="product-card" data-category="chef">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1529565214545-8a8c7b18f8e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Chef Grill Pan">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Chef Brand</span>
+                        <h3 class="product-title">Chef Cast Iron Grill Pan 28cm</h3>
+                        <div class="product-price">₨ 3,800 <span>₨ 4,800</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Pre-Seasoned Cast Iron</li>
+                            <li><i class="fas fa-check"></i> Ridge Design for Grilling</li>
+                            <li><i class="fas fa-check"></i> Multi-Fuel Compatible</li>
+                            <li><i class="fas fa-check"></i> Lifetime Durability</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Chef Cast Iron Grill Pan 28cm')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== ELECTRONICS ===== -->
+                <!-- Product 9 - Air Fryer -->
+                <div class="product-card" data-category="electronics">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1648501631688-fb8879d1bdc4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Air Fryer">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Electronics</span>
+                        <h3 class="product-title">Digital Air Fryer 5.5 Liter</h3>
+                        <div class="product-price">₨ 18,500 <span>₨ 22,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 1800W Rapid Air Circulation</li>
+                            <li><i class="fas fa-check"></i> Digital Touch Panel</li>
+                            <li><i class="fas fa-check"></i> 8 Pre-Set Programs</li>
+                            <li><i class="fas fa-check"></i> 80% Less Oil Usage</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Digital Air Fryer 5.5 Liter')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 10 - Electric Kettle -->
+                <div class="product-card" data-category="electronics">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1616096142563-ce6506d6e4b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Electric Kettle">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Electronics</span>
+                        <h3 class="product-title">Stainless Steel Electric Kettle 1.8L</h3>
+                        <div class="product-price">₨ 4,200 <span>₨ 5,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 1500W Fast Boiling</li>
+                            <li><i class="fas fa-check"></i> Auto Shut-Off</li>
+                            <li><i class="fas fa-check"></i> Boil-Dry Protection</li>
+                            <li><i class="fas fa-check"></i> 360° Cordless Base</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Stainless Steel Electric Kettle 1.8L')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 11 - Blender -->
+                <div class="product-card" data-category="electronics">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1570222094114-d054a817e56b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blender">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Electronics</span>
+                        <h3 class="product-title">Powerful 1000W Hand Blender</h3>
+                        <div class="product-price">₨ 5,800 <span>₨ 7,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 1000W Motor</li>
+                            <li><i class="fas fa-check"></i> Detachable Blade</li>
+                            <li><i class="fas fa-check"></i> 2-Speed Settings</li>
+                            <li><i class="fas fa-check"></i> Stainless Steel Shaft</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Powerful 1000W Hand Blender')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 12 - Rice Cooker -->
+                <div class="product-card" data-category="electronics">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rice Cooker">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Electronics</span>
+                        <h3 class="product-title">Automatic Rice Cooker 1.8L</h3>
+                        <div class="product-price">₨ 6,500 <span>₨ 7,800</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 1.8L Capacity (12 Cups)</li>
+                            <li><i class="fas fa-check"></i> Auto Keep-Warm</li>
+                            <li><i class="fas fa-check"></i> Non-Stick Inner Pot</li>
+                            <li><i class="fas fa-check"></i> Steam Vent Lid</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Automatic Rice Cooker 1.8L')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 13 - Juicer Mixer -->
+                <div class="product-card" data-category="electronics">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1579586337278-3f373f4c2f58?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Juicer Mixer Grinder">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Electronics</span>
+                        <h3 class="product-title">3-in-1 Juicer Mixer Grinder 750W</h3>
+                        <div class="product-price">₨ 8,500 <span>₨ 10,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 750W Copper Motor</li>
+                            <li><i class="fas fa-check"></i> 3 Stainless Steel Jars</li>
+                            <li><i class="fas fa-check"></i> 3-Speed Control</li>
+                            <li><i class="fas fa-check"></i> Overload Protection</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('3-in-1 Juicer Mixer Grinder 750W')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 14 - Microwave -->
+                <div class="product-card" data-category="electronics">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Microwave Oven">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Electronics</span>
+                        <h3 class="product-title">Digital Microwave Oven 25L</h3>
+                        <div class="product-price">₨ 22,000 <span>₨ 26,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 25 Liters Capacity</li>
+                            <li><i class="fas fa-check"></i> 900W Power</li>
+                            <li><i class="fas fa-check"></i> 10 Power Levels</li>
+                            <li><i class="fas fa-check"></i> Child Safety Lock</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Digital Microwave Oven 25L')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 15 - Sandwich Maker -->
+                <div class="product-card" data-category="electronics">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1484723091739-30a097e8f929?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Sandwich Maker">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Electronics</span>
+                        <h3 class="product-title">Non-Stick Sandwich & Grill Maker</h3>
+                        <div class="product-price">₨ 3,200 <span>₨ 4,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Non-Stick Plates</li>
+                            <li><i class="fas fa-check"></i> 750W Power</li>
+                            <li><i class="fas fa-check"></i> Heat Indicator Light</li>
+                            <li><i class="fas fa-check"></i> Cool-Touch Handle</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Non-Stick Sandwich & Grill Maker')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== COOKWARE ===== -->
+                <!-- Product 16 - Non-Stick Cookware Set -->
+                <div class="product-card" data-category="cookware">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Non-Stick Cookware Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Cookware</span>
+                        <h3 class="product-title">Premium Non-Stick Cookware Set 10pc</h3>
+                        <div class="product-price">₨ 12,500 <span>₨ 15,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 10-Piece Complete Set</li>
+                            <li><i class="fas fa-check"></i> Ceramic Coating</li>
+                            <li><i class="fas fa-check"></i> Heat Resistant Handles</li>
+                            <li><i class="fas fa-check"></i> 5 Years Warranty</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Premium Non-Stick Cookware Set 10pc')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 17 - Stainless Pressure Cooker -->
+                <div class="product-card" data-category="cookware">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Stainless Pressure Cooker">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Cookware</span>
+                        <h3 class="product-title">Stainless Steel Pressure Cooker 6L</h3>
+                        <div class="product-price">₨ 4,200 <span>₨ 5,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 6-Liter Capacity</li>
+                            <li><i class="fas fa-check"></i> 3-Ply Bottom</li>
+                            <li><i class="fas fa-check"></i> Safety Lock System</li>
+                            <li><i class="fas fa-check"></i> 10 Years Warranty</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Stainless Steel Pressure Cooker 6L')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 18 - Deep Frying Pan -->
+                <div class="product-card" data-category="cookware">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Deep Frying Pan">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Cookware</span>
+                        <h3 class="product-title">Deep Non-Stick Frying Pan 30cm</h3>
+                        <div class="product-price">₨ 2,500 <span>₨ 3,200</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Heavy-Gauge Aluminum</li>
+                            <li><i class="fas fa-check"></i> Deep-Fry Design</li>
+                            <li><i class="fas fa-check"></i> Tempered Glass Lid</li>
+                            <li><i class="fas fa-check"></i> Oil Spatter Guard</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Deep Non-Stick Frying Pan 30cm')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 19 - Biryani Pot -->
+                <div class="product-card" data-category="cookware">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Biryani Pot">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Cookware</span>
+                        <h3 class="product-title">Large Stainless Steel Biryani Pot 12L</h3>
+                        <div class="product-price">₨ 7,800 <span>₨ 9,500</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 12-Liter Capacity</li>
+                            <li><i class="fas fa-check"></i> Food-Grade Steel</li>
+                            <li><i class="fas fa-check"></i> Strong Double Handle</li>
+                            <li><i class="fas fa-check"></i> Suitable for Large Gatherings</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Large Stainless Steel Biryani Pot 12L')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== UTENSILS ===== -->
+                <!-- Product 20 - SS Utensils Set -->
+                <div class="product-card" data-category="utensils">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Stainless Steel Utensils">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Utensils</span>
+                        <h3 class="product-title">Stainless Steel Kitchen Utensils 15pc</h3>
+                        <div class="product-price">₨ 3,800 <span>₨ 4,500</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 15-Piece Set</li>
+                            <li><i class="fas fa-check"></i> Food Grade Steel</li>
+                            <li><i class="fas fa-check"></i> Dishwasher Safe</li>
+                            <li><i class="fas fa-check"></i> Rust Proof</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Stainless Steel Kitchen Utensils 15pc')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 21 - Brass Serving Set -->
+                <div class="product-card" data-category="utensils">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Brass Serving Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Utensils</span>
+                        <h3 class="product-title">Traditional Brass Serving Set 24pc</h3>
+                        <div class="product-price">₨ 9,800 <span>₨ 12,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Handcrafted Brass</li>
+                            <li><i class="fas fa-check"></i> Traditional Design</li>
+                            <li><i class="fas fa-check"></i> 24-Piece Set</li>
+                            <li><i class="fas fa-check"></i> Polished Finish</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Traditional Brass Serving Set 24pc')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 22 - Ladle & Spatula Set -->
+                <div class="product-card" data-category="utensils">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1504387828636-abeb8b7e5a85?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Ladle Spatula Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Utensils</span>
+                        <h3 class="product-title">Silicone Ladle & Spatula Set 8pc</h3>
+                        <div class="product-price">₨ 2,200 <span>₨ 2,800</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Heat Resistant 230°C</li>
+                            <li><i class="fas fa-check"></i> BPA Free Silicone</li>
+                            <li><i class="fas fa-check"></i> Non-Scratch Design</li>
+                            <li><i class="fas fa-check"></i> Dishwasher Safe</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Silicone Ladle & Spatula Set 8pc')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 23 - Cheese Grater -->
+                <div class="product-card" data-category="utensils">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1493770348161-369560ae357d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Kitchen Tools Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Utensils</span>
+                        <h3 class="product-title">Premium Kitchen Tools Hanging Set</h3>
+                        <div class="product-price">₨ 4,500 <span>₨ 5,500</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 12-Piece Set</li>
+                            <li><i class="fas fa-check"></i> Wall-Mount Rack Included</li>
+                            <li><i class="fas fa-check"></i> Stainless + Silicone</li>
+                            <li><i class="fas fa-check"></i> Space-Saving Design</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Premium Kitchen Tools Hanging Set')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== CUTLERY ===== -->
+                <!-- Product 24 - Cutlery Set -->
+                <div class="product-card" data-category="cutlery">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Cutlery Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Cutlery</span>
+                        <h3 class="product-title">Stainless Steel Cutlery Set 24pc</h3>
+                        <div class="product-price">₨ 5,500 <span>₨ 6,800</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 24-Piece (6 Settings)</li>
+                            <li><i class="fas fa-check"></i> Mirror Polished Finish</li>
+                            <li><i class="fas fa-check"></i> Dishwasher Safe</li>
+                            <li><i class="fas fa-check"></i> Gift Box Included</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Stainless Steel Cutlery Set 24pc')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 25 - Bread Knife -->
+                <div class="product-card" data-category="cutlery">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1591261730799-ee4e6c2d16d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Bread Knife">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Cutlery</span>
+                        <h3 class="product-title">Professional Bread & Meat Knife Set</h3>
+                        <div class="product-price">₨ 3,500 <span>₨ 4,200</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> High Carbon Steel</li>
+                            <li><i class="fas fa-check"></i> Serrated Edge Blade</li>
+                            <li><i class="fas fa-check"></i> Anti-Slip Handle</li>
+                            <li><i class="fas fa-check"></i> 3-Piece Set</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Professional Bread & Meat Knife Set')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 26 - Spoon Set -->
+                <div class="product-card" data-category="cutlery">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1515697246546-e3b84d14bf07?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Spoon Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Cutlery</span>
+                        <h3 class="product-title">Stainless Dessert Spoon Set 12pc</h3>
+                        <div class="product-price">₨ 1,800 <span>₨ 2,200</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 18/10 Stainless Steel</li>
+                            <li><i class="fas fa-check"></i> Heavyweight Design</li>
+                            <li><i class="fas fa-check"></i> Tarnish Resistant</li>
+                            <li><i class="fas fa-check"></i> Velvet Storage Box</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Stainless Dessert Spoon Set 12pc')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== BAKEWARE ===== -->
+                <!-- Product 27 - Baking Set -->
+                <div class="product-card" data-category="bakeware">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1556909190-eccf4a8bf97a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Baking Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Bakeware</span>
+                        <h3 class="product-title">Non-Stick Baking Pan Set 12pc</h3>
+                        <div class="product-price">₨ 6,500 <span>₨ 7,800</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 12-Piece Set</li>
+                            <li><i class="fas fa-check"></i> Oven Safe up to 250°C</li>
+                            <li><i class="fas fa-check"></i> Easy Release Coating</li>
+                            <li><i class="fas fa-check"></i> Dishwasher Safe</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Non-Stick Baking Pan Set 12pc')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 28 - Cake Mould Set -->
+                <div class="product-card" data-category="bakeware">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Cake Mould Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Bakeware</span>
+                        <h3 class="product-title">Silicone Cake & Muffin Mould Set</h3>
+                        <div class="product-price">₨ 2,800 <span>₨ 3,500</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Food-Grade Silicone</li>
+                            <li><i class="fas fa-check"></i> Flexible Non-Stick</li>
+                            <li><i class="fas fa-check"></i> 8 Shapes Included</li>
+                            <li><i class="fas fa-check"></i> Freezer & Oven Safe</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Silicone Cake & Muffin Mould Set')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 29 - Rolling Pin & Board -->
+                <div class="product-card" data-category="bakeware">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rolling Pin Board">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Bakeware</span>
+                        <h3 class="product-title">Marble Rolling Pin & Pastry Board</h3>
+                        <div class="product-price">₨ 3,200 <span>₨ 4,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Natural Marble Stone</li>
+                            <li><i class="fas fa-check"></i> Stays Cool for Dough</li>
+                            <li><i class="fas fa-check"></i> Non-Slip Base Board</li>
+                            <li><i class="fas fa-check"></i> Measurement Markings</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Marble Rolling Pin & Pastry Board')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== DINNERWARE ===== -->
+                <!-- Product 30 - Ceramic Dinner Set -->
+                <div class="product-card" data-category="dinnerware">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1583397646485-55e389efd3cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Ceramic Dinner Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Dinnerware</span>
+                        <h3 class="product-title">Ceramic Dinner Set 46-Piece</h3>
+                        <div class="product-price">₨ 11,500 <span>₨ 14,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 46-Piece Set</li>
+                            <li><i class="fas fa-check"></i> Microwave Safe</li>
+                            <li><i class="fas fa-check"></i> Dishwasher Safe</li>
+                            <li><i class="fas fa-check"></i> Elegant Design</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Ceramic Dinner Set 46-Piece')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 31 - Bone China Tea Set -->
+                <div class="product-card" data-category="dinnerware">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Tea Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Dinnerware</span>
+                        <h3 class="product-title">Bone China Tea & Coffee Set 27pc</h3>
+                        <div class="product-price">₨ 9,500 <span>₨ 12,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Fine Bone China</li>
+                            <li><i class="fas fa-check"></i> Gold Rim Design</li>
+                            <li><i class="fas fa-check"></i> 6-Person Set</li>
+                            <li><i class="fas fa-check"></i> Gift Box Packing</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Bone China Tea & Coffee Set 27pc')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 32 - Opalware Dinner Set -->
+                <div class="product-card" data-category="dinnerware">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Opalware Dinner Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Dinnerware</span>
+                        <h3 class="product-title">Opalware Printed Dinner Set 33pc</h3>
+                        <div class="product-price">₨ 7,800 <span>₨ 9,500</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Shatter Resistant</li>
+                            <li><i class="fas fa-check"></i> Printed Design</li>
+                            <li><i class="fas fa-check"></i> Microwave Safe</li>
+                            <li><i class="fas fa-check"></i> 33-Piece for 6 People</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Opalware Printed Dinner Set 33pc')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== STORAGE ===== -->
+                <!-- Product 33 - Canister Set -->
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1545579133-99bb5ab189bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Canister Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Storage</span>
+                        <h3 class="product-title">Stainless Steel Canister Set 5pc</h3>
+                        <div class="product-price">₨ 4,800 <span>₨ 5,800</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Airtight Lids</li>
+                            <li><i class="fas fa-check"></i> Mirror Finish</li>
+                            <li><i class="fas fa-check"></i> 5 Different Sizes</li>
+                            <li><i class="fas fa-check"></i> Rust Resistant</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Stainless Steel Canister Set 5pc')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 34 - Lunch Box -->
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1575467678930-c7acd65d6470?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lunch Box">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Storage</span>
+                        <h3 class="product-title">Stainless Steel Insulated Lunch Box</h3>
+                        <div class="product-price">₨ 2,500 <span>₨ 3,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 3-Tier Compartment</li>
+                            <li><i class="fas fa-check"></i> Keeps Food Warm 6hrs</li>
+                            <li><i class="fas fa-check"></i> Leak-Proof Seal</li>
+                            <li><i class="fas fa-check"></i> Carry Bag Included</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Stainless Steel Insulated Lunch Box')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 35 - Glass Container Set -->
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Glass Container Set">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Storage</span>
+                        <h3 class="product-title">Borosilicate Glass Food Container 7pc</h3>
+                        <div class="product-price">₨ 5,500 <span>₨ 6,500</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Borosilicate Glass</li>
+                            <li><i class="fas fa-check"></i> Oven & Freezer Safe</li>
+                            <li><i class="fas fa-check"></i> Snap-Lock Lids</li>
+                            <li><i class="fas fa-check"></i> 7 Sizes in Set</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Borosilicate Glass Food Container 7pc')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== APPLIANCES ===== -->
+                <!-- Product 36 - Hand Mixer -->
+                <div class="product-card" data-category="appliances">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1556909190-eccf4a8bf97a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Hand Mixer">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Appliances</span>
+                        <h3 class="product-title">5-Speed Electric Hand Mixer 300W</h3>
+                        <div class="product-price">₨ 4,200 <span>₨ 5,200</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 300W Powerful Motor</li>
+                            <li><i class="fas fa-check"></i> 5-Speed Settings</li>
+                            <li><i class="fas fa-check"></i> Turbo Boost Function</li>
+                            <li><i class="fas fa-check"></i> Whisk & Dough Hooks</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('5-Speed Electric Hand Mixer 300W')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 37 - Food Chopper -->
+                <div class="product-card" data-category="appliances">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1612200298126-ded5d6b7b3c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Food Chopper">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Appliances</span>
+                        <h3 class="product-title">Electric Food Chopper & Slicer</h3>
+                        <div class="product-price">₨ 5,200 <span>₨ 6,500</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 400W Motor</li>
+                            <li><i class="fas fa-check"></i> 4 Cutting Blades</li>
+                            <li><i class="fas fa-check"></i> 1.5L Bowl Capacity</li>
+                            <li><i class="fas fa-check"></i> One-Touch Operation</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Electric Food Chopper & Slicer')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 38 - Toaster Oven -->
+                <div class="product-card" data-category="appliances">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1531069048-05dd16cb0bac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Toaster Oven">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Appliances</span>
+                        <h3 class="product-title">Electric Toaster Oven 28L 1600W</h3>
+                        <div class="product-price">₨ 14,500 <span>₨ 18,000</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 28 Liters Capacity</li>
+                            <li><i class="fas fa-check"></i> Convection Fan</li>
+                            <li><i class="fas fa-check"></i> 60-Min Timer</li>
+                            <li><i class="fas fa-check"></i> 6 Cooking Functions</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Electric Toaster Oven 28L 1600W')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 39 - Coffee Maker -->
+                <div class="product-card" data-category="appliances">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Coffee Maker">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Appliances</span>
+                        <h3 class="product-title">Drip Coffee Maker 1.5L 12-Cup</h3>
+                        <div class="product-price">₨ 6,800 <span>₨ 8,500</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 12-Cup Capacity</li>
+                            <li><i class="fas fa-check"></i> Keep-Warm Plate</li>
+                            <li><i class="fas fa-check"></i> Pause & Pour Feature</li>
+                            <li><i class="fas fa-check"></i> Reusable Filter</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Drip Coffee Maker 1.5L 12-Cup')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product 40 - Water Dispenser Jug -->
+                <div class="product-card" data-category="storage">
+                    <div class="product-img">
+                        <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Water Dispenser Jug">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">Storage</span>
+                        <h3 class="product-title">Crystal Clear Water Jug Set with Glasses</h3>
+                        <div class="product-price">₨ 2,800 <span>₨ 3,500</span></div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> 1.8L Glass Jug</li>
+                            <li><i class="fas fa-check"></i> 6 Matching Glasses</li>
+                            <li><i class="fas fa-check"></i> Floral Etched Design</li>
+                            <li><i class="fas fa-check"></i> Lead-Free Crystal</li>
+                        </ul>
+                        <button class="product-btn" onclick="inquireProduct('Crystal Clear Water Jug Set with Glasses')">
+                            <i class="fas fa-shopping-cart"></i> Inquire Now
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="reviews-section" id="reviews">
+        <div class="container">
+            <div class="section-title">
+                <h2>Customer Reviews</h2>
+                <p>See what our satisfied customers say about us</p>
+            </div>
+
+            <div class="reviews-slider">
+                <div class="reviews-container" id="reviewsContainer">
+                    <!-- Review 1 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-avatar">AS</div>
+                            <div class="review-info">
+                                <h4>Ahmed Siddiqui</h4>
+                                <div class="review-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="review-date">2 Weeks Ago</div>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            "Excellent quality cookware! I purchased the non-stick set and it's been fantastic. The delivery was prompt and the owner, Mr. Yamin, provided great after-sales service. Highly recommended!"
+                        </div>
+                    </div>
+
+                    <!-- Review 2 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-avatar">FK</div>
+                            <div class="review-info">
+                                <h4>Fatima Khan</h4>
+                                <div class="review-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <div class="review-date">1 Month Ago</div>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            "I've been buying kitchenware from Friends Trader for 5 years now. Their products last longer than any other brand I've tried. The brass serving set I bought recently is absolutely beautiful!"
+                        </div>
+                    </div>
+
+                    <!-- Review 3 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-avatar">RS</div>
+                            <div class="review-info">
+                                <h4>Rashid Shah</h4>
+                                <div class="review-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="review-date">3 Days Ago</div>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            "Best kitchenware shop in Multan! The professional knife set I bought is top-notch quality. Mr. Yamin personally demonstrated how to maintain them. Great customer service!"
+                        </div>
+                    </div>
+
+                    <!-- Review 4 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-avatar">MY</div>
+                            <div class="review-info">
+                                <h4>Muqaddas Yamin</h4>
+                                <div class="review-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="review-date">1 Week Ago</div>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            " I purchased the non-stick set and it's been fantastic. The delivery was prompt and the owner, Mr. Yamin, provided great after-sales service. Highly recommended!"
+                        </div>
+                    </div>
+
+                    <!-- Review 5 -->
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-avatar">SK</div>
+                            <div class="review-info">
+                                <h4>Sana Kamal</h4>
+                                <div class="review-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="review-date">2 Months Ago</div>
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            "Ordered a baking set for my new bakery business. The quality exceeded my expectations! Delivery was free and on time. Will definitely order again for my kitchen supplies."
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 6 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-avatar">AY</div>
+                        <div class="review-info">
+                            <h4>Ayan Yamin</h4>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="review-date">2 Days Ago</div>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        "The quality of their products exceeded my expectations! Delivery was free and on time. Will definitely order again for my kitchen supplies."
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review 7 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="review-avatar">MY</div>
+                    <div class="review-info">
+                        <h4>Muskan Yamin</h4>
+                        <div class="review-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="review-date">1 Day Ago</div>
+                    </div>
+                </div>
+                <div class="review-content">
+                    " Delivery was free and on time. Will definitely order again for my kitchen supplies."
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="slider-controls">
+            <button class="slider-btn" id="prevBtn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+            <button class="slider-btn" id="nextBtn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+        </div>
+        </div>
+
+        <div class="review-stats">
+            <div class="stat-item">
+                <div class="stat-number">4.9/5</div>
+                <div class="stat-label">Average Rating</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">500+</div>
+                <div class="stat-label">Happy Customers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Years Experience</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1000+</div>
+                <div class="stat-label">Products Sold</div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>About Friends Trader</h2>
+            </div>
+
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Your Trusted Kitchenware Partner Since 2021</h3>
+                    <p>Friends Trader is a premier kitchen utensils and cookware store located in the heart of Multan. With over 25 years of combined experience in the kitchenware industry, we provide high-quality products that combine durability, functionality,
+                        and style.</p>
+                    <p>We offer a wide range of kitchen utensils, cookware sets, bakeware, cutlery, and specialty items for both home cooks and professional chefs. Our commitment to quality and customer satisfaction has made us a trusted name in Multan.</p>
+
+                    <div class="owner-info">
+                        <h4><i class="fas fa-user"></i> Owner: Muhammad Yamin</h4>
+                        <p>With decades of experience in kitchenware, Muhammad Yamin ensures that every product meets our high standards of quality and durability.</p>
+                    </div>
+                </div>
+
+                <div class="about-image">
+                    <!-- YOUR NEW IMAGE HAS BEEN ADDED HERE -->
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYUamVT4RNX_rtc4igw7toqQAH35Njtytc2g&s" alt="Friends Trader Store">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Contact Us</h2>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>Phone Numbers</h3>
+                    <p><strong>Primary:</strong> <a href="tel:03007195451">0300-7195451</a></p>
+                    <p><strong>Secondary:</strong> <a href="tel:03188195451">0318-8195451</a></p>
+                    <p>Call us for inquiries, orders, or expert advice</p>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email</h3>
+                    <p><strong>Email:</strong> <a href="mailto:yamin.yousaf79@gmail.com">yamin.yousaf79@gmail.com</a></p>
+                    <p>Send us your queries, bulk orders, or partnership proposals</p>
+
+                    <div class="social-links">
+                        <a href="mailto:yamin.yousaf79@gmail.com" class="social-icon email">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3>Social Media</h3>
+                    <p>Follow us for updates, offers, and kitchen tips</p>
+
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/share/17njqyLwbF/" target="_blank" class="social-icon facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/mohammadyameen10?igsh=MXI0aXBwaGxjNXZrdg==" target="_blank" class="social-icon instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://wa.me/9230007195451" target="_blank" class="social-icon" style="background: #25D366;">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="section map-section" id="map">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Location</h2>
+            </div>
+
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3476.847261178101!2d71.4412427753386!3d30.195222554970094!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x393b35c55123c4e9%3A0x7e9d5a0b5b5b5b5b!2sChungi%20No%2011%2C%20Makhdoom%20Rasheed%20Road%2C%20Near%20UBL%20Bank%2C%20Bilal%20Nagar%2C%20Multan%2C%20Pakistan!5e0!3m2!1sen!2s!4v1690000000000!5m2!1sen!2s"
+                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+
+            <div class="contact-card" style="max-width: 800px; margin: 30px auto 0;">
+                <h3><i class="fas fa-map-marker-alt"></i> Store Address</h3>
+                <p><strong>Friends Trader</strong><br> Chungi No 11, Makhdoom Rasheed Road,<br> Near UBL Bank, Bilal Nagar, Multan</p>
+                <p><i class="fas fa-clock"></i> <strong>Opening Hours:</strong> Monday to Sunday, 9:00 AM to 9:00 PM</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Friends Trader</h3>
+                    <p>Your trusted source for premium kitchen utensils and cookware in Multan for over 25 years.</p>
+                    <p>Business Established: 2021</p>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#products">Products</a></li>
+                        <li><a href="#reviews">Reviews</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Business Hours</h3>
+                    <ul class="business-hours">
+                        <li><span>Monday - Sunday:</span> <span>9:00 AM - 9:00 PM</span></li>
+                    </ul>
+                    <p>Open 7 days a week for your convenience</p>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Contact Info</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Chungi No 11, Makhdoom Rasheed Road, Bilal Nagar, Multan</li>
+                        <li><i class="fas fa-phone"></i> 0300-7195451 | 0318-8195451</li>
+                        <li><i class="fas fa-envelope"></i> yamin.yousaf79@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="copyright">
+                <p>&copy; 2024 Friends Trader. All Rights Reserved. | Designed with <i class="fas fa-heart" style="color: #c62828;"></i> for the people of Multan</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mainNav = document.getElementById('mainNav');
+
+        mobileMenuBtn.addEventListener('click', function() {
+            mainNav.classList.toggle('active');
+            mobileMenuBtn.innerHTML = mainNav.classList.contains('active') ?
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+
+                    // Close mobile menu if open
+                    if (mainNav.classList.contains('active')) {
+                        mainNav.classList.remove('active');
+                        mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                    }
+                }
+            });
+        });
+
+        // Products Filter Functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const productCards = document.querySelectorAll('.product-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+
+                const filter = btn.getAttribute('data-filter');
+
+                productCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'block';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, 50);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+
+        // Product Inquiry Function
+        function inquireProduct(productName) {
+            const message = `Hello! I'm interested in your product: ${productName}. Please provide me with more details.`;
+            const whatsappUrl = `https://wa.me/923007195451?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Reviews Slider Functionality
+        const reviewsContainer = document.getElementById('reviewsContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let currentIndex = 0;
+        const cardWidth = document.querySelector('.review-card').offsetWidth + 30; // including gap
+
+        function updateSlider() {
+            reviewsContainer.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            const maxIndex = Math.floor(reviewsContainer.children.length - (window.innerWidth < 768 ? 1 : window.innerWidth < 992 ? 2 : 3));
+            currentIndex = Math.min(currentIndex + 1, maxIndex);
+            updateSlider();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex = Math.max(currentIndex - 1, 0);
+            updateSlider();
+        });
+
+        // Auto slide reviews every 5 seconds
+        setInterval(() => {
+            const maxIndex = Math.floor(reviewsContainer.children.length - (window.innerWidth < 768 ? 1 : window.innerWidth < 992 ? 2 : 3));
+            if (currentIndex >= maxIndex) {
+                currentIndex = 0;
+            } else {
+                currentIndex++;
+            }
+            updateSlider();
+        }, 5000);
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.product-card, .review-card, .contact-card, .about-content').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(el);
+        });
+
+        // Initialize product cards with animation
+        productCards.forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.1}s`;
+        });
+    </script>
+</body>
+
+</html
