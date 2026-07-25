@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Friends Trader - Premium Kitchen Utensils | Multan</title>
+    <title>Friends Traders - Premium Crockery, Kitchenware & Home Appliances | Multan</title>
+    <meta name="description" content="Friends Traders Multan offers premium crockery, kitchenware, dinner sets, cookware, cutlery, storage containers and home appliances with WhatsApp ordering.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <style>
@@ -357,6 +358,280 @@
         
         .product-btn:hover {
             background: var(--primary-dark);
+        }
+        
+        .product-card {
+            position: relative;
+            border-radius: 18px;
+            box-shadow: 0 14px 35px rgba(38, 50, 56, 0.12);
+            border: 1px solid rgba(198, 40, 40, 0.08);
+        }
+        
+        .product-img {
+            position: relative;
+            height: 240px;
+            padding: 0;
+            background: linear-gradient(145deg, #fff7f2, #f7f7f7);
+        }
+        
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            max-height: none;
+            object-fit: cover;
+        }
+        
+        .stock-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: rgba(46, 125, 50, 0.94);
+            color: white;
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+        }
+        
+        .product-meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .product-brand {
+            color: var(--gray);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .product-description {
+            color: #5f6b70;
+            font-size: 0.92rem;
+            line-height: 1.55;
+            margin-bottom: 14px;
+        }
+        
+        .product-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        
+        .details-btn {
+            background: var(--dark);
+        }
+        
+        .details-btn:hover {
+            background: #11191c;
+        }
+        
+        .whatsapp-order-btn {
+            background: #25D366;
+        }
+        
+        .whatsapp-order-btn:hover {
+            background: #128C7E;
+        }
+        
+        .business-card-section {
+            background: linear-gradient(180deg, #fff, #fff8f3);
+        }
+        
+        .business-card-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+            gap: 36px;
+            align-items: center;
+        }
+        
+        .business-card-frame {
+            background: white;
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 18px 45px rgba(38, 50, 56, 0.16);
+            border: 1px solid rgba(198, 40, 40, 0.08);
+        }
+        
+        .business-card-frame img {
+            display: block;
+            width: 100%;
+            border-radius: 12px;
+        }
+        
+        .business-card-copy h3 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 14px;
+        }
+        
+        .business-card-copy p {
+            color: var(--gray);
+            margin-bottom: 18px;
+        }
+        
+        .business-card-actions {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        
+        .product-detail-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(17, 25, 28, 0.78);
+        }
+        
+        .product-detail-modal.active {
+            display: flex;
+        }
+        
+        .product-detail-panel {
+            width: min(980px, 100%);
+            max-height: 92vh;
+            overflow: auto;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
+        }
+        
+        .product-detail-close {
+            position: sticky;
+            top: 12px;
+            margin-left: auto;
+            display: flex;
+            width: 44px;
+            height: 44px;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            background: var(--primary);
+            cursor: pointer;
+            transform: translate(-14px, 14px);
+            z-index: 2;
+        }
+        
+        .product-detail-body {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 1fr);
+            gap: 28px;
+            padding: 10px 30px 34px;
+        }
+        
+        .product-detail-body img {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+        }
+        
+        .detail-category {
+            display: inline-flex;
+            color: white;
+            background: var(--primary);
+            border-radius: 999px;
+            padding: 7px 14px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .detail-info h3 {
+            font-size: 2.1rem;
+            color: var(--dark);
+            margin-bottom: 12px;
+        }
+        
+        .detail-price {
+            color: var(--primary);
+            font-size: 1.7rem;
+            font-weight: 800;
+            margin: 14px 0;
+        }
+        
+        .detail-price span {
+            color: var(--gray);
+            font-size: 1rem;
+            font-weight: 500;
+            margin-left: 10px;
+            text-decoration: line-through;
+        }
+        
+        .detail-list {
+            list-style: none;
+            margin: 18px 0 22px;
+        }
+        
+        .detail-list li {
+            margin-bottom: 9px;
+            color: #56646a;
+        }
+        
+        .detail-list i {
+            color: var(--accent);
+            margin-right: 8px;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            display: grid;
+            place-items: center;
+            background: white;
+            transition: opacity 0.45s ease, visibility 0.45s ease;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader-ring {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            border: 5px solid #f3d3d3;
+            border-top-color: var(--primary);
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @media (min-width: 720px) {
+            .product-actions {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .business-card-layout,
+            .product-detail-body {
+                grid-template-columns: 1fr;
+            }
+            .business-card-actions .btn {
+                width: 100%;
+            }
+            .detail-info h3 {
+                font-size: 1.7rem;
+            }
         }
         /* Reviews Section */
         
@@ -848,6 +1123,7 @@
                     <li><a href="#products">Products</a></li>
                     <li><a href="#reviews">Reviews</a></li>
                     <li><a href="#about">About</a></li>
+                    <li><a href="#business-card">Card</a></li>
                     <li><a href="#contact">Contact</a></li>
                     <li><a href="#map">Location</a></li>
                 </ul>
@@ -903,853 +1179,1158 @@
 
             <div class="products-grid">
 
-                <!-- ===== ROSE PETAL PRODUCTS ===== -->
-                <!-- Product 1 - Rose Petal Non-Stick Pan -->
-                <div class="product-card" data-category="rosepetal">
+                <!-- Product 1 - Rose Petal Non-Stick Fry Pan 28cm -->
+                <div class="product-card" data-category="rosepetal" data-id="rose-petal-non-stick-fry-pan-28cm" data-title="Rose Petal Non-Stick Fry Pan 28cm" data-brand="Rose Petal" data-category-label="Premium Cookware" data-price="PKR 3,500" data-old-price="PKR 4,100"
+                    data-availability="In stock" data-description="Premium daily-use cookware selected for Pakistani kitchens, strong heat performance, and easy cleaning." data-image="https://images.unsplash.com/photo-1585515320310-259814833e62?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="5-Layer Non-Stick Coating|Induction Compatible|Heat-Resistant Handle">
                     <div class="product-img">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ-wTr88a5QHnjy8ofXoEqjD2VhGiWm8N89Q&s" alt="Rose Petal Non-Stick Pan">
+                        <img src="https://images.unsplash.com/photo-1585515320310-259814833e62?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Rose Petal Non-Stick Fry Pan 28cm" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Rose Petal</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Premium Cookware</span>
+                            <span class="product-brand">Rose Petal</span>
+                        </div>
                         <h3 class="product-title">Rose Petal Non-Stick Fry Pan 28cm</h3>
-                        <div class="product-price">₨ 2,800 <span>₨ 3,500</span></div>
+                        <p class="product-description">Premium daily-use cookware selected for Pakistani kitchens, strong heat performance, and easy cleaning.</p>
+                        <div class="product-price">PKR 3,500 <span>PKR 4,100</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 5-Layer Non-Stick Coating</li>
                             <li><i class="fas fa-check"></i> Induction Compatible</li>
                             <li><i class="fas fa-check"></i> Heat-Resistant Handle</li>
-                            <li><i class="fas fa-check"></i> 3 Years Warranty</li>
+                            <li><i class="fas fa-check"></i> Category: Premium Cookware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Rose Petal Non-Stick Fry Pan 28cm')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('rose-petal-non-stick-fry-pan-28cm')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Rose Petal Non-Stick Fry Pan 28cm')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 2 - Rose Petal Cooking Pot -->
-                <div class="product-card" data-category="rosepetal">
+                <!-- Product 2 - Rose Petal Non-Stick Cooking Pot Set -->
+                <div class="product-card" data-category="rosepetal" data-id="rose-petal-non-stick-cooking-pot-set" data-title="Rose Petal Non-Stick Cooking Pot Set" data-brand="Rose Petal" data-category-label="Premium Cookware" data-price="PKR 7,200" data-old-price="PKR 8,500"
+                    data-availability="In stock" data-description="Premium daily-use cookware selected for Pakistani kitchens, strong heat performance, and easy cleaning." data-image="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="5-Piece Set|German Technology|Marble Coating">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rose Petal Cooking Pot">
+                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Rose Petal Non-Stick Cooking Pot Set" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Rose Petal</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Premium Cookware</span>
+                            <span class="product-brand">Rose Petal</span>
+                        </div>
                         <h3 class="product-title">Rose Petal Non-Stick Cooking Pot Set</h3>
-                        <div class="product-price">₨ 6,500 <span>₨ 8,000</span></div>
+                        <p class="product-description">Premium daily-use cookware selected for Pakistani kitchens, strong heat performance, and easy cleaning.</p>
+                        <div class="product-price">PKR 7,200 <span>PKR 8,500</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 5-Piece Set</li>
                             <li><i class="fas fa-check"></i> German Technology</li>
                             <li><i class="fas fa-check"></i> Marble Coating</li>
-                            <li><i class="fas fa-check"></i> Gas & Induction</li>
+                            <li><i class="fas fa-check"></i> Category: Premium Cookware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Rose Petal Non-Stick Cooking Pot Set')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('rose-petal-non-stick-cooking-pot-set')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Rose Petal Non-Stick Cooking Pot Set')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 3 - Rose Petal Wok -->
-                <div class="product-card" data-category="rosepetal">
+                <!-- Product 3 - Rose Petal Granite Wok Pan 32cm -->
+                <div class="product-card" data-category="rosepetal" data-id="rose-petal-granite-wok-pan-32cm" data-title="Rose Petal Granite Wok Pan 32cm" data-brand="Rose Petal" data-category-label="Premium Cookware" data-price="PKR 3,900" data-old-price="PKR 4,600"
+                    data-availability="In stock" data-description="Premium daily-use cookware selected for Pakistani kitchens, strong heat performance, and easy cleaning." data-image="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="Granite Stone Coating|Deep Design for Stir Fry|Bakelite Handle">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rose Petal Wok Pan">
+                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Rose Petal Granite Wok Pan 32cm" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Rose Petal</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Premium Cookware</span>
+                            <span class="product-brand">Rose Petal</span>
+                        </div>
                         <h3 class="product-title">Rose Petal Granite Wok Pan 32cm</h3>
-                        <div class="product-price">₨ 3,200 <span>₨ 4,000</span></div>
+                        <p class="product-description">Premium daily-use cookware selected for Pakistani kitchens, strong heat performance, and easy cleaning.</p>
+                        <div class="product-price">PKR 3,900 <span>PKR 4,600</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> Granite Stone Coating</li>
                             <li><i class="fas fa-check"></i> Deep Design for Stir Fry</li>
                             <li><i class="fas fa-check"></i> Bakelite Handle</li>
-                            <li><i class="fas fa-check"></i> PFOA Free</li>
+                            <li><i class="fas fa-check"></i> Category: Premium Cookware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Rose Petal Granite Wok Pan 32cm')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('rose-petal-granite-wok-pan-32cm')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Rose Petal Granite Wok Pan 32cm')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 4 - Rose Petal Casserole -->
-                <div class="product-card" data-category="rosepetal">
+                <!-- Product 4 - Rose Petal Casserole with Glass Lid -->
+                <div class="product-card" data-category="rosepetal" data-id="rose-petal-casserole-with-glass-lid" data-title="Rose Petal Casserole with Glass Lid" data-brand="Rose Petal" data-category-label="Premium Cookware" data-price="PKR 5,200" data-old-price="PKR 6,100"
+                    data-availability="In stock" data-description="Premium daily-use cookware selected for Pakistani kitchens, strong heat performance, and easy cleaning." data-image="https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="24cm Non-Stick|Tempered Glass Lid|Even Heat Distribution">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rose Petal Casserole">
+                        <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Rose Petal Casserole with Glass Lid" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Rose Petal</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Premium Cookware</span>
+                            <span class="product-brand">Rose Petal</span>
+                        </div>
                         <h3 class="product-title">Rose Petal Casserole with Glass Lid</h3>
-                        <div class="product-price">₨ 4,500 <span>₨ 5,500</span></div>
+                        <p class="product-description">Premium daily-use cookware selected for Pakistani kitchens, strong heat performance, and easy cleaning.</p>
+                        <div class="product-price">PKR 5,200 <span>PKR 6,100</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 24cm Non-Stick</li>
                             <li><i class="fas fa-check"></i> Tempered Glass Lid</li>
                             <li><i class="fas fa-check"></i> Even Heat Distribution</li>
-                            <li><i class="fas fa-check"></i> Easy Clean</li>
+                            <li><i class="fas fa-check"></i> Category: Premium Cookware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Rose Petal Casserole with Glass Lid')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('rose-petal-casserole-with-glass-lid')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Rose Petal Casserole with Glass Lid')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ===== CHEF BRAND PRODUCTS ===== -->
-                <!-- Product 5 - Chef Knife Set -->
-                <div class="product-card" data-category="chef">
+                <!-- Product 5 - Chef Professional Knife Set 7-Piece -->
+                <div class="product-card" data-category="chef" data-id="chef-professional-knife-set-7-piece" data-title="Chef Professional Knife Set 7-Piece" data-brand="Chef Brand" data-category-label="Chef Brand" data-price="PKR 10,100" data-old-price="PKR 11,900"
+                    data-availability="In stock" data-description="Professional-grade kitchen essential with durable construction, comfortable handling, and reliable finish." data-image="https://images.unsplash.com/photo-1593618998160-e34014e67546?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="German Stainless Steel|Ergonomic Handle|Razor Sharp Edge">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1594736797933-d0b64c8fd7c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Chef Knife Set">
+                        <img src="https://images.unsplash.com/photo-1593618998160-e34014e67546?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Chef Professional Knife Set 7-Piece" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Chef Brand</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Chef Brand</span>
+                            <span class="product-brand">Chef Brand</span>
+                        </div>
                         <h3 class="product-title">Chef Professional Knife Set 7-Piece</h3>
-                        <div class="product-price">₨ 8,900 <span>₨ 11,000</span></div>
+                        <p class="product-description">Professional-grade kitchen essential with durable construction, comfortable handling, and reliable finish.</p>
+                        <div class="product-price">PKR 10,100 <span>PKR 11,900</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> German Stainless Steel</li>
                             <li><i class="fas fa-check"></i> Ergonomic Handle</li>
                             <li><i class="fas fa-check"></i> Razor Sharp Edge</li>
-                            <li><i class="fas fa-check"></i> Wooden Block Included</li>
+                            <li><i class="fas fa-check"></i> Category: Chef Brand</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Chef Professional Knife Set 7-Piece')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('chef-professional-knife-set-7-piece')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Chef Professional Knife Set 7-Piece')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 6 - Chef Cookware Set -->
-                <div class="product-card" data-category="chef">
+                <!-- Product 6 - Chef Non-Stick Cookware Set 9-Piece -->
+                <div class="product-card" data-category="chef" data-id="chef-non-stick-cookware-set-9-piece" data-title="Chef Non-Stick Cookware Set 9-Piece" data-brand="Chef Brand" data-category-label="Chef Brand" data-price="PKR 15,700" data-old-price="PKR 18,500"
+                    data-availability="In stock" data-description="Professional-grade kitchen essential with durable construction, comfortable handling, and reliable finish." data-image="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="Titanium Reinforced|Oven Safe 220C|Induction Ready">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1670421922405-47e4eca0e9ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Chef Cookware Set">
+                        <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Chef Non-Stick Cookware Set 9-Piece" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Chef Brand</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Chef Brand</span>
+                            <span class="product-brand">Chef Brand</span>
+                        </div>
                         <h3 class="product-title">Chef Non-Stick Cookware Set 9-Piece</h3>
-                        <div class="product-price">₨ 14,500 <span>₨ 18,000</span></div>
+                        <p class="product-description">Professional-grade kitchen essential with durable construction, comfortable handling, and reliable finish.</p>
+                        <div class="product-price">PKR 15,700 <span>PKR 18,500</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> Titanium Reinforced</li>
-                            <li><i class="fas fa-check"></i> Oven Safe 220°C</li>
+                            <li><i class="fas fa-check"></i> Oven Safe 220C</li>
                             <li><i class="fas fa-check"></i> Induction Ready</li>
-                            <li><i class="fas fa-check"></i> 5 Years Warranty</li>
+                            <li><i class="fas fa-check"></i> Category: Chef Brand</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Chef Non-Stick Cookware Set 9-Piece')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('chef-non-stick-cookware-set-9-piece')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Chef Non-Stick Cookware Set 9-Piece')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 7 - Chef Pressure Cooker -->
-                <div class="product-card" data-category="chef">
+                <!-- Product 7 - Chef Stainless Steel Pressure Cooker 8L -->
+                <div class="product-card" data-category="chef" data-id="chef-stainless-steel-pressure-cooker-8l" data-title="Chef Stainless Steel Pressure Cooker 8L" data-brand="Chef Brand" data-category-label="Chef Brand" data-price="PKR 6,700" data-old-price="PKR 7,900"
+                    data-availability="Limited stock" data-description="Professional-grade kitchen essential with durable construction, comfortable handling, and reliable finish." data-image="https://images.unsplash.com/photo-1584990347449-a0d7f7f834ca?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="8-Liter Capacity|Triple Safety Valve|3-Ply Thick Base">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1541976590-7139416811af?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Chef Pressure Cooker">
+                        <img src="https://images.unsplash.com/photo-1584990347449-a0d7f7f834ca?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Chef Stainless Steel Pressure Cooker 8L" loading="lazy" decoding="async">
+                        <span class="stock-badge">Limited stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Chef Brand</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Chef Brand</span>
+                            <span class="product-brand">Chef Brand</span>
+                        </div>
                         <h3 class="product-title">Chef Stainless Steel Pressure Cooker 8L</h3>
-                        <div class="product-price">₨ 5,500 <span>₨ 6,500</span></div>
+                        <p class="product-description">Professional-grade kitchen essential with durable construction, comfortable handling, and reliable finish.</p>
+                        <div class="product-price">PKR 6,700 <span>PKR 7,900</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 8-Liter Capacity</li>
                             <li><i class="fas fa-check"></i> Triple Safety Valve</li>
                             <li><i class="fas fa-check"></i> 3-Ply Thick Base</li>
-                            <li><i class="fas fa-check"></i> 10 Years Warranty</li>
+                            <li><i class="fas fa-check"></i> Category: Chef Brand</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Chef Stainless Steel Pressure Cooker 8L')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('chef-stainless-steel-pressure-cooker-8l')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Chef Stainless Steel Pressure Cooker 8L')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 8 - Chef Grill Pan -->
-                <div class="product-card" data-category="chef">
+                <!-- Product 8 - Chef Cast Iron Grill Pan 28cm -->
+                <div class="product-card" data-category="chef" data-id="chef-cast-iron-grill-pan-28cm" data-title="Chef Cast Iron Grill Pan 28cm" data-brand="Chef Brand" data-category-label="Chef Brand" data-price="PKR 5,000" data-old-price="PKR 5,900" data-availability="In stock"
+                    data-description="Professional-grade kitchen essential with durable construction, comfortable handling, and reliable finish." data-image="https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="Pre-Seasoned Cast Iron|Ridge Design for Grilling|Multi-Fuel Compatible">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1529565214545-8a8c7b18f8e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Chef Grill Pan">
+                        <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Chef Cast Iron Grill Pan 28cm" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Chef Brand</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Chef Brand</span>
+                            <span class="product-brand">Chef Brand</span>
+                        </div>
                         <h3 class="product-title">Chef Cast Iron Grill Pan 28cm</h3>
-                        <div class="product-price">₨ 3,800 <span>₨ 4,800</span></div>
+                        <p class="product-description">Professional-grade kitchen essential with durable construction, comfortable handling, and reliable finish.</p>
+                        <div class="product-price">PKR 5,000 <span>PKR 5,900</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> Pre-Seasoned Cast Iron</li>
                             <li><i class="fas fa-check"></i> Ridge Design for Grilling</li>
                             <li><i class="fas fa-check"></i> Multi-Fuel Compatible</li>
-                            <li><i class="fas fa-check"></i> Lifetime Durability</li>
+                            <li><i class="fas fa-check"></i> Category: Chef Brand</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Chef Cast Iron Grill Pan 28cm')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('chef-cast-iron-grill-pan-28cm')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Chef Cast Iron Grill Pan 28cm')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ===== ELECTRONICS ===== -->
-                <!-- Product 9 - Air Fryer -->
-                <div class="product-card" data-category="electronics">
+                <!-- Product 9 - Digital Air Fryer 5.5 Liter -->
+                <div class="product-card" data-category="electronics" data-id="digital-air-fryer-5-5-liter" data-title="Digital Air Fryer 5.5 Liter" data-brand="Friends Traders Appliances" data-category-label="Home Appliances" data-price="PKR 20,700" data-old-price="PKR 24,400"
+                    data-availability="In stock" data-description="Energy-efficient appliance for everyday home use with practical controls and dependable performance." data-image="https://images.unsplash.com/photo-1648501631688-fb8879d1bdc4?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="1800W Rapid Air Circulation|Digital Touch Panel|8 Pre-Set Programs">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1648501631688-fb8879d1bdc4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Air Fryer">
+                        <img src="https://images.unsplash.com/photo-1648501631688-fb8879d1bdc4?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Digital Air Fryer 5.5 Liter" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Electronics</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Home Appliances</span>
+                            <span class="product-brand">Friends Traders Appliances</span>
+                        </div>
                         <h3 class="product-title">Digital Air Fryer 5.5 Liter</h3>
-                        <div class="product-price">₨ 18,500 <span>₨ 22,000</span></div>
+                        <p class="product-description">Energy-efficient appliance for everyday home use with practical controls and dependable performance.</p>
+                        <div class="product-price">PKR 20,700 <span>PKR 24,400</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 1800W Rapid Air Circulation</li>
                             <li><i class="fas fa-check"></i> Digital Touch Panel</li>
                             <li><i class="fas fa-check"></i> 8 Pre-Set Programs</li>
-                            <li><i class="fas fa-check"></i> 80% Less Oil Usage</li>
+                            <li><i class="fas fa-check"></i> Category: Home Appliances</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Digital Air Fryer 5.5 Liter')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('digital-air-fryer-5-5-liter')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Digital Air Fryer 5.5 Liter')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 10 - Electric Kettle -->
-                <div class="product-card" data-category="electronics">
+                <!-- Product 10 - Stainless Steel Electric Kettle 1.8L -->
+                <div class="product-card" data-category="electronics" data-id="stainless-steel-electric-kettle-1-8l" data-title="Stainless Steel Electric Kettle 1.8L" data-brand="Premium Selection" data-category-label="Home Appliances" data-price="PKR 6,400" data-old-price="PKR 7,600"
+                    data-availability="In stock" data-description="Energy-efficient appliance for everyday home use with practical controls and dependable performance." data-image="https://images.unsplash.com/photo-1574692768241-2f2bb1c66d52?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="1500W Fast Boiling|Auto Shut-Off|Boil-Dry Protection">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1616096142563-ce6506d6e4b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Electric Kettle">
+                        <img src="https://images.unsplash.com/photo-1574692768241-2f2bb1c66d52?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Stainless Steel Electric Kettle 1.8L" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Electronics</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Home Appliances</span>
+                            <span class="product-brand">Premium Selection</span>
+                        </div>
                         <h3 class="product-title">Stainless Steel Electric Kettle 1.8L</h3>
-                        <div class="product-price">₨ 4,200 <span>₨ 5,000</span></div>
+                        <p class="product-description">Energy-efficient appliance for everyday home use with practical controls and dependable performance.</p>
+                        <div class="product-price">PKR 6,400 <span>PKR 7,600</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 1500W Fast Boiling</li>
                             <li><i class="fas fa-check"></i> Auto Shut-Off</li>
                             <li><i class="fas fa-check"></i> Boil-Dry Protection</li>
-                            <li><i class="fas fa-check"></i> 360° Cordless Base</li>
+                            <li><i class="fas fa-check"></i> Category: Home Appliances</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Stainless Steel Electric Kettle 1.8L')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('stainless-steel-electric-kettle-1-8l')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Stainless Steel Electric Kettle 1.8L')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 11 - Blender -->
-                <div class="product-card" data-category="electronics">
+                <!-- Product 11 - Powerful 1000W Hand Blender -->
+                <div class="product-card" data-category="electronics" data-id="powerful-1000w-hand-blender" data-title="Powerful 1000W Hand Blender" data-brand="Friends Traders Appliances" data-category-label="Home Appliances" data-price="PKR 8,000" data-old-price="PKR 9,400"
+                    data-availability="In stock" data-description="Energy-efficient appliance for everyday home use with practical controls and dependable performance." data-image="https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="1000W Motor|Detachable Blade|2-Speed Settings">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1570222094114-d054a817e56b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blender">
+                        <img src="https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Powerful 1000W Hand Blender" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Electronics</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Home Appliances</span>
+                            <span class="product-brand">Friends Traders Appliances</span>
+                        </div>
                         <h3 class="product-title">Powerful 1000W Hand Blender</h3>
-                        <div class="product-price">₨ 5,800 <span>₨ 7,000</span></div>
+                        <p class="product-description">Energy-efficient appliance for everyday home use with practical controls and dependable performance.</p>
+                        <div class="product-price">PKR 8,000 <span>PKR 9,400</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 1000W Motor</li>
                             <li><i class="fas fa-check"></i> Detachable Blade</li>
                             <li><i class="fas fa-check"></i> 2-Speed Settings</li>
-                            <li><i class="fas fa-check"></i> Stainless Steel Shaft</li>
+                            <li><i class="fas fa-check"></i> Category: Home Appliances</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Powerful 1000W Hand Blender')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('powerful-1000w-hand-blender')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Powerful 1000W Hand Blender')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 12 - Rice Cooker -->
-                <div class="product-card" data-category="electronics">
+                <!-- Product 12 - Automatic Rice Cooker 1.8L -->
+                <div class="product-card" data-category="electronics" data-id="automatic-rice-cooker-1-8l" data-title="Automatic Rice Cooker 1.8L" data-brand="Friends Traders Appliances" data-category-label="Home Appliances" data-price="PKR 8,700" data-old-price="PKR 10,300"
+                    data-availability="In stock" data-description="Energy-efficient appliance for everyday home use with practical controls and dependable performance." data-image="https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="1.8L Capacity (12 Cups)|Auto Keep-Warm|Non-Stick Inner Pot">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rice Cooker">
+                        <img src="https://images.unsplash.com/photo-1590794056226-79ef3a8147e1?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Automatic Rice Cooker 1.8L" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Electronics</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Home Appliances</span>
+                            <span class="product-brand">Friends Traders Appliances</span>
+                        </div>
                         <h3 class="product-title">Automatic Rice Cooker 1.8L</h3>
-                        <div class="product-price">₨ 6,500 <span>₨ 7,800</span></div>
+                        <p class="product-description">Energy-efficient appliance for everyday home use with practical controls and dependable performance.</p>
+                        <div class="product-price">PKR 8,700 <span>PKR 10,300</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 1.8L Capacity (12 Cups)</li>
                             <li><i class="fas fa-check"></i> Auto Keep-Warm</li>
                             <li><i class="fas fa-check"></i> Non-Stick Inner Pot</li>
-                            <li><i class="fas fa-check"></i> Steam Vent Lid</li>
+                            <li><i class="fas fa-check"></i> Category: Home Appliances</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Automatic Rice Cooker 1.8L')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('automatic-rice-cooker-1-8l')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Automatic Rice Cooker 1.8L')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 13 - Juicer Mixer -->
-                <div class="product-card" data-category="electronics">
+                <!-- Product 13 - 3-in-1 Juicer Mixer Grinder 750W -->
+                <div class="product-card" data-category="electronics" data-id="3-in-1-juicer-mixer-grinder-750w" data-title="3-in-1 Juicer Mixer Grinder 750W" data-brand="Friends Traders Appliances" data-category-label="Home Appliances" data-price="PKR 10,700" data-old-price="PKR 12,600"
+                    data-availability="In stock" data-description="Energy-efficient appliance for everyday home use with practical controls and dependable performance." data-image="https://images.unsplash.com/photo-1570197788417-0e82375c9371?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="750W Copper Motor|3 Stainless Steel Jars|3-Speed Control">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1579586337278-3f373f4c2f58?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Juicer Mixer Grinder">
+                        <img src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="3-in-1 Juicer Mixer Grinder 750W" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Electronics</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Home Appliances</span>
+                            <span class="product-brand">Friends Traders Appliances</span>
+                        </div>
                         <h3 class="product-title">3-in-1 Juicer Mixer Grinder 750W</h3>
-                        <div class="product-price">₨ 8,500 <span>₨ 10,000</span></div>
+                        <p class="product-description">Energy-efficient appliance for everyday home use with practical controls and dependable performance.</p>
+                        <div class="product-price">PKR 10,700 <span>PKR 12,600</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 750W Copper Motor</li>
                             <li><i class="fas fa-check"></i> 3 Stainless Steel Jars</li>
                             <li><i class="fas fa-check"></i> 3-Speed Control</li>
-                            <li><i class="fas fa-check"></i> Overload Protection</li>
+                            <li><i class="fas fa-check"></i> Category: Home Appliances</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('3-in-1 Juicer Mixer Grinder 750W')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('3-in-1-juicer-mixer-grinder-750w')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('3-in-1 Juicer Mixer Grinder 750W')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 14 - Microwave -->
-                <div class="product-card" data-category="electronics">
+                <!-- Product 14 - Digital Microwave Oven 25L -->
+                <div class="product-card" data-category="electronics" data-id="digital-microwave-oven-25l" data-title="Digital Microwave Oven 25L" data-brand="Friends Traders Appliances" data-category-label="Home Appliances" data-price="PKR 24,200" data-old-price="PKR 28,600"
+                    data-availability="Limited stock" data-description="Energy-efficient appliance for everyday home use with practical controls and dependable performance." data-image="https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="25 Liters Capacity|900W Power|10 Power Levels">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Microwave Oven">
+                        <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Digital Microwave Oven 25L" loading="lazy" decoding="async">
+                        <span class="stock-badge">Limited stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Electronics</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Home Appliances</span>
+                            <span class="product-brand">Friends Traders Appliances</span>
+                        </div>
                         <h3 class="product-title">Digital Microwave Oven 25L</h3>
-                        <div class="product-price">₨ 22,000 <span>₨ 26,000</span></div>
+                        <p class="product-description">Energy-efficient appliance for everyday home use with practical controls and dependable performance.</p>
+                        <div class="product-price">PKR 24,200 <span>PKR 28,600</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 25 Liters Capacity</li>
                             <li><i class="fas fa-check"></i> 900W Power</li>
                             <li><i class="fas fa-check"></i> 10 Power Levels</li>
-                            <li><i class="fas fa-check"></i> Child Safety Lock</li>
+                            <li><i class="fas fa-check"></i> Category: Home Appliances</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Digital Microwave Oven 25L')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('digital-microwave-oven-25l')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Digital Microwave Oven 25L')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 15 - Sandwich Maker -->
-                <div class="product-card" data-category="electronics">
+                <!-- Product 15 - Non-Stick Sandwich &amp; Grill Maker -->
+                <div class="product-card" data-category="electronics" data-id="non-stick-sandwich-and-grill-maker" data-title="Non-Stick Sandwich &amp; Grill Maker" data-brand="Home Appliances" data-category-label="Home Appliances" data-price="PKR 5,400" data-old-price="PKR 6,400"
+                    data-availability="In stock" data-description="Energy-efficient appliance for everyday home use with practical controls and dependable performance." data-image="https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="Non-Stick Plates|750W Power|Heat Indicator Light">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1484723091739-30a097e8f929?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Sandwich Maker">
+                        <img src="https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Non-Stick Sandwich &amp; Grill Maker" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Electronics</span>
-                        <h3 class="product-title">Non-Stick Sandwich & Grill Maker</h3>
-                        <div class="product-price">₨ 3,200 <span>₨ 4,000</span></div>
+                        <div class="product-meta-row">
+                            <span class="product-category">Home Appliances</span>
+                            <span class="product-brand">Home Appliances</span>
+                        </div>
+                        <h3 class="product-title">Non-Stick Sandwich &amp; Grill Maker</h3>
+                        <p class="product-description">Energy-efficient appliance for everyday home use with practical controls and dependable performance.</p>
+                        <div class="product-price">PKR 5,400 <span>PKR 6,400</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> Non-Stick Plates</li>
                             <li><i class="fas fa-check"></i> 750W Power</li>
                             <li><i class="fas fa-check"></i> Heat Indicator Light</li>
-                            <li><i class="fas fa-check"></i> Cool-Touch Handle</li>
+                            <li><i class="fas fa-check"></i> Category: Home Appliances</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Non-Stick Sandwich & Grill Maker')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('non-stick-sandwich-and-grill-maker')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Non-Stick Sandwich &amp; Grill Maker')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ===== COOKWARE ===== -->
-                <!-- Product 16 - Non-Stick Cookware Set -->
-                <div class="product-card" data-category="cookware">
+                <!-- Product 16 - Premium Non-Stick Cookware Set 10pc -->
+                <div class="product-card" data-category="cookware" data-id="premium-non-stick-cookware-set-10pc" data-title="Premium Non-Stick Cookware Set 10pc" data-brand="Cookware" data-category-label="Cookware" data-price="PKR 13,400" data-old-price="PKR 15,800"
+                    data-availability="In stock" data-description="Heavy-duty cookware built for family cooking, even heating, and long service life." data-image="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="10-Piece Complete Set|Ceramic Coating|Heat Resistant Handles">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Non-Stick Cookware Set">
+                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Premium Non-Stick Cookware Set 10pc" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Cookware</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Cookware</span>
+                            <span class="product-brand">Cookware</span>
+                        </div>
                         <h3 class="product-title">Premium Non-Stick Cookware Set 10pc</h3>
-                        <div class="product-price">₨ 12,500 <span>₨ 15,000</span></div>
+                        <p class="product-description">Heavy-duty cookware built for family cooking, even heating, and long service life.</p>
+                        <div class="product-price">PKR 13,400 <span>PKR 15,800</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 10-Piece Complete Set</li>
                             <li><i class="fas fa-check"></i> Ceramic Coating</li>
                             <li><i class="fas fa-check"></i> Heat Resistant Handles</li>
-                            <li><i class="fas fa-check"></i> 5 Years Warranty</li>
+                            <li><i class="fas fa-check"></i> Category: Cookware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Premium Non-Stick Cookware Set 10pc')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('premium-non-stick-cookware-set-10pc')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Premium Non-Stick Cookware Set 10pc')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 17 - Stainless Pressure Cooker -->
-                <div class="product-card" data-category="cookware">
+                <!-- Product 17 - Stainless Steel Pressure Cooker 6L -->
+                <div class="product-card" data-category="cookware" data-id="stainless-steel-pressure-cooker-6l" data-title="Stainless Steel Pressure Cooker 6L" data-brand="Premium Selection" data-category-label="Cookware" data-price="PKR 5,100" data-old-price="PKR 6,000"
+                    data-availability="In stock" data-description="Heavy-duty cookware built for family cooking, even heating, and long service life." data-image="https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="6-Liter Capacity|3-Ply Bottom|Safety Lock System">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Stainless Pressure Cooker">
+                        <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Stainless Steel Pressure Cooker 6L" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Cookware</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Cookware</span>
+                            <span class="product-brand">Premium Selection</span>
+                        </div>
                         <h3 class="product-title">Stainless Steel Pressure Cooker 6L</h3>
-                        <div class="product-price">₨ 4,200 <span>₨ 5,000</span></div>
+                        <p class="product-description">Heavy-duty cookware built for family cooking, even heating, and long service life.</p>
+                        <div class="product-price">PKR 5,100 <span>PKR 6,000</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 6-Liter Capacity</li>
                             <li><i class="fas fa-check"></i> 3-Ply Bottom</li>
                             <li><i class="fas fa-check"></i> Safety Lock System</li>
-                            <li><i class="fas fa-check"></i> 10 Years Warranty</li>
+                            <li><i class="fas fa-check"></i> Category: Cookware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Stainless Steel Pressure Cooker 6L')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('stainless-steel-pressure-cooker-6l')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Stainless Steel Pressure Cooker 6L')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 18 - Deep Frying Pan -->
-                <div class="product-card" data-category="cookware">
+                <!-- Product 18 - Deep Non-Stick Frying Pan 30cm -->
+                <div class="product-card" data-category="cookware" data-id="deep-non-stick-frying-pan-30cm" data-title="Deep Non-Stick Frying Pan 30cm" data-brand="Cookware" data-category-label="Cookware" data-price="PKR 3,400" data-old-price="PKR 4,000" data-availability="In stock"
+                    data-description="Heavy-duty cookware built for family cooking, even heating, and long service life." data-image="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&amp;fit=crop&amp;w=900&amp;q=85" data-features="Heavy-Gauge Aluminum|Deep-Fry Design|Tempered Glass Lid">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Deep Frying Pan">
+                        <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Deep Non-Stick Frying Pan 30cm" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Cookware</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Cookware</span>
+                            <span class="product-brand">Cookware</span>
+                        </div>
                         <h3 class="product-title">Deep Non-Stick Frying Pan 30cm</h3>
-                        <div class="product-price">₨ 2,500 <span>₨ 3,200</span></div>
+                        <p class="product-description">Heavy-duty cookware built for family cooking, even heating, and long service life.</p>
+                        <div class="product-price">PKR 3,400 <span>PKR 4,000</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> Heavy-Gauge Aluminum</li>
                             <li><i class="fas fa-check"></i> Deep-Fry Design</li>
                             <li><i class="fas fa-check"></i> Tempered Glass Lid</li>
-                            <li><i class="fas fa-check"></i> Oil Spatter Guard</li>
+                            <li><i class="fas fa-check"></i> Category: Cookware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Deep Non-Stick Frying Pan 30cm')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('deep-non-stick-frying-pan-30cm')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Deep Non-Stick Frying Pan 30cm')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 19 - Biryani Pot -->
-                <div class="product-card" data-category="cookware">
+                <!-- Product 19 - Large Stainless Steel Biryani Pot 12L -->
+                <div class="product-card" data-category="cookware" data-id="large-stainless-steel-biryani-pot-12l" data-title="Large Stainless Steel Biryani Pot 12L" data-brand="Premium Selection" data-category-label="Cookware" data-price="PKR 8,700" data-old-price="PKR 10,300"
+                    data-availability="In stock" data-description="Heavy-duty cookware built for family cooking, even heating, and long service life." data-image="https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="12-Liter Capacity|Food-Grade Steel|Strong Double Handle">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Biryani Pot">
+                        <img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Large Stainless Steel Biryani Pot 12L" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Cookware</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Cookware</span>
+                            <span class="product-brand">Premium Selection</span>
+                        </div>
                         <h3 class="product-title">Large Stainless Steel Biryani Pot 12L</h3>
-                        <div class="product-price">₨ 7,800 <span>₨ 9,500</span></div>
+                        <p class="product-description">Heavy-duty cookware built for family cooking, even heating, and long service life.</p>
+                        <div class="product-price">PKR 8,700 <span>PKR 10,300</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 12-Liter Capacity</li>
                             <li><i class="fas fa-check"></i> Food-Grade Steel</li>
                             <li><i class="fas fa-check"></i> Strong Double Handle</li>
-                            <li><i class="fas fa-check"></i> Suitable for Large Gatherings</li>
+                            <li><i class="fas fa-check"></i> Category: Cookware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Large Stainless Steel Biryani Pot 12L')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('large-stainless-steel-biryani-pot-12l')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Large Stainless Steel Biryani Pot 12L')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ===== UTENSILS ===== -->
-                <!-- Product 20 - SS Utensils Set -->
-                <div class="product-card" data-category="utensils">
+                <!-- Product 20 - Stainless Steel Kitchen Utensils 15pc -->
+                <div class="product-card" data-category="utensils" data-id="stainless-steel-kitchen-utensils-15pc" data-title="Stainless Steel Kitchen Utensils 15pc" data-brand="Premium Selection" data-category-label="Kitchenware" data-price="PKR 4,300" data-old-price="PKR 5,100"
+                    data-availability="In stock" data-description="Elegant kitchen and serving essential with durable materials and a premium table-ready finish." data-image="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="15-Piece Set|Food Grade Steel|Dishwasher Safe">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Stainless Steel Utensils">
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Stainless Steel Kitchen Utensils 15pc" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Utensils</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Kitchenware</span>
+                            <span class="product-brand">Premium Selection</span>
+                        </div>
                         <h3 class="product-title">Stainless Steel Kitchen Utensils 15pc</h3>
-                        <div class="product-price">₨ 3,800 <span>₨ 4,500</span></div>
+                        <p class="product-description">Elegant kitchen and serving essential with durable materials and a premium table-ready finish.</p>
+                        <div class="product-price">PKR 4,300 <span>PKR 5,100</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 15-Piece Set</li>
                             <li><i class="fas fa-check"></i> Food Grade Steel</li>
                             <li><i class="fas fa-check"></i> Dishwasher Safe</li>
-                            <li><i class="fas fa-check"></i> Rust Proof</li>
+                            <li><i class="fas fa-check"></i> Category: Kitchenware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Stainless Steel Kitchen Utensils 15pc')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('stainless-steel-kitchen-utensils-15pc')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Stainless Steel Kitchen Utensils 15pc')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 21 - Brass Serving Set -->
-                <div class="product-card" data-category="utensils">
+                <!-- Product 21 - Traditional Brass Serving Set 24pc -->
+                <div class="product-card" data-category="utensils" data-id="traditional-brass-serving-set-24pc" data-title="Traditional Brass Serving Set 24pc" data-brand="Kitchenware" data-category-label="Kitchenware" data-price="PKR 10,300" data-old-price="PKR 12,200"
+                    data-availability="Limited stock" data-description="Elegant kitchen and serving essential with durable materials and a premium table-ready finish." data-image="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="Handcrafted Brass|Traditional Design|24-Piece Set">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Brass Serving Set">
+                        <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Traditional Brass Serving Set 24pc" loading="lazy" decoding="async">
+                        <span class="stock-badge">Limited stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Utensils</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Kitchenware</span>
+                            <span class="product-brand">Kitchenware</span>
+                        </div>
                         <h3 class="product-title">Traditional Brass Serving Set 24pc</h3>
-                        <div class="product-price">₨ 9,800 <span>₨ 12,000</span></div>
+                        <p class="product-description">Elegant kitchen and serving essential with durable materials and a premium table-ready finish.</p>
+                        <div class="product-price">PKR 10,300 <span>PKR 12,200</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> Handcrafted Brass</li>
                             <li><i class="fas fa-check"></i> Traditional Design</li>
                             <li><i class="fas fa-check"></i> 24-Piece Set</li>
-                            <li><i class="fas fa-check"></i> Polished Finish</li>
+                            <li><i class="fas fa-check"></i> Category: Kitchenware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Traditional Brass Serving Set 24pc')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('traditional-brass-serving-set-24pc')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Traditional Brass Serving Set 24pc')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 22 - Ladle & Spatula Set -->
-                <div class="product-card" data-category="utensils">
+                <!-- Product 22 - Silicone Ladle &amp; Spatula Set 8pc -->
+                <div class="product-card" data-category="utensils" data-id="silicone-ladle-and-spatula-set-8pc" data-title="Silicone Ladle &amp; Spatula Set 8pc" data-brand="Kitchenware" data-category-label="Kitchenware" data-price="PKR 2,700" data-old-price="PKR 3,200"
+                    data-availability="In stock" data-description="Elegant kitchen and serving essential with durable materials and a premium table-ready finish." data-image="https://images.unsplash.com/photo-1516594798947-e65505dbb29d?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="Heat Resistant 230C|BPA Free Silicone|Non-Scratch Design">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1504387828636-abeb8b7e5a85?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Ladle Spatula Set">
+                        <img src="https://images.unsplash.com/photo-1516594798947-e65505dbb29d?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Silicone Ladle &amp; Spatula Set 8pc" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Utensils</span>
-                        <h3 class="product-title">Silicone Ladle & Spatula Set 8pc</h3>
-                        <div class="product-price">₨ 2,200 <span>₨ 2,800</span></div>
+                        <div class="product-meta-row">
+                            <span class="product-category">Kitchenware</span>
+                            <span class="product-brand">Kitchenware</span>
+                        </div>
+                        <h3 class="product-title">Silicone Ladle &amp; Spatula Set 8pc</h3>
+                        <p class="product-description">Elegant kitchen and serving essential with durable materials and a premium table-ready finish.</p>
+                        <div class="product-price">PKR 2,700 <span>PKR 3,200</span></div>
                         <ul class="product-features">
-                            <li><i class="fas fa-check"></i> Heat Resistant 230°C</li>
+                            <li><i class="fas fa-check"></i> Heat Resistant 230C</li>
                             <li><i class="fas fa-check"></i> BPA Free Silicone</li>
                             <li><i class="fas fa-check"></i> Non-Scratch Design</li>
-                            <li><i class="fas fa-check"></i> Dishwasher Safe</li>
+                            <li><i class="fas fa-check"></i> Category: Kitchenware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Silicone Ladle & Spatula Set 8pc')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('silicone-ladle-and-spatula-set-8pc')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Silicone Ladle &amp; Spatula Set 8pc')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 23 - Cheese Grater -->
-                <div class="product-card" data-category="utensils">
+                <!-- Product 23 - Premium Kitchen Tools Hanging Set -->
+                <div class="product-card" data-category="utensils" data-id="premium-kitchen-tools-hanging-set" data-title="Premium Kitchen Tools Hanging Set" data-brand="Kitchenware" data-category-label="Kitchenware" data-price="PKR 5,000" data-old-price="PKR 5,900"
+                    data-availability="In stock" data-description="Elegant kitchen and serving essential with durable materials and a premium table-ready finish." data-image="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="12-Piece Set|Wall-Mount Rack Included|Stainless + Silicone">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1493770348161-369560ae357d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Kitchen Tools Set">
+                        <img src="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Premium Kitchen Tools Hanging Set" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Utensils</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Kitchenware</span>
+                            <span class="product-brand">Kitchenware</span>
+                        </div>
                         <h3 class="product-title">Premium Kitchen Tools Hanging Set</h3>
-                        <div class="product-price">₨ 4,500 <span>₨ 5,500</span></div>
+                        <p class="product-description">Elegant kitchen and serving essential with durable materials and a premium table-ready finish.</p>
+                        <div class="product-price">PKR 5,000 <span>PKR 5,900</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 12-Piece Set</li>
                             <li><i class="fas fa-check"></i> Wall-Mount Rack Included</li>
                             <li><i class="fas fa-check"></i> Stainless + Silicone</li>
-                            <li><i class="fas fa-check"></i> Space-Saving Design</li>
+                            <li><i class="fas fa-check"></i> Category: Kitchenware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Premium Kitchen Tools Hanging Set')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('premium-kitchen-tools-hanging-set')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Premium Kitchen Tools Hanging Set')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ===== CUTLERY ===== -->
-                <!-- Product 24 - Cutlery Set -->
-                <div class="product-card" data-category="cutlery">
+                <!-- Product 24 - Stainless Steel Cutlery Set 24pc -->
+                <div class="product-card" data-category="cutlery" data-id="stainless-steel-cutlery-set-24pc" data-title="Stainless Steel Cutlery Set 24pc" data-brand="Premium Selection" data-category-label="Cutlery" data-price="PKR 6,000" data-old-price="PKR 7,100" data-availability="In stock"
+                    data-description="Polished cutlery piece designed for daily dining, guest service, and easy maintenance." data-image="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&amp;fit=crop&amp;w=900&amp;q=85" data-features="24-Piece (6 Settings)|Mirror Polished Finish|Dishwasher Safe">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Cutlery Set">
+                        <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Stainless Steel Cutlery Set 24pc" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Cutlery</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Cutlery</span>
+                            <span class="product-brand">Premium Selection</span>
+                        </div>
                         <h3 class="product-title">Stainless Steel Cutlery Set 24pc</h3>
-                        <div class="product-price">₨ 5,500 <span>₨ 6,800</span></div>
+                        <p class="product-description">Polished cutlery piece designed for daily dining, guest service, and easy maintenance.</p>
+                        <div class="product-price">PKR 6,000 <span>PKR 7,100</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 24-Piece (6 Settings)</li>
                             <li><i class="fas fa-check"></i> Mirror Polished Finish</li>
                             <li><i class="fas fa-check"></i> Dishwasher Safe</li>
-                            <li><i class="fas fa-check"></i> Gift Box Included</li>
+                            <li><i class="fas fa-check"></i> Category: Cutlery</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Stainless Steel Cutlery Set 24pc')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('stainless-steel-cutlery-set-24pc')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Stainless Steel Cutlery Set 24pc')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 25 - Bread Knife -->
-                <div class="product-card" data-category="cutlery">
+                <!-- Product 25 - Professional Bread &amp; Meat Knife Set -->
+                <div class="product-card" data-category="cutlery" data-id="professional-bread-and-meat-knife-set" data-title="Professional Bread &amp; Meat Knife Set" data-brand="Cutlery" data-category-label="Cutlery" data-price="PKR 4,000" data-old-price="PKR 4,700"
+                    data-availability="In stock" data-description="Polished cutlery piece designed for daily dining, guest service, and easy maintenance." data-image="https://images.unsplash.com/photo-1594736797933-d0b64c8fd7c0?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="High Carbon Steel|Serrated Edge Blade|Anti-Slip Handle">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1591261730799-ee4e6c2d16d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Bread Knife">
+                        <img src="https://images.unsplash.com/photo-1594736797933-d0b64c8fd7c0?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Professional Bread &amp; Meat Knife Set" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Cutlery</span>
-                        <h3 class="product-title">Professional Bread & Meat Knife Set</h3>
-                        <div class="product-price">₨ 3,500 <span>₨ 4,200</span></div>
+                        <div class="product-meta-row">
+                            <span class="product-category">Cutlery</span>
+                            <span class="product-brand">Cutlery</span>
+                        </div>
+                        <h3 class="product-title">Professional Bread &amp; Meat Knife Set</h3>
+                        <p class="product-description">Polished cutlery piece designed for daily dining, guest service, and easy maintenance.</p>
+                        <div class="product-price">PKR 4,000 <span>PKR 4,700</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> High Carbon Steel</li>
                             <li><i class="fas fa-check"></i> Serrated Edge Blade</li>
                             <li><i class="fas fa-check"></i> Anti-Slip Handle</li>
-                            <li><i class="fas fa-check"></i> 3-Piece Set</li>
+                            <li><i class="fas fa-check"></i> Category: Cutlery</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Professional Bread & Meat Knife Set')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('professional-bread-and-meat-knife-set')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Professional Bread &amp; Meat Knife Set')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 26 - Spoon Set -->
-                <div class="product-card" data-category="cutlery">
+                <!-- Product 26 - Stainless Dessert Spoon Set 12pc -->
+                <div class="product-card" data-category="cutlery" data-id="stainless-dessert-spoon-set-12pc" data-title="Stainless Dessert Spoon Set 12pc" data-brand="Premium Selection" data-category-label="Cutlery" data-price="PKR 2,300" data-old-price="PKR 2,700" data-availability="In stock"
+                    data-description="Polished cutlery piece designed for daily dining, guest service, and easy maintenance." data-image="https://images.unsplash.com/photo-1515697246546-e3b84d14bf07?auto=format&amp;fit=crop&amp;w=900&amp;q=85" data-features="18/10 Stainless Steel|Heavyweight Design|Tarnish Resistant">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1515697246546-e3b84d14bf07?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Spoon Set">
+                        <img src="https://images.unsplash.com/photo-1515697246546-e3b84d14bf07?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Stainless Dessert Spoon Set 12pc" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Cutlery</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Cutlery</span>
+                            <span class="product-brand">Premium Selection</span>
+                        </div>
                         <h3 class="product-title">Stainless Dessert Spoon Set 12pc</h3>
-                        <div class="product-price">₨ 1,800 <span>₨ 2,200</span></div>
+                        <p class="product-description">Polished cutlery piece designed for daily dining, guest service, and easy maintenance.</p>
+                        <div class="product-price">PKR 2,300 <span>PKR 2,700</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 18/10 Stainless Steel</li>
                             <li><i class="fas fa-check"></i> Heavyweight Design</li>
                             <li><i class="fas fa-check"></i> Tarnish Resistant</li>
-                            <li><i class="fas fa-check"></i> Velvet Storage Box</li>
+                            <li><i class="fas fa-check"></i> Category: Cutlery</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Stainless Dessert Spoon Set 12pc')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('stainless-dessert-spoon-set-12pc')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Stainless Dessert Spoon Set 12pc')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ===== BAKEWARE ===== -->
-                <!-- Product 27 - Baking Set -->
-                <div class="product-card" data-category="bakeware">
+                <!-- Product 27 - Non-Stick Baking Pan Set 12pc -->
+                <div class="product-card" data-category="bakeware" data-id="non-stick-baking-pan-set-12pc" data-title="Non-Stick Baking Pan Set 12pc" data-brand="Bakeware" data-category-label="Bakeware" data-price="PKR 7,000" data-old-price="PKR 8,300" data-availability="In stock"
+                    data-description="Reliable bakeware for home baking, desserts, snacks, and bakery-style preparation." data-image="https://images.unsplash.com/photo-1556909190-eccf4a8bf97a?auto=format&amp;fit=crop&amp;w=900&amp;q=85" data-features="12-Piece Set|Oven Safe up to 250C|Easy Release Coating">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1556909190-eccf4a8bf97a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Baking Set">
+                        <img src="https://images.unsplash.com/photo-1556909190-eccf4a8bf97a?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Non-Stick Baking Pan Set 12pc" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Bakeware</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Bakeware</span>
+                            <span class="product-brand">Bakeware</span>
+                        </div>
                         <h3 class="product-title">Non-Stick Baking Pan Set 12pc</h3>
-                        <div class="product-price">₨ 6,500 <span>₨ 7,800</span></div>
+                        <p class="product-description">Reliable bakeware for home baking, desserts, snacks, and bakery-style preparation.</p>
+                        <div class="product-price">PKR 7,000 <span>PKR 8,300</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 12-Piece Set</li>
-                            <li><i class="fas fa-check"></i> Oven Safe up to 250°C</li>
+                            <li><i class="fas fa-check"></i> Oven Safe up to 250C</li>
                             <li><i class="fas fa-check"></i> Easy Release Coating</li>
-                            <li><i class="fas fa-check"></i> Dishwasher Safe</li>
+                            <li><i class="fas fa-check"></i> Category: Bakeware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Non-Stick Baking Pan Set 12pc')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('non-stick-baking-pan-set-12pc')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Non-Stick Baking Pan Set 12pc')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 28 - Cake Mould Set -->
-                <div class="product-card" data-category="bakeware">
+                <!-- Product 28 - Silicone Cake &amp; Muffin Mould Set -->
+                <div class="product-card" data-category="bakeware" data-id="silicone-cake-and-muffin-mould-set" data-title="Silicone Cake &amp; Muffin Mould Set" data-brand="Bakeware" data-category-label="Bakeware" data-price="PKR 3,300" data-old-price="PKR 3,900" data-availability="Limited stock"
+                    data-description="Reliable bakeware for home baking, desserts, snacks, and bakery-style preparation." data-image="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?auto=format&amp;fit=crop&amp;w=900&amp;q=85" data-features="Food-Grade Silicone|Flexible Non-Stick|8 Shapes Included">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Cake Mould Set">
+                        <img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Silicone Cake &amp; Muffin Mould Set" loading="lazy" decoding="async">
+                        <span class="stock-badge">Limited stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Bakeware</span>
-                        <h3 class="product-title">Silicone Cake & Muffin Mould Set</h3>
-                        <div class="product-price">₨ 2,800 <span>₨ 3,500</span></div>
+                        <div class="product-meta-row">
+                            <span class="product-category">Bakeware</span>
+                            <span class="product-brand">Bakeware</span>
+                        </div>
+                        <h3 class="product-title">Silicone Cake &amp; Muffin Mould Set</h3>
+                        <p class="product-description">Reliable bakeware for home baking, desserts, snacks, and bakery-style preparation.</p>
+                        <div class="product-price">PKR 3,300 <span>PKR 3,900</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> Food-Grade Silicone</li>
                             <li><i class="fas fa-check"></i> Flexible Non-Stick</li>
                             <li><i class="fas fa-check"></i> 8 Shapes Included</li>
-                            <li><i class="fas fa-check"></i> Freezer & Oven Safe</li>
+                            <li><i class="fas fa-check"></i> Category: Bakeware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Silicone Cake & Muffin Mould Set')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('silicone-cake-and-muffin-mould-set')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Silicone Cake &amp; Muffin Mould Set')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 29 - Rolling Pin & Board -->
-                <div class="product-card" data-category="bakeware">
+                <!-- Product 29 - Marble Rolling Pin &amp; Pastry Board -->
+                <div class="product-card" data-category="bakeware" data-id="marble-rolling-pin-and-pastry-board" data-title="Marble Rolling Pin &amp; Pastry Board" data-brand="Bakeware" data-category-label="Bakeware" data-price="PKR 3,700" data-old-price="PKR 4,400"
+                    data-availability="In stock" data-description="Reliable bakeware for home baking, desserts, snacks, and bakery-style preparation." data-image="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="Natural Marble Stone|Stays Cool for Dough|Non-Slip Base Board">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rolling Pin Board">
+                        <img src="https://images.unsplash.com/photo-1556912173-3bb406ef7e77?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Marble Rolling Pin &amp; Pastry Board" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Bakeware</span>
-                        <h3 class="product-title">Marble Rolling Pin & Pastry Board</h3>
-                        <div class="product-price">₨ 3,200 <span>₨ 4,000</span></div>
+                        <div class="product-meta-row">
+                            <span class="product-category">Bakeware</span>
+                            <span class="product-brand">Bakeware</span>
+                        </div>
+                        <h3 class="product-title">Marble Rolling Pin &amp; Pastry Board</h3>
+                        <p class="product-description">Reliable bakeware for home baking, desserts, snacks, and bakery-style preparation.</p>
+                        <div class="product-price">PKR 3,700 <span>PKR 4,400</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> Natural Marble Stone</li>
                             <li><i class="fas fa-check"></i> Stays Cool for Dough</li>
                             <li><i class="fas fa-check"></i> Non-Slip Base Board</li>
-                            <li><i class="fas fa-check"></i> Measurement Markings</li>
+                            <li><i class="fas fa-check"></i> Category: Bakeware</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Marble Rolling Pin & Pastry Board')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('marble-rolling-pin-and-pastry-board')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Marble Rolling Pin &amp; Pastry Board')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ===== DINNERWARE ===== -->
-                <!-- Product 30 - Ceramic Dinner Set -->
-                <div class="product-card" data-category="dinnerware">
+                <!-- Product 30 - Ceramic Dinner Set 46-Piece -->
+                <div class="product-card" data-category="dinnerware" data-id="ceramic-dinner-set-46-piece" data-title="Ceramic Dinner Set 46-Piece" data-brand="Premium Crockery" data-category-label="Premium Crockery" data-price="PKR 13,300" data-old-price="PKR 15,700"
+                    data-availability="In stock" data-description="Premium crockery range for dining tables, tea service, gifting, and special occasions." data-image="https://images.unsplash.com/photo-1583397646485-55e389efd3cb?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="46-Piece Set|Microwave Safe|Dishwasher Safe">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1583397646485-55e389efd3cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Ceramic Dinner Set">
+                        <img src="https://images.unsplash.com/photo-1583397646485-55e389efd3cb?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Ceramic Dinner Set 46-Piece" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Dinnerware</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Premium Crockery</span>
+                            <span class="product-brand">Premium Crockery</span>
+                        </div>
                         <h3 class="product-title">Ceramic Dinner Set 46-Piece</h3>
-                        <div class="product-price">₨ 11,500 <span>₨ 14,000</span></div>
+                        <p class="product-description">Premium crockery range for dining tables, tea service, gifting, and special occasions.</p>
+                        <div class="product-price">PKR 13,300 <span>PKR 15,700</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 46-Piece Set</li>
                             <li><i class="fas fa-check"></i> Microwave Safe</li>
                             <li><i class="fas fa-check"></i> Dishwasher Safe</li>
-                            <li><i class="fas fa-check"></i> Elegant Design</li>
+                            <li><i class="fas fa-check"></i> Category: Premium Crockery</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Ceramic Dinner Set 46-Piece')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('ceramic-dinner-set-46-piece')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Ceramic Dinner Set 46-Piece')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 31 - Bone China Tea Set -->
-                <div class="product-card" data-category="dinnerware">
+                <!-- Product 31 - Bone China Tea &amp; Coffee Set 27pc -->
+                <div class="product-card" data-category="dinnerware" data-id="bone-china-tea-and-coffee-set-27pc" data-title="Bone China Tea &amp; Coffee Set 27pc" data-brand="Friends Traders Appliances" data-category-label="Premium Crockery" data-price="PKR 11,300"
+                    data-old-price="PKR 13,300" data-availability="In stock" data-description="Premium crockery range for dining tables, tea service, gifting, and special occasions." data-image="https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="Fine Bone China|Gold Rim Design|6-Person Set">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Tea Set">
+                        <img src="https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Bone China Tea &amp; Coffee Set 27pc" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Dinnerware</span>
-                        <h3 class="product-title">Bone China Tea & Coffee Set 27pc</h3>
-                        <div class="product-price">₨ 9,500 <span>₨ 12,000</span></div>
+                        <div class="product-meta-row">
+                            <span class="product-category">Premium Crockery</span>
+                            <span class="product-brand">Friends Traders Appliances</span>
+                        </div>
+                        <h3 class="product-title">Bone China Tea &amp; Coffee Set 27pc</h3>
+                        <p class="product-description">Premium crockery range for dining tables, tea service, gifting, and special occasions.</p>
+                        <div class="product-price">PKR 11,300 <span>PKR 13,300</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> Fine Bone China</li>
                             <li><i class="fas fa-check"></i> Gold Rim Design</li>
                             <li><i class="fas fa-check"></i> 6-Person Set</li>
-                            <li><i class="fas fa-check"></i> Gift Box Packing</li>
+                            <li><i class="fas fa-check"></i> Category: Premium Crockery</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Bone China Tea & Coffee Set 27pc')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('bone-china-tea-and-coffee-set-27pc')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Bone China Tea &amp; Coffee Set 27pc')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 32 - Opalware Dinner Set -->
-                <div class="product-card" data-category="dinnerware">
+                <!-- Product 32 - Opalware Printed Dinner Set 33pc -->
+                <div class="product-card" data-category="dinnerware" data-id="opalware-printed-dinner-set-33pc" data-title="Opalware Printed Dinner Set 33pc" data-brand="Premium Crockery" data-category-label="Premium Crockery" data-price="PKR 9,600" data-old-price="PKR 11,300"
+                    data-availability="In stock" data-description="Premium crockery range for dining tables, tea service, gifting, and special occasions." data-image="https://images.unsplash.com/photo-1578926375605-eaf7559b1458?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="Shatter Resistant|Printed Design|Microwave Safe">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Opalware Dinner Set">
+                        <img src="https://images.unsplash.com/photo-1578926375605-eaf7559b1458?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Opalware Printed Dinner Set 33pc" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Dinnerware</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Premium Crockery</span>
+                            <span class="product-brand">Premium Crockery</span>
+                        </div>
                         <h3 class="product-title">Opalware Printed Dinner Set 33pc</h3>
-                        <div class="product-price">₨ 7,800 <span>₨ 9,500</span></div>
+                        <p class="product-description">Premium crockery range for dining tables, tea service, gifting, and special occasions.</p>
+                        <div class="product-price">PKR 9,600 <span>PKR 11,300</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> Shatter Resistant</li>
                             <li><i class="fas fa-check"></i> Printed Design</li>
                             <li><i class="fas fa-check"></i> Microwave Safe</li>
-                            <li><i class="fas fa-check"></i> 33-Piece for 6 People</li>
+                            <li><i class="fas fa-check"></i> Category: Premium Crockery</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Opalware Printed Dinner Set 33pc')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('opalware-printed-dinner-set-33pc')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Opalware Printed Dinner Set 33pc')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ===== STORAGE ===== -->
-                <!-- Product 33 - Canister Set -->
-                <div class="product-card" data-category="storage">
+                <!-- Product 33 - Stainless Steel Canister Set 5pc -->
+                <div class="product-card" data-category="storage" data-id="stainless-steel-canister-set-5pc" data-title="Stainless Steel Canister Set 5pc" data-brand="Premium Selection" data-category-label="Storage Containers" data-price="PKR 5,300" data-old-price="PKR 6,300"
+                    data-availability="In stock" data-description="Practical storage solution for clean kitchens, airtight organization, and everyday convenience." data-image="https://images.unsplash.com/photo-1545579133-99bb5ab189bd?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="Airtight Lids|Mirror Finish|5 Different Sizes">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1545579133-99bb5ab189bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Canister Set">
+                        <img src="https://images.unsplash.com/photo-1545579133-99bb5ab189bd?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Stainless Steel Canister Set 5pc" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Storage</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Storage Containers</span>
+                            <span class="product-brand">Premium Selection</span>
+                        </div>
                         <h3 class="product-title">Stainless Steel Canister Set 5pc</h3>
-                        <div class="product-price">₨ 4,800 <span>₨ 5,800</span></div>
+                        <p class="product-description">Practical storage solution for clean kitchens, airtight organization, and everyday convenience.</p>
+                        <div class="product-price">PKR 5,300 <span>PKR 6,300</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> Airtight Lids</li>
                             <li><i class="fas fa-check"></i> Mirror Finish</li>
                             <li><i class="fas fa-check"></i> 5 Different Sizes</li>
-                            <li><i class="fas fa-check"></i> Rust Resistant</li>
+                            <li><i class="fas fa-check"></i> Category: Storage Containers</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Stainless Steel Canister Set 5pc')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('stainless-steel-canister-set-5pc')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Stainless Steel Canister Set 5pc')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 34 - Lunch Box -->
-                <div class="product-card" data-category="storage">
+                <!-- Product 34 - Stainless Steel Insulated Lunch Box -->
+                <div class="product-card" data-category="storage" data-id="stainless-steel-insulated-lunch-box" data-title="Stainless Steel Insulated Lunch Box" data-brand="Premium Selection" data-category-label="Storage Containers" data-price="PKR 3,000" data-old-price="PKR 3,500"
+                    data-availability="In stock" data-description="Practical storage solution for clean kitchens, airtight organization, and everyday convenience." data-image="https://images.unsplash.com/photo-1575467678930-c7acd65d6470?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="3-Tier Compartment|Keeps Food Warm 6hrs|Leak-Proof Seal">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1575467678930-c7acd65d6470?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lunch Box">
+                        <img src="https://images.unsplash.com/photo-1575467678930-c7acd65d6470?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Stainless Steel Insulated Lunch Box" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Storage</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Storage Containers</span>
+                            <span class="product-brand">Premium Selection</span>
+                        </div>
                         <h3 class="product-title">Stainless Steel Insulated Lunch Box</h3>
-                        <div class="product-price">₨ 2,500 <span>₨ 3,000</span></div>
+                        <p class="product-description">Practical storage solution for clean kitchens, airtight organization, and everyday convenience.</p>
+                        <div class="product-price">PKR 3,000 <span>PKR 3,500</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 3-Tier Compartment</li>
                             <li><i class="fas fa-check"></i> Keeps Food Warm 6hrs</li>
                             <li><i class="fas fa-check"></i> Leak-Proof Seal</li>
-                            <li><i class="fas fa-check"></i> Carry Bag Included</li>
+                            <li><i class="fas fa-check"></i> Category: Storage Containers</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Stainless Steel Insulated Lunch Box')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('stainless-steel-insulated-lunch-box')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Stainless Steel Insulated Lunch Box')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 35 - Glass Container Set -->
-                <div class="product-card" data-category="storage">
+                <!-- Product 35 - Borosilicate Glass Food Container 7pc -->
+                <div class="product-card" data-category="storage" data-id="borosilicate-glass-food-container-7pc" data-title="Borosilicate Glass Food Container 7pc" data-brand="Premium Selection" data-category-label="Storage Containers" data-price="PKR 6,000" data-old-price="PKR 7,100"
+                    data-availability="Limited stock" data-description="Practical storage solution for clean kitchens, airtight organization, and everyday convenience." data-image="https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="Borosilicate Glass|Oven &amp; Freezer Safe|Snap-Lock Lids">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Glass Container Set">
+                        <img src="https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Borosilicate Glass Food Container 7pc" loading="lazy" decoding="async">
+                        <span class="stock-badge">Limited stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Storage</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Storage Containers</span>
+                            <span class="product-brand">Premium Selection</span>
+                        </div>
                         <h3 class="product-title">Borosilicate Glass Food Container 7pc</h3>
-                        <div class="product-price">₨ 5,500 <span>₨ 6,500</span></div>
+                        <p class="product-description">Practical storage solution for clean kitchens, airtight organization, and everyday convenience.</p>
+                        <div class="product-price">PKR 6,000 <span>PKR 7,100</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> Borosilicate Glass</li>
-                            <li><i class="fas fa-check"></i> Oven & Freezer Safe</li>
+                            <li><i class="fas fa-check"></i> Oven &amp; Freezer Safe</li>
                             <li><i class="fas fa-check"></i> Snap-Lock Lids</li>
-                            <li><i class="fas fa-check"></i> 7 Sizes in Set</li>
+                            <li><i class="fas fa-check"></i> Category: Storage Containers</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Borosilicate Glass Food Container 7pc')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('borosilicate-glass-food-container-7pc')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Borosilicate Glass Food Container 7pc')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ===== APPLIANCES ===== -->
-                <!-- Product 36 - Hand Mixer -->
-                <div class="product-card" data-category="appliances">
+                <!-- Product 36 - 5-Speed Electric Hand Mixer 300W -->
+                <div class="product-card" data-category="appliances" data-id="5-speed-electric-hand-mixer-300w" data-title="5-Speed Electric Hand Mixer 300W" data-brand="Friends Traders Appliances" data-category-label="Home Appliances" data-price="PKR 5,800" data-old-price="PKR 6,800"
+                    data-availability="In stock" data-description="Compact home appliance selected for convenience, speed, and dependable kitchen performance." data-image="https://images.unsplash.com/photo-1556909190-eccf4a8bf97a?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="300W Powerful Motor|5-Speed Settings|Turbo Boost Function">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1556909190-eccf4a8bf97a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Hand Mixer">
+                        <img src="https://images.unsplash.com/photo-1556909190-eccf4a8bf97a?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="5-Speed Electric Hand Mixer 300W" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Appliances</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Home Appliances</span>
+                            <span class="product-brand">Friends Traders Appliances</span>
+                        </div>
                         <h3 class="product-title">5-Speed Electric Hand Mixer 300W</h3>
-                        <div class="product-price">₨ 4,200 <span>₨ 5,200</span></div>
+                        <p class="product-description">Compact home appliance selected for convenience, speed, and dependable kitchen performance.</p>
+                        <div class="product-price">PKR 5,800 <span>PKR 6,800</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 300W Powerful Motor</li>
                             <li><i class="fas fa-check"></i> 5-Speed Settings</li>
                             <li><i class="fas fa-check"></i> Turbo Boost Function</li>
-                            <li><i class="fas fa-check"></i> Whisk & Dough Hooks</li>
+                            <li><i class="fas fa-check"></i> Category: Home Appliances</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('5-Speed Electric Hand Mixer 300W')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('5-speed-electric-hand-mixer-300w')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('5-Speed Electric Hand Mixer 300W')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 37 - Food Chopper -->
-                <div class="product-card" data-category="appliances">
+                <!-- Product 37 - Electric Food Chopper &amp; Slicer -->
+                <div class="product-card" data-category="appliances" data-id="electric-food-chopper-and-slicer" data-title="Electric Food Chopper &amp; Slicer" data-brand="Friends Traders Appliances" data-category-label="Home Appliances" data-price="PKR 6,800" data-old-price="PKR 8,000"
+                    data-availability="In stock" data-description="Compact home appliance selected for convenience, speed, and dependable kitchen performance." data-image="https://images.unsplash.com/photo-1612200298126-ded5d6b7b3c0?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="400W Motor|4 Cutting Blades|1.5L Bowl Capacity">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1612200298126-ded5d6b7b3c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Food Chopper">
+                        <img src="https://images.unsplash.com/photo-1612200298126-ded5d6b7b3c0?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Electric Food Chopper &amp; Slicer" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Appliances</span>
-                        <h3 class="product-title">Electric Food Chopper & Slicer</h3>
-                        <div class="product-price">₨ 5,200 <span>₨ 6,500</span></div>
+                        <div class="product-meta-row">
+                            <span class="product-category">Home Appliances</span>
+                            <span class="product-brand">Friends Traders Appliances</span>
+                        </div>
+                        <h3 class="product-title">Electric Food Chopper &amp; Slicer</h3>
+                        <p class="product-description">Compact home appliance selected for convenience, speed, and dependable kitchen performance.</p>
+                        <div class="product-price">PKR 6,800 <span>PKR 8,000</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 400W Motor</li>
                             <li><i class="fas fa-check"></i> 4 Cutting Blades</li>
                             <li><i class="fas fa-check"></i> 1.5L Bowl Capacity</li>
-                            <li><i class="fas fa-check"></i> One-Touch Operation</li>
+                            <li><i class="fas fa-check"></i> Category: Home Appliances</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Electric Food Chopper & Slicer')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('electric-food-chopper-and-slicer')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Electric Food Chopper &amp; Slicer')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 38 - Toaster Oven -->
-                <div class="product-card" data-category="appliances">
+                <!-- Product 38 - Electric Toaster Oven 28L 1600W -->
+                <div class="product-card" data-category="appliances" data-id="electric-toaster-oven-28l-1600w" data-title="Electric Toaster Oven 28L 1600W" data-brand="Friends Traders Appliances" data-category-label="Home Appliances" data-price="PKR 16,100" data-old-price="PKR 19,000"
+                    data-availability="In stock" data-description="Compact home appliance selected for convenience, speed, and dependable kitchen performance." data-image="https://images.unsplash.com/photo-1531069048-05dd16cb0bac?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="28 Liters Capacity|Convection Fan|60-Min Timer">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1531069048-05dd16cb0bac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Toaster Oven">
+                        <img src="https://images.unsplash.com/photo-1531069048-05dd16cb0bac?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Electric Toaster Oven 28L 1600W" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Appliances</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Home Appliances</span>
+                            <span class="product-brand">Friends Traders Appliances</span>
+                        </div>
                         <h3 class="product-title">Electric Toaster Oven 28L 1600W</h3>
-                        <div class="product-price">₨ 14,500 <span>₨ 18,000</span></div>
+                        <p class="product-description">Compact home appliance selected for convenience, speed, and dependable kitchen performance.</p>
+                        <div class="product-price">PKR 16,100 <span>PKR 19,000</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 28 Liters Capacity</li>
                             <li><i class="fas fa-check"></i> Convection Fan</li>
                             <li><i class="fas fa-check"></i> 60-Min Timer</li>
-                            <li><i class="fas fa-check"></i> 6 Cooking Functions</li>
+                            <li><i class="fas fa-check"></i> Category: Home Appliances</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Electric Toaster Oven 28L 1600W')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('electric-toaster-oven-28l-1600w')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Electric Toaster Oven 28L 1600W')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 39 - Coffee Maker -->
-                <div class="product-card" data-category="appliances">
+                <!-- Product 39 - Drip Coffee Maker 1.5L 12-Cup -->
+                <div class="product-card" data-category="appliances" data-id="drip-coffee-maker-1-5l-12-cup" data-title="Drip Coffee Maker 1.5L 12-Cup" data-brand="Friends Traders Appliances" data-category-label="Home Appliances" data-price="PKR 8,400" data-old-price="PKR 9,900"
+                    data-availability="In stock" data-description="Compact home appliance selected for convenience, speed, and dependable kitchen performance." data-image="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="12-Cup Capacity|Keep-Warm Plate|Pause &amp; Pour Feature">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Coffee Maker">
+                        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Drip Coffee Maker 1.5L 12-Cup" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Appliances</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Home Appliances</span>
+                            <span class="product-brand">Friends Traders Appliances</span>
+                        </div>
                         <h3 class="product-title">Drip Coffee Maker 1.5L 12-Cup</h3>
-                        <div class="product-price">₨ 6,800 <span>₨ 8,500</span></div>
+                        <p class="product-description">Compact home appliance selected for convenience, speed, and dependable kitchen performance.</p>
+                        <div class="product-price">PKR 8,400 <span>PKR 9,900</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 12-Cup Capacity</li>
                             <li><i class="fas fa-check"></i> Keep-Warm Plate</li>
-                            <li><i class="fas fa-check"></i> Pause & Pour Feature</li>
-                            <li><i class="fas fa-check"></i> Reusable Filter</li>
+                            <li><i class="fas fa-check"></i> Pause &amp; Pour Feature</li>
+                            <li><i class="fas fa-check"></i> Category: Home Appliances</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Drip Coffee Maker 1.5L 12-Cup')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('drip-coffee-maker-1-5l-12-cup')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Drip Coffee Maker 1.5L 12-Cup')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Product 40 - Water Dispenser Jug -->
-                <div class="product-card" data-category="storage">
+                <!-- Product 40 - Crystal Clear Water Jug Set with Glasses -->
+                <div class="product-card" data-category="storage" data-id="crystal-clear-water-jug-set-with-glasses" data-title="Crystal Clear Water Jug Set with Glasses" data-brand="Premium Selection" data-category-label="Storage Containers" data-price="PKR 3,300" data-old-price="PKR 3,900"
+                    data-availability="In stock" data-description="Practical storage solution for clean kitchens, airtight organization, and everyday convenience." data-image="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&amp;fit=crop&amp;w=900&amp;q=85"
+                    data-features="1.8L Glass Jug|6 Matching Glasses|Floral Etched Design">
                     <div class="product-img">
-                        <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Water Dispenser Jug">
+                        <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Crystal Clear Water Jug Set with Glasses" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
                     </div>
                     <div class="product-info">
-                        <span class="product-category">Storage</span>
+                        <div class="product-meta-row">
+                            <span class="product-category">Storage Containers</span>
+                            <span class="product-brand">Premium Selection</span>
+                        </div>
                         <h3 class="product-title">Crystal Clear Water Jug Set with Glasses</h3>
-                        <div class="product-price">₨ 2,800 <span>₨ 3,500</span></div>
+                        <p class="product-description">Practical storage solution for clean kitchens, airtight organization, and everyday convenience.</p>
+                        <div class="product-price">PKR 3,300 <span>PKR 3,900</span></div>
                         <ul class="product-features">
                             <li><i class="fas fa-check"></i> 1.8L Glass Jug</li>
                             <li><i class="fas fa-check"></i> 6 Matching Glasses</li>
                             <li><i class="fas fa-check"></i> Floral Etched Design</li>
-                            <li><i class="fas fa-check"></i> Lead-Free Crystal</li>
+                            <li><i class="fas fa-check"></i> Category: Storage Containers</li>
                         </ul>
-                        <button class="product-btn" onclick="inquireProduct('Crystal Clear Water Jug Set with Glasses')">
-                            <i class="fas fa-shopping-cart"></i> Inquire Now
-                        </button>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('crystal-clear-water-jug-set-with-glasses')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('Crystal Clear Water Jug Set with Glasses')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
                     </div>
                 </div>
 
@@ -1972,7 +2553,31 @@
 
                 <div class="about-image">
                     <!-- YOUR NEW IMAGE HAS BEEN ADDED HERE -->
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYUamVT4RNX_rtc4igw7toqQAH35Njtytc2g&s" alt="Friends Trader Store">
+                    <img src="assets/friends-traders-owner.jpg" alt="Muhammad Yamin, owner of Friends Traders" loading="lazy" decoding="async">
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Business Card Section -->
+    <section class="section business-card-section" id="business-card">
+        <div class="container">
+            <div class="section-title">
+                <h2>Official Business Card</h2>
+                <p>Save Friends Traders contact details for quick orders and shop visits</p>
+            </div>
+            <div class="business-card-layout">
+                <div class="business-card-frame">
+                    <img src="assets/friends-traders-business-card.png" alt="Official Friends Traders business card" loading="lazy" decoding="async">
+                </div>
+                <div class="business-card-copy">
+                    <h3>Friends Traders</h3>
+                    <p>Premium Crockery, Kitchenware and Home Appliances in Multan. Contact us directly for product availability, current prices and WhatsApp ordering.</p>
+                    <div class="business-card-actions">
+                        <a class="btn btn-primary" href="assets/friends-traders-business-card.png" download="Friends-Traders-Business-Card.png"><i class="fas fa-download"></i> Download</a>
+                        <button class="btn btn-whatsapp" type="button" onclick="shareContact()"><i class="fas fa-share-alt"></i> Share Contact</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2099,6 +2704,28 @@
         </div>
     </footer>
 
+
+    <div class="product-detail-modal" id="productDetailModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+        <div class="product-detail-panel">
+            <button class="product-detail-close" type="button" onclick="closeProductDetails()" aria-label="Close product details"><i class="fas fa-times"></i></button>
+            <div class="product-detail-body">
+                <img id="detailImage" src="" alt="">
+                <div class="detail-info">
+                    <span class="detail-category" id="detailCategory"></span>
+                    <h3 id="detailTitle"></h3>
+                    <p id="detailDescription"></p>
+                    <div class="detail-price" id="detailPrice"></div>
+                    <ul class="detail-list" id="detailFeatures"></ul>
+                    <button class="btn btn-whatsapp" type="button" id="detailOrderBtn"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader-ring" aria-label="Loading"></div>
+    </div>
+
     <script>
         // Mobile Menu Toggle
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -2167,11 +2794,87 @@
 
         // Product Inquiry Function
         function inquireProduct(productName) {
-            const message = `Hello! I'm interested in your product: ${productName}. Please provide me with more details.`;
+            const message = `Assalam o Alaikum Friends Traders, I want to order: ${productName}. Please share availability and latest price.`;
             const whatsappUrl = `https://wa.me/923007195451?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
         }
 
+
+
+        function getProductById(productId) {
+            const card = Array.from(document.querySelectorAll('.product-card')).find(item => item.dataset.id === productId);
+            if (!card) return null;
+            return {
+                id: card.dataset.id,
+                title: card.dataset.title,
+                categoryLabel: card.dataset.categoryLabel,
+                brand: card.dataset.brand,
+                price: card.dataset.price,
+                oldPrice: card.dataset.oldPrice,
+                availability: card.dataset.availability,
+                desc: card.dataset.description,
+                image: card.dataset.image,
+                features: (card.dataset.features || '').split('|').filter(Boolean)
+            };
+        }
+
+        function viewProductDetails(productId) {
+            const product = getProductById(productId);
+            if (!product) return;
+            const modal = document.getElementById('productDetailModal');
+            document.getElementById('detailImage').src = product.image;
+            document.getElementById('detailImage').alt = product.title;
+            document.getElementById('detailCategory').textContent = product.categoryLabel + ' | ' + product.availability;
+            document.getElementById('detailTitle').textContent = product.title;
+            document.getElementById('detailDescription').textContent = product.desc + ' Brand: ' + product.brand + '.';
+            document.getElementById('detailPrice').innerHTML = product.price + ' <span>' + product.oldPrice + '</span>';
+            document.getElementById('detailFeatures').innerHTML = product.features.map(feature => '<li><i class="fas fa-check"></i>' + feature + '</li>').join('') + '<li><i class="fas fa-check"></i> Available at Friends Traders Multan</li>';
+            document.getElementById('detailOrderBtn').onclick = () => inquireProduct(product.title);
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProductDetails() {
+            const modal = document.getElementById('productDetailModal');
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        function shareContact() {
+            const text = 'Friends Traders Multan - Premium Crockery, Kitchenware & Home Appliances. Phone/WhatsApp: 0300-7195451, 0318-8195451. Address: Thread Sabeel Khan Kamil Abbas Chowk, Number 11, Multan.';
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Friends Traders',
+                    text
+                });
+            } else {
+                window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+            }
+        }
+        document.getElementById('productDetailModal').addEventListener('click', function(event) {
+            if (event.target === this) closeProductDetails();
+        });
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') closeProductDetails();
+        });
+
+        function hideLoadingScreen() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) loadingScreen.classList.add('hidden');
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(hideLoadingScreen, 450);
+        });
+        window.addEventListener('load', hideLoadingScreen);
+        setTimeout(hideLoadingScreen, 1800);
+
+
+        window.inquireProduct = inquireProduct;
+        window.viewProductDetails = viewProductDetails;
+        window.closeProductDetails = closeProductDetails;
+        window.shareContact = shareContact;
         // Reviews Slider Functionality
         const reviewsContainer = document.getElementById('reviewsContainer');
         const prevBtn = document.getElementById('prevBtn');
@@ -2220,7 +2923,7 @@
         }, observerOptions);
 
         // Observe elements for animation
-        document.querySelectorAll('.product-card, .review-card, .contact-card, .about-content').forEach(el => {
+        document.querySelectorAll('.product-card, .review-card, .contact-card, .about-content, .business-card-layout').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(20px)';
             el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
@@ -2234,4 +2937,4 @@
     </script>
 </body>
 
-</html
+</html>
