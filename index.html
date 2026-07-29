@@ -3124,7 +3124,7 @@
             <div class="owner-tools" id="ownerTools" style="display: none;">
                 <div class="order-stats" id="ownerOrderStats"></div>
                 <div class="order-status-list" id="ownerOrdersList"></div>
-                <p class="owner-note">Yahan se new product browser me save hoga aur product grid me show ho jayega.</p>
+                <p class="owner-note">New product will be show in grid.</p>
                 <input id="ownerProductTitle" type="text" placeholder="Product name">
                 <input id="ownerProductPrice" type="text" placeholder="Price, e.g. PKR 2,500">
                 <input id="ownerProductImage" type="url" placeholder="Image URL">
@@ -3342,7 +3342,7 @@
             cartCount.textContent = totalQty;
             cartTotal.textContent = formatPrice(total);
             if (!cart.length) {
-                cartItems.innerHTML = '<p class="owner-note">Cart empty hai. Products me se Add to Cart press karein.</p>';
+                cartItems.innerHTML = '<p class="owner-note">Cart is empty.Add products.</p>';
                 return;
             }
             cartItems.innerHTML = cart.map(item => `
@@ -3370,7 +3370,7 @@
             const box = document.getElementById('customerOrderStatus');
             if (!box) return;
             if (!orders.length) {
-                box.innerHTML = '<p class="owner-note">Abhi koi order place nahi hua.</p>';
+                box.innerHTML = '<p class="owner-note">No order placed yet.</p>';
                 return;
             }
             box.innerHTML = '<h4>My Order Status</h4>' + orders.slice().reverse().map(order => `
@@ -3399,7 +3399,7 @@
                 </div>
             `).join('');
             if (!orders.length) {
-                listBox.innerHTML = '<p class="owner-note">Abhi koi order nahi aaya.</p>';
+                listBox.innerHTML = '<p class="owner-note">No order yet.</p>';
                 return;
             }
             listBox.innerHTML = '<h4>Orders</h4>' + orders.slice().reverse().map(order => `
@@ -3435,7 +3435,7 @@
             const customerPhone = document.getElementById('customerPhone').value.trim();
             const customerAddress = document.getElementById('customerAddress').value.trim();
             if (!customerName || !customerPhone) {
-                alert('Name aur phone number zaroori hain.');
+                alert('Name , Mobile Number and real address is compulsory');
                 return;
             }
             const orderLines = cart.map((item, index) => `${index + 1}. ${item.title} x ${item.qty} - ${item.price}`).join('\n');
