@@ -55,7 +55,7 @@
             background-size: cover;
             background-position: center;
             color: white;
-            padding: 15px 0;
+            padding: 8px 0;
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -66,49 +66,96 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 22px;
         }
         
         .logo {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+            flex: 0 0 auto;
         }
         
         .logo h1 {
-            font-size: 2.2rem;
+            font-size: 1.45rem;
             color: white;
-            margin-bottom: 5px;
+            margin-bottom: 0;
+            line-height: 1.05;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            white-space: nowrap;
         }
         
         .logo span {
-            font-size: 1rem;
+            font-size: 0.74rem;
             color: var(--secondary);
             font-family: 'Poppins', sans-serif;
+            line-height: 1.2;
+            margin-top: 3px;
+            white-space: nowrap;
         }
         
         nav ul {
             display: flex;
             list-style: none;
+            align-items: center;
+            gap: 8px;
         }
         
         nav ul li {
-            margin-left: 30px;
+            margin-left: 0;
         }
         
         nav ul li a {
             color: white;
             text-decoration: none;
             font-weight: 500;
-            font-size: 1.1rem;
+            font-size: 0.94rem;
             transition: var(--transition);
-            padding: 5px 10px;
+            padding: 6px 8px;
             border-radius: 4px;
         }
         
         nav ul li a:hover {
             color: var(--secondary);
             background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-action-btn {
+            color: white;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 999px;
+            padding: 6px 9px;
+            font: inherit;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-action-btn:hover {
+            color: var(--secondary);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            min-width: 19px;
+            height: 19px;
+            border-radius: 50%;
+            background: var(--secondary);
+            color: var(--dark);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.68rem;
+            font-weight: 800;
         }
         
         .mobile-menu-btn {
@@ -227,6 +274,53 @@
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 40px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+            margin-bottom: 34px;
+        }
+
+        .category-card {
+            min-height: 132px;
+            text-align: left;
+            background: linear-gradient(180deg, #ffffff, #fffaf3);
+            border: 1px solid rgba(201, 145, 54, 0.28);
+            border-radius: 8px;
+            padding: 22px 24px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--dark);
+        }
+
+        .category-card:hover,
+        .category-card.active {
+            border-color: #c99136;
+            box-shadow: 0 16px 32px rgba(201, 145, 54, 0.16);
+            transform: translateY(-4px);
+        }
+
+        .category-card i {
+            color: #c99136;
+            font-size: 1.7rem;
+            margin-bottom: 18px;
+        }
+
+        .category-card strong {
+            display: block;
+            color: #050505;
+            font-size: 1.18rem;
+            line-height: 1.15;
+        }
+
+        .category-card span {
+            display: block;
+            color: #5a4a3a;
+            font-size: 1rem;
+            line-height: 1.25;
+            margin-top: 4px;
         }
         
         .filter-btn {
@@ -421,6 +515,252 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 10px;
+        }
+
+        .add-cart-btn {
+            background: var(--secondary);
+            color: var(--dark);
+        }
+
+        .add-cart-btn:hover {
+            background: #ff9800;
+        }
+
+        .floating-panel-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            background: rgba(17, 25, 28, 0.72);
+            z-index: 2100;
+            padding: 18px;
+        }
+
+        .floating-panel-backdrop.active {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .floating-panel {
+            width: min(430px, 100%);
+            max-height: 100%;
+            overflow: auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+            padding: 22px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .panel-header h3 {
+            color: var(--primary);
+            font-size: 1.7rem;
+        }
+
+        .panel-close {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            background: var(--primary);
+            cursor: pointer;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 70px 1fr auto;
+            gap: 12px;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: var(--light);
+        }
+
+        .cart-item h4 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .cart-item p {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.92rem;
+        }
+
+        .qty-controls {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .qty-controls button,
+        .remove-cart-btn {
+            border: 1px solid #ddd;
+            background: white;
+            color: var(--dark);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .qty-controls button {
+            width: 28px;
+            height: 28px;
+        }
+
+        .remove-cart-btn {
+            width: 34px;
+            height: 34px;
+            color: var(--primary);
+        }
+
+        .cart-summary {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 2px solid #f0ded0;
+        }
+
+        .cart-summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 800;
+            margin-bottom: 14px;
+        }
+
+        .checkout-form,
+        .order-status-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .checkout-form input,
+        .checkout-form textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 11px 13px;
+            font: inherit;
+        }
+
+        .checkout-form textarea {
+            min-height: 74px;
+            resize: vertical;
+        }
+
+        .order-status-card {
+            border: 1px solid #ead8c1;
+            border-radius: 8px;
+            padding: 12px;
+            background: #fffaf3;
+        }
+
+        .order-status-card h4 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.98rem;
+            margin-bottom: 6px;
+        }
+
+        .order-status-card p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: white;
+            background: var(--gray);
+        }
+
+        .status-pending {
+            background: #ff8f00;
+            color: var(--dark);
+        }
+
+        .status-shipped {
+            background: #1565c0;
+        }
+
+        .status-delivered {
+            background: #2e7d32;
+        }
+
+        .status-cancelled {
+            background: #8e0000;
+        }
+
+        .order-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .order-stat {
+            border: 1px solid #ead8c1;
+            border-radius: 8px;
+            padding: 12px;
+            background: #fffaf3;
+        }
+
+        .order-stat strong {
+            display: block;
+            font-size: 1.45rem;
+            color: var(--primary);
+        }
+
+        .owner-order {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 12px;
+            display: grid;
+            gap: 8px;
+        }
+
+        .owner-panel .owner-login,
+        .owner-panel .owner-tools {
+            display: grid;
+            gap: 12px;
+        }
+
+        .owner-panel input,
+        .owner-panel select,
+        .owner-panel textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font: inherit;
+        }
+
+        .owner-panel textarea {
+            min-height: 86px;
+            resize: vertical;
+        }
+
+        .owner-note {
+            color: var(--gray);
+            font-size: 0.9rem;
         }
         
         .details-btn {
@@ -1052,13 +1392,24 @@
         }
         
         @media (max-width: 768px) {
+            header {
+                padding: 9px 0;
+            }
             .header-container {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 8px;
+            }
+            .logo h1 {
+                font-size: 1.3rem;
+            }
+            .logo span {
+                font-size: 0.7rem;
+                white-space: normal;
             }
             nav {
                 width: 100%;
-                margin-top: 20px;
+                margin-top: 8px;
                 display: none;
             }
             nav.active {
@@ -1069,12 +1420,12 @@
                 width: 100%;
             }
             nav ul li {
-                margin: 0 0 10px 0;
+                margin: 0 0 6px 0;
             }
             .mobile-menu-btn {
                 display: block;
                 position: absolute;
-                top: 25px;
+                top: 14px;
                 right: 20px;
             }
             .hero h2 {
@@ -1126,6 +1477,8 @@
                     <li><a href="#business-card">Card</a></li>
                     <li><a href="#contact">Contact</a></li>
                     <li><a href="#map">Location</a></li>
+                    <li><button class="nav-action-btn" type="button" onclick="openCart()" title="Cart"><i class="fas fa-shopping-cart"></i><span>Cart</span><span class="cart-count" id="cartCount">0</span></button></li>
+                    <li><button class="nav-action-btn" type="button" onclick="openOwnerPanel()" title="Owner Panel"><i class="fas fa-user-shield"></i><span>Owner</span></button></li>
                 </ul>
             </nav>
         </div>
@@ -1163,18 +1516,25 @@
                 <p>Explore our wide range of high-quality kitchenware</p>
             </div>
 
-            <div class="products-filter">
-                <button class="filter-btn active" data-filter="all">All Products</button>
-                <button class="filter-btn" data-filter="rosepetal">Rose Petal</button>
-                <button class="filter-btn" data-filter="chef">Chef Brand</button>
-                <button class="filter-btn" data-filter="electronics">Electronics</button>
-                <button class="filter-btn" data-filter="cookware">Cookware</button>
-                <button class="filter-btn" data-filter="utensils">Utensils</button>
-                <button class="filter-btn" data-filter="cutlery">Cutlery</button>
-                <button class="filter-btn" data-filter="bakeware">Bakeware</button>
-                <button class="filter-btn" data-filter="dinnerware">Dinnerware</button>
-                <button class="filter-btn" data-filter="storage">Storage</button>
-                <button class="filter-btn" data-filter="appliances">Appliances</button>
+            <div class="products-filter category-grid" aria-label="Product categories">
+                <button class="category-card filter-btn active" data-filter="all"><i class="fas fa-layer-group"></i><strong>All Products</strong><span>35 products</span></button>
+                <button class="category-card filter-btn" data-filter="chef"><i class="fas fa-utensils"></i><strong>Chef</strong><span>3 products</span></button>
+                <button class="category-card filter-btn" data-filter="rosepetal"><i class="fas fa-seedling"></i><strong>Rose Petal</strong><span>3 products</span></button>
+                <button class="category-card filter-btn" data-filter="sk"><i class="fas fa-crown"></i><strong>SK</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="thermos"><i class="fas fa-temperature-half"></i><strong>Thermos</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="plates"><i class="fas fa-bowl-food"></i><strong>Plates</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="cups-mugs"><i class="fas fa-mug-hot"></i><strong>Cups &amp; Mugs</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="glasses-drinkware"><i class="fas fa-wine-glass"></i><strong>Glasses &amp; Drinkware</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="lunch-boxes"><i class="fas fa-box-open"></i><strong>Lunch Boxes</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="water-bottles"><i class="fas fa-bottle-water"></i><strong>Water Bottles</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="dinnerware"><i class="fas fa-utensils"></i><strong>Dinner Sets</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="utensils"><i class="fas fa-kitchen-set"></i><strong>Kitchen Essentials</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="storage"><i class="fas fa-boxes-stacked"></i><strong>Storage Containers</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="stainless-steel"><i class="fas fa-shield-halved"></i><strong>Stainless Steel</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="appliances"><i class="fas fa-plug"></i><strong>Electric Kitchen Appliances</strong><span>3 products</span></button>
+                <button class="category-card filter-btn" data-filter="air-fryers"><i class="fas fa-fan"></i><strong>Air Fryers</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="random"><i class="fas fa-shuffle"></i><strong>Random Products</strong><span>2 products</span></button>
+                <button class="category-card filter-btn" data-filter="misc"><i class="fas fa-shapes"></i><strong>Other Brands / Miscellaneous</strong><span>2 products</span></button>
             </div>
 
             <div class="products-grid">
@@ -2727,6 +3087,73 @@
         </div>
     </div>
 
+    <div class="floating-panel-backdrop" id="cartPanel" aria-hidden="true">
+        <aside class="floating-panel" aria-label="Shopping cart">
+            <div class="panel-header">
+                <h3>Your Cart</h3>
+                <button class="panel-close" type="button" onclick="closeCart()" aria-label="Close cart"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="cartItems"></div>
+            <div class="cart-summary">
+                <div class="cart-summary-row">
+                    <span>Total</span>
+                    <span id="cartTotal">PKR 0</span>
+                </div>
+                <div class="checkout-form">
+                    <input id="customerName" type="text" placeholder="Your name">
+                    <input id="customerPhone" type="tel" placeholder="Phone / WhatsApp number">
+                    <textarea id="customerAddress" placeholder="Delivery address"></textarea>
+                </div>
+                <button class="btn btn-whatsapp" type="button" onclick="placeOrder()"><i class="fas fa-receipt"></i> Place Order</button>
+                <div class="order-status-list" id="customerOrderStatus"></div>
+            </div>
+        </aside>
+    </div>
+
+    <div class="floating-panel-backdrop" id="ownerPanel" aria-hidden="true">
+        <aside class="floating-panel owner-panel" aria-label="Owner product panel">
+            <div class="panel-header">
+                <h3>Owner Panel</h3>
+                <button class="panel-close" type="button" onclick="closeOwnerPanel()" aria-label="Close owner panel"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="owner-login" id="ownerLogin">
+                <p class="owner-note">Owner password enter karein. Default password: <strong>1122</strong></p>
+                <input id="ownerPassword" type="password" placeholder="Owner password">
+                <button class="btn btn-primary" type="button" onclick="unlockOwnerPanel()"><i class="fas fa-lock-open"></i> Login</button>
+            </div>
+            <div class="owner-tools" id="ownerTools" style="display: none;">
+                <div class="order-stats" id="ownerOrderStats"></div>
+                <div class="order-status-list" id="ownerOrdersList"></div>
+                <p class="owner-note">Yahan se new product browser me save hoga aur product grid me show ho jayega.</p>
+                <input id="ownerProductTitle" type="text" placeholder="Product name">
+                <input id="ownerProductPrice" type="text" placeholder="Price, e.g. PKR 2,500">
+                <input id="ownerProductImage" type="url" placeholder="Image URL">
+                <select id="ownerProductCategory">
+                    <option value="rosepetal">Rose Petal</option>
+                    <option value="chef">Chef</option>
+                    <option value="sk">SK</option>
+                    <option value="thermos">Thermos</option>
+                    <option value="plates">Plates</option>
+                    <option value="cups-mugs">Cups & Mugs</option>
+                    <option value="glasses-drinkware">Glasses & Drinkware</option>
+                    <option value="lunch-boxes">Lunch Boxes</option>
+                    <option value="water-bottles">Water Bottles</option>
+                    <option value="dinnerware">Dinner Sets</option>
+                    <option value="utensils">Kitchen Essentials</option>
+                    <option value="storage">Storage Containers</option>
+                    <option value="appliances">Electric Kitchen Appliances</option>
+                    <option value="stainless-steel">Stainless Steel</option>
+                    <option value="air-fryers">Air Fryers</option>
+                    <option value="random">Random Products</option>
+                    <option value="misc">Other Brands / Miscellaneous</option>
+                </select>
+                <textarea id="ownerProductDescription" placeholder="Short product description"></textarea>
+                <button class="btn btn-secondary" type="button" onclick="saveOwnerProduct()"><i class="fas fa-plus"></i> Add Product</button>
+                <button class="btn btn-primary" type="button" onclick="clearOwnerProducts()"><i class="fas fa-trash"></i> Clear Added Products</button>
+            </div>
+        </aside>
+    </div>
+
     <div class="loading-screen" id="loadingScreen">
         <div class="loader-ring" aria-label="Loading"></div>
     </div>
@@ -2768,7 +3195,45 @@
 
         // Products Filter Functionality
         const filterBtns = document.querySelectorAll('.filter-btn');
-        const productCards = document.querySelectorAll('.product-card');
+        let productCards = document.querySelectorAll('.product-card');
+        const productGrid = document.querySelector('.products-grid');
+        const cartStorageKey = 'friendsTradersCart';
+        const ownerProductsStorageKey = 'friendsTradersOwnerProducts';
+        const ordersStorageKey = 'friendsTradersOrders';
+        let cart = JSON.parse(localStorage.getItem(cartStorageKey) || '[]');
+        let orders = JSON.parse(localStorage.getItem(ordersStorageKey) || '[]');
+
+        const filterAliases = {
+            sk: ['sk', 'premium selection', 'stainless steel'],
+            thermos: ['thermos', 'flask', 'insulated', 'kettle'],
+            plates: ['plate', 'plates', 'dinner set', 'opalware', 'ceramic'],
+            'cups-mugs': ['cup', 'cups', 'mug', 'mugs', 'coffee', 'tea'],
+            'glasses-drinkware': ['glass', 'glasses', 'drinkware', 'jug'],
+            'lunch-boxes': ['lunch box', 'lunch'],
+            'water-bottles': ['water bottle', 'bottle', 'water', 'jug'],
+            'stainless-steel': ['stainless steel', 'stainless', 'steel'],
+            'air-fryers': ['air fryer'],
+            random: ['random', 'bakeware', 'cookware'],
+            misc: ['other', 'misc', 'miscellaneous', 'premium selection', 'friends traders appliances']
+        };
+
+        function getProductCards() {
+            productCards = document.querySelectorAll('.product-card');
+            return productCards;
+        }
+
+        function productMatchesFilter(card, filter) {
+            if (filter === 'all') return true;
+            if (card.getAttribute('data-category') === filter) return true;
+            const haystack = [
+                card.dataset.title,
+                card.dataset.brand,
+                card.dataset.categoryLabel,
+                card.dataset.description,
+                card.dataset.features
+            ].join(' ').toLowerCase();
+            return (filterAliases[filter] || [filter]).some(term => haystack.includes(term));
+        }
 
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -2779,8 +3244,8 @@
 
                 const filter = btn.getAttribute('data-filter');
 
-                productCards.forEach(card => {
-                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                getProductCards().forEach(card => {
+                    if (productMatchesFilter(card, filter)) {
                         card.style.display = 'block';
                         setTimeout(() => {
                             card.style.opacity = '1';
@@ -2804,6 +3269,209 @@
             window.open(whatsappUrl, '_blank');
         }
 
+        function parsePrice(priceText) {
+            return Number(String(priceText || '').replace(/[^\d]/g, '')) || 0;
+        }
+
+        function formatPrice(amount) {
+            return 'PKR ' + amount.toLocaleString('en-PK');
+        }
+
+        function saveCart() {
+            localStorage.setItem(cartStorageKey, JSON.stringify(cart));
+            renderCart();
+        }
+
+        function saveOrders() {
+            localStorage.setItem(ordersStorageKey, JSON.stringify(orders));
+            renderCustomerOrderStatus();
+            renderOwnerOrders();
+        }
+
+        function addCartButtons() {
+            getProductCards().forEach(card => {
+                const actions = card.querySelector('.product-actions');
+                if (!actions || actions.querySelector('.add-cart-btn')) return;
+                const btn = document.createElement('button');
+                btn.className = 'product-btn add-cart-btn';
+                btn.type = 'button';
+                btn.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
+                btn.addEventListener('click', () => addToCart(card.dataset.id));
+                actions.appendChild(btn);
+            });
+        }
+
+        function addToCart(productId) {
+            const product = getProductById(productId);
+            if (!product) return;
+            const existing = cart.find(item => item.id === product.id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    image: product.image,
+                    qty: 1
+                });
+            }
+            saveCart();
+            openCart();
+        }
+
+        function updateCartQty(productId, change) {
+            const item = cart.find(cartItem => cartItem.id === productId);
+            if (!item) return;
+            item.qty += change;
+            if (item.qty <= 0) cart = cart.filter(cartItem => cartItem.id !== productId);
+            saveCart();
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            saveCart();
+        }
+
+        function renderCart() {
+            const cartItems = document.getElementById('cartItems');
+            const cartCount = document.getElementById('cartCount');
+            const cartTotal = document.getElementById('cartTotal');
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            const total = cart.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0);
+            cartCount.textContent = totalQty;
+            cartTotal.textContent = formatPrice(total);
+            if (!cart.length) {
+                cartItems.innerHTML = '<p class="owner-note">Cart empty hai. Products me se Add to Cart press karein.</p>';
+                return;
+            }
+            cartItems.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <img src="${item.image}" alt="${item.title}">
+                    <div>
+                        <h4>${item.title}</h4>
+                        <p>${item.price}</p>
+                        <div class="qty-controls">
+                            <button type="button" onclick="updateCartQty('${item.id}', -1)">-</button>
+                            <span>${item.qty}</span>
+                            <button type="button" onclick="updateCartQty('${item.id}', 1)">+</button>
+                        </div>
+                    </div>
+                    <button class="remove-cart-btn" type="button" onclick="removeFromCart('${item.id}')" aria-label="Remove ${item.title}"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function statusClass(status) {
+            return 'status-' + String(status || 'pending').toLowerCase();
+        }
+
+        function renderCustomerOrderStatus() {
+            const box = document.getElementById('customerOrderStatus');
+            if (!box) return;
+            if (!orders.length) {
+                box.innerHTML = '<p class="owner-note">Abhi koi order place nahi hua.</p>';
+                return;
+            }
+            box.innerHTML = '<h4>My Order Status</h4>' + orders.slice().reverse().map(order => `
+                <div class="order-status-card">
+                    <h4>${escapeHtml(order.id)}</h4>
+                    <p>${escapeHtml(order.customerName)} | ${escapeHtml(order.customerPhone)}</p>
+                    <p>${order.items.length} items | ${escapeHtml(order.total)}</p>
+                    <span class="status-badge ${statusClass(order.status)}">${escapeHtml(order.status)}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderOwnerOrders() {
+            const statsBox = document.getElementById('ownerOrderStats');
+            const listBox = document.getElementById('ownerOrdersList');
+            if (!statsBox || !listBox) return;
+            const statuses = ['Pending', 'Shipped', 'Delivered', 'Cancelled'];
+            const counts = statuses.reduce((acc, status) => {
+                acc[status] = orders.filter(order => order.status === status).length;
+                return acc;
+            }, {});
+            statsBox.innerHTML = statuses.map(status => `
+                <div class="order-stat">
+                    <strong>${counts[status]}</strong>
+                    <span>${status}</span>
+                </div>
+            `).join('');
+            if (!orders.length) {
+                listBox.innerHTML = '<p class="owner-note">Abhi koi order nahi aaya.</p>';
+                return;
+            }
+            listBox.innerHTML = '<h4>Orders</h4>' + orders.slice().reverse().map(order => `
+                <div class="owner-order">
+                    <strong>${escapeHtml(order.id)} - ${escapeHtml(order.total)}</strong>
+                    <span>${escapeHtml(order.customerName)} | ${escapeHtml(order.customerPhone)}</span>
+                    <span>${escapeHtml(order.customerAddress)}</span>
+                    <span>${order.items.map(item => escapeHtml(item.title + ' x ' + item.qty)).join(', ')}</span>
+                    <select onchange="updateOrderStatus('${order.id}', this.value)">
+                        ${statuses.map(status => `<option value="${status}" ${order.status === status ? 'selected' : ''}>${status}</option>`).join('')}
+                    </select>
+                </div>
+            `).join('');
+        }
+
+        function openCart() {
+            renderCart();
+            renderCustomerOrderStatus();
+            document.getElementById('cartPanel').classList.add('active');
+            document.getElementById('cartPanel').setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCart() {
+            document.getElementById('cartPanel').classList.remove('active');
+            document.getElementById('cartPanel').setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        function placeOrder() {
+            if (!cart.length) return;
+            const customerName = document.getElementById('customerName').value.trim();
+            const customerPhone = document.getElementById('customerPhone').value.trim();
+            const customerAddress = document.getElementById('customerAddress').value.trim();
+            if (!customerName || !customerPhone) {
+                alert('Name aur phone number zaroori hain.');
+                return;
+            }
+            const orderLines = cart.map((item, index) => `${index + 1}. ${item.title} x ${item.qty} - ${item.price}`).join('\n');
+            const total = cart.reduce((sum, item) => sum + parsePrice(item.price) * item.qty, 0);
+            const order = {
+                id: 'FT-' + Date.now().toString().slice(-8),
+                status: 'Pending',
+                customerName,
+                customerPhone,
+                customerAddress,
+                items: cart.map(item => ({ ...item })),
+                total: formatPrice(total),
+                createdAt: new Date().toISOString()
+            };
+            orders.push(order);
+            saveOrders();
+            cart = [];
+            saveCart();
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('customerAddress').value = '';
+            const message = `Assalam o Alaikum Friends Traders, I placed order ${order.id}:\n\n${orderLines}\n\nTotal: ${order.total}\nName: ${customerName}\nPhone: ${customerPhone}\nAddress: ${customerAddress}\n\nPlease confirm availability and delivery.`;
+            window.open(`https://wa.me/923007195451?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function checkoutCart() {
+            placeOrder();
+        }
+
+        function updateOrderStatus(orderId, status) {
+            const order = orders.find(item => item.id === orderId);
+            if (!order) return;
+            order.status = status;
+            saveOrders();
+        }
+
 
 
         function getProductById(productId) {
@@ -2818,7 +3486,7 @@
                 oldPrice: card.dataset.oldPrice,
                 availability: card.dataset.availability,
                 desc: card.dataset.description,
-                image: card.dataset.image,
+                image: card.querySelector('.product-img img')?.src || card.dataset.image,
                 features: (card.dataset.features || '').split('|').filter(Boolean)
             };
         }
@@ -2847,6 +3515,147 @@
             document.body.style.overflow = '';
         }
 
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[char]));
+        }
+
+        function slugify(value) {
+            return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'product';
+        }
+
+        function categoryLabel(category) {
+            const labels = {
+                rosepetal: 'Rose Petal',
+                chef: 'Chef',
+                sk: 'SK',
+                thermos: 'Thermos',
+                plates: 'Plates',
+                'cups-mugs': 'Cups & Mugs',
+                'glasses-drinkware': 'Glasses & Drinkware',
+                'lunch-boxes': 'Lunch Boxes',
+                'water-bottles': 'Water Bottles',
+                dinnerware: 'Dinner Sets',
+                utensils: 'Kitchen Essentials',
+                storage: 'Storage Containers',
+                appliances: 'Electric Kitchen Appliances',
+                'stainless-steel': 'Stainless Steel',
+                'air-fryers': 'Air Fryers',
+                random: 'Random Products',
+                misc: 'Other Brands / Miscellaneous'
+            };
+            return labels[category] || 'Premium Products';
+        }
+
+        function productCardTemplate(product) {
+            const title = escapeHtml(product.title);
+            const category = escapeHtml(product.category);
+            const label = escapeHtml(categoryLabel(product.category));
+            const price = escapeHtml(product.price);
+            const image = escapeHtml(product.image || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=900&q=85');
+            const description = escapeHtml(product.description || 'Quality product available at Friends Traders Multan.');
+            const id = escapeHtml(product.id);
+            return `
+                <div class="product-card owner-added-product" data-category="${category}" data-id="${id}" data-title="${title}" data-brand="Friends Traders" data-category-label="${label}" data-price="${price}" data-old-price="" data-availability="In stock" data-description="${description}" data-image="${image}" data-features="Owner Added|Available at Friends Traders|WhatsApp order available">
+                    <div class="product-img">
+                        <img src="${image}" alt="${title}" loading="lazy" decoding="async">
+                        <span class="stock-badge">In stock</span>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-meta-row">
+                            <span class="product-category">${label}</span>
+                            <span class="product-brand">Friends Traders</span>
+                        </div>
+                        <h3 class="product-title">${title}</h3>
+                        <p class="product-description">${description}</p>
+                        <div class="product-price">${price}</div>
+                        <ul class="product-features">
+                            <li><i class="fas fa-check"></i> Owner Added</li>
+                            <li><i class="fas fa-check"></i> Available at Friends Traders Multan</li>
+                            <li><i class="fas fa-check"></i> WhatsApp order available</li>
+                        </ul>
+                        <div class="product-actions">
+                            <button class="product-btn details-btn" type="button" onclick="viewProductDetails('${id}')"><i class="fas fa-eye"></i> View Details</button>
+                            <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('${title}')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadOwnerProducts() {
+            const products = JSON.parse(localStorage.getItem(ownerProductsStorageKey) || '[]');
+            products.forEach(product => productGrid.insertAdjacentHTML('beforeend', productCardTemplate(product)));
+            addCartButtons();
+            getProductCards();
+        }
+
+        function openOwnerPanel() {
+            renderOwnerOrders();
+            document.getElementById('ownerPanel').classList.add('active');
+            document.getElementById('ownerPanel').setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeOwnerPanel() {
+            document.getElementById('ownerPanel').classList.remove('active');
+            document.getElementById('ownerPanel').setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        function unlockOwnerPanel() {
+            if (document.getElementById('ownerPassword').value !== '1122') {
+                alert('Wrong password');
+                return;
+            }
+            document.getElementById('ownerLogin').style.display = 'none';
+            document.getElementById('ownerTools').style.display = 'grid';
+            renderOwnerOrders();
+        }
+
+        function saveOwnerProduct() {
+            const title = document.getElementById('ownerProductTitle').value.trim();
+            const price = document.getElementById('ownerProductPrice').value.trim();
+            const image = document.getElementById('ownerProductImage').value.trim();
+            const category = document.getElementById('ownerProductCategory').value;
+            const description = document.getElementById('ownerProductDescription').value.trim();
+            if (!title || !price) {
+                alert('Product name aur price zaroori hain.');
+                return;
+            }
+            const products = JSON.parse(localStorage.getItem(ownerProductsStorageKey) || '[]');
+            const product = {
+                id: `owner-${slugify(title)}-${Date.now()}`,
+                title,
+                price,
+                image,
+                category,
+                description
+            };
+            products.push(product);
+            localStorage.setItem(ownerProductsStorageKey, JSON.stringify(products));
+            productGrid.insertAdjacentHTML('beforeend', productCardTemplate(product));
+            addCartButtons();
+            getProductCards();
+            document.getElementById('ownerProductTitle').value = '';
+            document.getElementById('ownerProductPrice').value = '';
+            document.getElementById('ownerProductImage').value = '';
+            document.getElementById('ownerProductDescription').value = '';
+            alert('Product added.');
+        }
+
+        function clearOwnerProducts() {
+            if (!confirm('Owner panel se added products clear kar dein?')) return;
+            localStorage.removeItem(ownerProductsStorageKey);
+            document.querySelectorAll('.owner-added-product').forEach(card => card.remove());
+            getProductCards();
+        }
+
         function shareContact() {
             const text = 'Friends Traders Multan - Premium Crockery, Kitchenware & Home Appliances. Phone/WhatsApp: 0300-7195451, 0318-8195451. Address: Thread Sabeel Khan Kamil Abbas Chowk, Number 11, Multan.';
             if (navigator.share) {
@@ -2861,8 +3670,18 @@
         document.getElementById('productDetailModal').addEventListener('click', function(event) {
             if (event.target === this) closeProductDetails();
         });
+        document.getElementById('cartPanel').addEventListener('click', function(event) {
+            if (event.target === this) closeCart();
+        });
+        document.getElementById('ownerPanel').addEventListener('click', function(event) {
+            if (event.target === this) closeOwnerPanel();
+        });
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') closeProductDetails();
+            if (event.key === 'Escape') {
+                closeProductDetails();
+                closeCart();
+                closeOwnerPanel();
+            }
         });
 
         function hideLoadingScreen() {
@@ -2875,10 +3694,28 @@
         window.addEventListener('load', hideLoadingScreen);
         setTimeout(hideLoadingScreen, 1800);
 
+        loadOwnerProducts();
+        addCartButtons();
+        renderCart();
+        renderCustomerOrderStatus();
+        renderOwnerOrders();
 
         window.inquireProduct = inquireProduct;
         window.viewProductDetails = viewProductDetails;
         window.closeProductDetails = closeProductDetails;
+        window.addToCart = addToCart;
+        window.updateCartQty = updateCartQty;
+        window.removeFromCart = removeFromCart;
+        window.openCart = openCart;
+        window.closeCart = closeCart;
+        window.checkoutCart = checkoutCart;
+        window.placeOrder = placeOrder;
+        window.updateOrderStatus = updateOrderStatus;
+        window.openOwnerPanel = openOwnerPanel;
+        window.closeOwnerPanel = closeOwnerPanel;
+        window.unlockOwnerPanel = unlockOwnerPanel;
+        window.saveOwnerProduct = saveOwnerProduct;
+        window.clearOwnerProducts = clearOwnerProducts;
         window.shareContact = shareContact;
         // Reviews Slider Functionality
         const reviewsContainer = document.getElementById('reviewsContainer');
