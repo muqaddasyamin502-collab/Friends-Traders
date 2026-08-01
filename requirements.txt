@@ -1,0 +1,6 @@
+﻿Flask==3.0.3
+Werkzeug==3.0.3
+Pillow>=10.4.0,<13
+gunicorn==22.0.0
+psycopg[binary]>=3.2,<4
+python-dotenv==1.0.1
