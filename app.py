@@ -87,9 +87,6 @@ def migrate():
     with db() as con:
         con.execute('create table if not exists schema_migrations (version text primary key, applied_at text not null)')
         if DATABASE_URL:
-            schema = MIGRATIONS_DIR / 'supabase_schema.sql'
-            if schema.exists():
-                con.executescript(schema.read_text(encoding='utf-8'))
             return
         done = {r['version'] for r in con.execute('select version from schema_migrations')}
         for p in sorted(MIGRATIONS_DIR.glob('*.sql')):
