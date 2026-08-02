@@ -1,4 +1,4 @@
-﻿(function() {
+(function() {
         let csrfToken = '';
         let ownerMode = false;
         const backendHost = location.hostname === 'localhost' ? 'localhost' : '127.0.0.1';
@@ -7,10 +7,14 @@
         const assetUrl = url => (url && url.startsWith('/')) ? apiBase + url : url;
         const money = value => 'PKR ' + Number(value || 0).toLocaleString('en-PK');
         const escapeHtml = value => String(value || '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
-        const api = async(url, options = {}) => {
+        const api = async(url, options = {}, retry = true) => {
             const headers = options.body instanceof FormData ? { 'X-CSRF-Token': csrfToken } : { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken };
             const response = await fetch(apiUrl(url), { credentials: 'include', ...options, headers: {...headers, ...(options.headers || {}) } });
             const data = await response.json().catch(() => ({}));
+            if (response.status === 403 && retry && String(data.error || '').toLowerCase().includes('security token')) {
+                await initCsrf();
+                return api(url, options, false);
+            }
             if (!response.ok) throw new Error(data.error || 'Request failed');
             return data;
         };
@@ -24,6 +28,23 @@
             try { await api('/api/cart/items', { method: 'POST', body: JSON.stringify({ product_id: productId, quantity: 1 }) });
                 await window.openCart(); } catch (error) { alert(error.message); }
         };
+        function wireBackendCartButtons() {
+            document.querySelectorAll('.product-card').forEach(card => {
+                const actions = card.querySelector('.product-actions');
+                if (!actions) return;
+                let button = actions.querySelector('.add-cart-btn');
+                if (!button) {
+                    button = document.createElement('button');
+                    button.className = 'product-btn add-cart-btn';
+                    button.type = 'button';
+                    button.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
+                    actions.appendChild(button);
+                }
+                const fresh = button.cloneNode(true);
+                fresh.addEventListener('click', () => window.addToCart(card.dataset.id));
+                button.replaceWith(fresh);
+            });
+        }
         window.updateCartQty = async function(productId, delta) {
             const cart = await getCart();
             const item = cart.items.find(i => i.product_id === productId);
@@ -143,6 +164,7 @@
                 const existingTitles = new Set(Array.from(document.querySelectorAll('.product-card')).map(card => String(card.dataset.title || '').trim().toLowerCase()));
                 const fresh = data.products.filter(product => !existingTitles.has(String(product.name || '').trim().toLowerCase()));
                 if (fresh.length) grid.insertAdjacentHTML('beforeend', fresh.map(backendProductCard).join(''));
+                wireBackendCartButtons();
             } catch (error) {
                 console.warn('Backend products could not load:', error.message);
             }
@@ -172,6 +194,9 @@
         }
         window.unlockOwnerPanel = async function() {
             const typed = document.getElementById('ownerPassword').value;
+            const loginButton = document.querySelector('#ownerLogin .btn-primary');
+            const oldText = loginButton ? loginButton.innerHTML : '';
+            if (loginButton) { loginButton.disabled = true; loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening...'; }
             try {
                 await api('/api/auth/owner-login', { method: 'POST', body: JSON.stringify({ password: typed }) });
                 ownerMode = true;
@@ -180,7 +205,11 @@
                 enhanceOwnerFields();
                 await renderOwnerDashboard();
                 setInterval(() => { if (ownerMode) renderOwnerDashboard(); }, 5000);
-            } catch (error) { alert(error.message + ' Please check OWNER_PASSWORD in .env.'); }
+            } catch (error) {
+                alert(error.message + ' Please check OWNER_PASSWORD in Render Environment.');
+            } finally {
+                if (loginButton && !ownerMode) { loginButton.disabled = false; loginButton.innerHTML = oldText; }
+            }
         };
         async function renderOwnerDashboard() {
             const data = await api('/api/dashboard', { method: 'GET' });
@@ -256,6 +285,7 @@
   document.addEventListener('DOMContentLoaded', async () => {
     await initCsrf();
     await renderBackendProducts();
+    wireBackendCartButtons();
     await renderBackendCart();
   });
 })();
