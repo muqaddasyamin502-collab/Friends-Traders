@@ -1,4 +1,4 @@
-﻿import csv, io, json, os, re, secrets, sqlite3, uuid
+import csv, io, json, os, re, secrets, sqlite3, uuid
 from datetime import datetime, timezone, date
 from pathlib import Path
 from dotenv import load_dotenv
