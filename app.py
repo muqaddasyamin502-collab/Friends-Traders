@@ -3,6 +3,7 @@ from datetime import datetime, timezone, date
 from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask, Response, jsonify, request, send_from_directory, session
+from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 try:
@@ -83,6 +84,9 @@ def migrate():
     with db() as con:
         con.execute('create table if not exists schema_migrations (version text primary key, applied_at text not null)')
         if DATABASE_URL:
+            schema = MIGRATIONS_DIR / 'supabase_schema.sql'
+            if schema.exists():
+                con.executescript(schema.read_text(encoding='utf-8'))
             return
         done = {r['version'] for r in con.execute('select version from schema_migrations')}
         for p in sorted(MIGRATIONS_DIR.glob('*.sql')):
@@ -141,6 +145,13 @@ def headers(resp):
         resp.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-CSRF-Token'
         resp.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
     return resp
+
+@app.errorhandler(Exception)
+def app_error(exc):
+    if isinstance(exc, HTTPException):
+        return exc
+    app.logger.exception(exc)
+    return jsonify({'error':'Server error. Please check Render logs or Supabase database setup.'}), 500
 
 
 def resolve_product_id(con, raw_id):
