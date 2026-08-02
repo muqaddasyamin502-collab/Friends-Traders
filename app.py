@@ -55,7 +55,10 @@ class PgConn:
 
     def executescript(self, script):
         with self._con.cursor() as cur:
-            cur.execute(script)
+            for stmt in [s.strip() for s in script.split(';') if s.strip()]:
+                if stmt.startswith('--'):
+                    continue
+                cur.execute(stmt)
 
     def __enter__(self):
         return self
