@@ -3200,8 +3200,9 @@
         const cartStorageKey = 'friendsTradersCart';
         const ownerProductsStorageKey = 'friendsTradersOwnerProducts';
         const ordersStorageKey = 'friendsTradersOrders';
-        let cart = JSON.parse(localStorage.getItem(cartStorageKey) || '[]');
-        let orders = JSON.parse(localStorage.getItem(ordersStorageKey) || '[]');
+        const useLocalCart = !['', '5001'].includes(location.port) && !location.hostname.includes('onrender.com');
+        let cart = useLocalCart ? JSON.parse(localStorage.getItem(cartStorageKey) || '[]') : [];
+        let orders = useLocalCart ? JSON.parse(localStorage.getItem(ordersStorageKey) || '[]') : [];
 
         const filterAliases = {
             sk: ['sk', 'premium selection', 'stainless steel'],
@@ -3695,27 +3696,31 @@
         setTimeout(hideLoadingScreen, 1800);
 
         loadOwnerProducts();
-        addCartButtons();
-        renderCart();
-        renderCustomerOrderStatus();
-        renderOwnerOrders();
+        if (useLocalCart) {
+            addCartButtons();
+            renderCart();
+            renderCustomerOrderStatus();
+            renderOwnerOrders();
+        }
 
         window.inquireProduct = inquireProduct;
         window.viewProductDetails = viewProductDetails;
         window.closeProductDetails = closeProductDetails;
-        window.addToCart = addToCart;
-        window.updateCartQty = updateCartQty;
-        window.removeFromCart = removeFromCart;
-        window.openCart = openCart;
-        window.closeCart = closeCart;
-        window.checkoutCart = checkoutCart;
-        window.placeOrder = placeOrder;
-        window.updateOrderStatus = updateOrderStatus;
-        window.openOwnerPanel = openOwnerPanel;
-        window.closeOwnerPanel = closeOwnerPanel;
-        window.unlockOwnerPanel = unlockOwnerPanel;
-        window.saveOwnerProduct = saveOwnerProduct;
-        window.clearOwnerProducts = clearOwnerProducts;
+        if (useLocalCart) {
+            window.addToCart = addToCart;
+            window.updateCartQty = updateCartQty;
+            window.removeFromCart = removeFromCart;
+            window.openCart = openCart;
+            window.closeCart = closeCart;
+            window.checkoutCart = checkoutCart;
+            window.placeOrder = placeOrder;
+            window.updateOrderStatus = updateOrderStatus;
+            window.openOwnerPanel = openOwnerPanel;
+            window.closeOwnerPanel = closeOwnerPanel;
+            window.unlockOwnerPanel = unlockOwnerPanel;
+            window.saveOwnerProduct = saveOwnerProduct;
+            window.clearOwnerProducts = clearOwnerProducts;
+        }
         window.shareContact = shareContact;
         // Reviews Slider Functionality
         const reviewsContainer = document.getElementById('reviewsContainer');
