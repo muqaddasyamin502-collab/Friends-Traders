@@ -1,4 +1,4 @@
-import csv, io, json, os, re, secrets, sqlite3, uuid
+import base64, csv, io, json, os, re, secrets, sqlite3, uuid
 from datetime import datetime, timezone, date
 from pathlib import Path
 from dotenv import load_dotenv
@@ -258,6 +258,8 @@ def add_address():
 @app.get('/api/products')
 def list_products():
     u=current_user(); q=clean(request.args.get('q'),120).lower(); cat=clean(request.args.get('category'),80); brand=clean(request.args.get('brand'),80); status=clean(request.args.get('status'),30); sort=request.args.get('sort','newest'); page=max(1,int(request.args.get('page',1))); per=min(48,max(1,int(request.args.get('per_page',12))))
+    if u and u['role']=='owner':
+        per=min(500,max(1,int(request.args.get('per_page',48))))
     where=[]; params=[]
     if not u or u['role']!='owner': where.append("status='active'")
     elif status: where.append('status=?'); params.append(status)
@@ -293,6 +295,20 @@ def save_images(files,pid,name):
         if not f or not f.filename: continue
         ext=Path(f.filename).suffix.lower()
         if ext not in ALLOWED_IMAGE_EXTS: continue
+
+        if DATABASE_URL:
+
+            raw = f.read()
+
+            if len(raw) > int(os.getenv('MAX_DB_IMAGE_BYTES', str(1024*1024))):
+
+                continue
+
+            mime = 'image/webp' if ext == '.webp' else ('image/png' if ext == '.png' else 'image/jpeg')
+
+            saved.append(('data:' + mime + ';base64,' + base64.b64encode(raw).decode('ascii'), n))
+
+            continue
         fn=f'{pid}-{uuid.uuid4().hex[:10]}-{secure_filename(Path(f.filename).stem)[:50] or "product"}.webp'; target=UPLOAD_DIR/fn
         if Image:
             img=Image.open(f.stream).convert('RGB'); img.thumbnail((1400,1400)); img.save(target,'WEBP',quality=82,method=6)
@@ -336,13 +352,16 @@ def patch_product(pid):
     if 'status' in d: sets.append('status=?'); params.append(clean(d['status'],20))
     if 'stock' in d: sets.append('stock=?'); params.append(max(0,int(d['stock'])))
     if not sets: return jsonify({'error':'No supported fields supplied.'}),400
-    with db() as con: con.execute(f"update products set {','.join(sets)},updated_at=? where id=?",[*params,now_iso(),pid])
+    with db() as con:
+        pid = resolve_product_id(con, pid) or pid
+        con.execute(f"update products set {','.join(sets)},updated_at=? where id=?",[*params,now_iso(),pid])
     return product_detail(pid)
 @app.delete('/api/products/<pid>')
 def delete_product(pid):
     u,e=require_owner();
     if e: return e
     with db() as con:
+        pid = resolve_product_id(con, pid) or pid
         imgs=con.execute('select url from product_images where product_id=?',(pid,)).fetchall(); con.execute('delete from products where id=?',(pid,))
     for img in imgs:
         if img['url'].startswith('/uploads/'):
@@ -418,6 +437,24 @@ def list_orders():
     with db() as con:
         rows=con.execute('select id from orders order by created_at desc limit 300' if u['role']=='owner' else 'select id from orders where user_id=? order by created_at desc',( () if u['role']=='owner' else (u['id'],) )).fetchall()
     return jsonify({'orders':[order_payload(r['id']) for r in rows]})
+
+
+@app.get('/api/owner/summary')
+def owner_summary():
+    u,e=require_owner();
+    if e: return e
+    today=date.today().isoformat(); month=today[:7]
+    with db() as con:
+        sc={r['order_status']:r['c'] for r in con.execute('select order_status,count(*) c from orders group by order_status')}
+        cards={'total_products':con.execute('select count(*) c from products').fetchone()['c'],'total_orders':con.execute('select count(*) c from orders').fetchone()['c'],'pending_orders':sc.get('pending',0),'processing_orders':sc.get('processing',0),'completed_orders':sc.get('completed',0),'cancelled_orders':sc.get('cancelled',0),'revenue':round(float(con.execute("select coalesce(sum(total),0) v from orders where order_status='completed'").fetchone()['v']),2),'today_sales':round(float(con.execute('select coalesce(sum(total),0) v from orders where substr(created_at,1,10)=?',(today,)).fetchone()['v']),2),'monthly_sales':round(float(con.execute('select coalesce(sum(total),0) v from orders where substr(created_at,1,7)=?',(month,)).fetchone()['v']),2)}
+        order_ids=con.execute('select id from orders order by created_at desc limit 300').fetchall()
+        product_rows=con.execute('select * from products order by updated_at desc limit 500').fetchall()
+        image_map=product_images_for(con, [r['id'] for r in product_rows])
+        products=[public_product(r, image_map) for r in product_rows]
+        low=[p for p in products if p['stock'] <= LOW_STOCK_THRESHOLD][:30]
+        notes=[dict(r) for r in con.execute("select * from notifications where audience in ('owner','all') and read_at is null order by created_at desc limit 30")]
+    return jsonify({'cards':cards,'orders':[order_payload(r['id']) for r in order_ids],'products':products,'low_stock':low,'notifications':notes})
+
 @app.patch('/api/orders/<oid>')
 def update_order(oid):
     u,e=require_owner();
@@ -504,3 +541,4 @@ def restore():
                     con.execute(f"insert or replace into {table} ({','.join(cols)}) values ({','.join('?' for _ in cols)})",[row[c] for c in cols])
     return jsonify({'ok':True})
 if __name__ == '__main__': app.run(host='127.0.0.1',port=int(os.getenv('PORT','5001')),debug=os.getenv('FLASK_DEBUG')=='true')
+
