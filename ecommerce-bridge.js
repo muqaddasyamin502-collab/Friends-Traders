@@ -1,12 +1,15 @@
 (function() {
         let csrfToken = '';
         let ownerMode = false;
+        let backendReady = false;
         const backendHost = location.hostname === 'localhost' ? 'localhost' : '127.0.0.1';
-        const apiBase = (location.protocol === 'file:' || !['5001', ''].includes(location.port)) ? `http://${backendHost}:5001` : '';
+        const isFlaskHost = ['5001', ''].includes(location.port) || location.hostname.includes('onrender.com');
+        const apiBase = (location.protocol === 'file:' || !isFlaskHost) ? `http://${backendHost}:5001` : '';
         const apiUrl = url => apiBase + url;
+        window.useBackendCart = !!apiBase || isFlaskHost;
         const assetUrl = url => (url && url.startsWith('/')) ? apiBase + url : url;
         const money = value => 'PKR ' + Number(value || 0).toLocaleString('en-PK');
-        const escapeHtml = value => String(value || '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+        const escapeHtml = value => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
         const api = async(url, options = {}, retry = true) => {
             const headers = options.body instanceof FormData ? { 'X-CSRF-Token': csrfToken } : { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken };
             const response = await fetch(apiUrl(url), { credentials: 'include', ...options, headers: {...headers, ...(options.headers || {}) } });
@@ -24,10 +27,22 @@
             csrfToken = data.csrf_token;
         }
         async function getCart() { return api('/api/cart', { method: 'GET' }); }
-        window.addToCart = async function(productId) {
-            try { await api('/api/cart/items', { method: 'POST', body: JSON.stringify({ product_id: productId, quantity: 1 }) });
-                await window.openCart(); } catch (error) { alert(error.message); }
+        window.addToCart = async function(productId, button) {
+            const btn = button || (typeof event !== 'undefined' && event ? .target ? .closest ? .('button'));
+            const oldHtml = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...'; }
+            try {
+                await api('/api/cart/items', { method: 'POST', body: JSON.stringify({ product_id: productId, quantity: 1 }) });
+                await window.openCart();
+            } catch (error) {
+                alert(error.message || 'Could not add to cart. Server may be waking up — please try again.');
+            } finally {
+                if (btn) { btn.disabled = false;
+                    btn.innerHTML = oldHtml || '<i class="fas fa-cart-plus"></i> Add to Cart'; }
+            }
         };
+
         function wireBackendCartButtons() {
             document.querySelectorAll('.product-card').forEach(card => {
                 const actions = card.querySelector('.product-actions');
@@ -41,7 +56,7 @@
                     actions.appendChild(button);
                 }
                 const fresh = button.cloneNode(true);
-                fresh.addEventListener('click', () => window.addToCart(card.dataset.id));
+                fresh.addEventListener('click', (event) => window.addToCart(card.dataset.id, event.currentTarget));
                 button.replaceWith(fresh);
             });
         }
@@ -150,7 +165,7 @@
           <div class="product-actions">
             <button class="product-btn details-btn" type="button" onclick="viewProductDetails('${escapeHtml(product.id)}')"><i class="fas fa-eye"></i> View Details</button>
             <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('${escapeHtml(product.name)}')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
-            <button class="product-btn add-cart-btn" type="button" onclick="window.addToCart('${escapeHtml(product.id)}')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+            <button class="product-btn add-cart-btn" type="button" onclick="window.addToCart('${escapeHtml(product.id)}', this)"><i class="fas fa-cart-plus"></i> Add to Cart</button>
           </div>
         </div>
       </div>`;
@@ -192,11 +207,25 @@
       <button class="btn btn-secondary" type="button" onclick="restoreBackup()"><i class="fas fa-upload"></i> Restore Backup</button>`;
             tools.appendChild(div);
         }
+        window.openOwnerPanel = async function() {
+            document.getElementById('ownerPanel').classList.add('active');
+            document.getElementById('ownerPanel').setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            if (ownerMode) {
+                try { await renderOwnerDashboard(); } catch (_) {}
+            }
+        };
+        window.closeOwnerPanel = function() {
+            document.getElementById('ownerPanel').classList.remove('active');
+            document.getElementById('ownerPanel').setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        };
         window.unlockOwnerPanel = async function() {
             const typed = document.getElementById('ownerPassword').value;
             const loginButton = document.querySelector('#ownerLogin .btn-primary');
             const oldText = loginButton ? loginButton.innerHTML : '';
-            if (loginButton) { loginButton.disabled = true; loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening...'; }
+            if (loginButton) { loginButton.disabled = true;
+                loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening...'; }
             try {
                 await api('/api/auth/owner-login', { method: 'POST', body: JSON.stringify({ password: typed }) });
                 ownerMode = true;
@@ -208,7 +237,8 @@
             } catch (error) {
                 alert(error.message + ' Please check OWNER_PASSWORD in Render Environment.');
             } finally {
-                if (loginButton && !ownerMode) { loginButton.disabled = false; loginButton.innerHTML = oldText; }
+                if (loginButton && !ownerMode) { loginButton.disabled = false;
+                    loginButton.innerHTML = oldText; }
             }
         };
         async function renderOwnerDashboard() {
@@ -282,10 +312,22 @@
     alert('Backup restored.');
     await renderOwnerDashboard();
   };
+  async function warmBackend() {
+    try {
+      await fetch(apiUrl('/api/health'), { credentials: 'include' });
+      backendReady = true;
+    } catch (_) {}
+  }
   document.addEventListener('DOMContentLoaded', async () => {
-    await initCsrf();
-    await renderBackendProducts();
-    wireBackendCartButtons();
-    await renderBackendCart();
+    warmBackend();
+    try {
+      await initCsrf();
+      backendReady = true;
+      await renderBackendProducts();
+      wireBackendCartButtons();
+      await renderBackendCart();
+    } catch (error) {
+      console.warn('Backend cart unavailable:', error.message);
+    }
   });
 })();
