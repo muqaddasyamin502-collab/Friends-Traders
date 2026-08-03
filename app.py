@@ -385,11 +385,17 @@ def get_cart(): return jsonify(cart_payload())
 @app.post('/api/cart/items')
 def add_cart():
     d=request.get_json(silent=True) or {}; pid=clean(d.get('product_id'),80); qty=max(1,int(d.get('quantity') or 1))
+    key = cart_key()
     with db() as con:
         pid = resolve_product_id(con, pid)
         p=con.execute('select stock,status from products where id=?',(pid,)).fetchone() if pid else None
         if not p or p['status']!='active' or p['stock']<=0: return jsonify({'error':'Product is not available.'}),400
-        con.execute('insert into cart_items values (?,?,?,?) on conflict(cart_key,product_id) do update set quantity=case when quantity+excluded.quantity < ? then quantity+excluded.quantity else ? end,updated_at=excluded.updated_at',(cart_key(),pid,min(qty,p['stock']),now_iso(),p['stock'],p['stock']))
+        existing=con.execute('select quantity from cart_items where cart_key=? and product_id=?',(key,pid)).fetchone()
+        next_qty=min(int(p['stock']), (int(existing['quantity']) if existing else 0) + qty)
+        if existing:
+            con.execute('update cart_items set quantity=?,updated_at=? where cart_key=? and product_id=?',(next_qty,now_iso(),key,pid))
+        else:
+            con.execute('insert into cart_items values (?,?,?,?)',(key,pid,next_qty,now_iso()))
     return jsonify(cart_payload())
 @app.patch('/api/cart/items/<pid>')
 def update_cart(pid):
