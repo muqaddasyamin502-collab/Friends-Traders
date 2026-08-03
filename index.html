@@ -706,6 +706,14 @@
             background: #2e7d32;
         }
         
+        .status-processing {
+            background: #1565c0;
+        }
+
+        .status-completed {
+            background: #2e7d32;
+        }
+
         .status-cancelled {
             background: #8e0000;
         }
@@ -737,6 +745,10 @@
             gap: 8px;
         }
         
+        .owner-panel {
+            width: min(760px, 100%);
+        }
+
         .owner-panel .owner-login,
         .owner-panel .owner-tools {
             display: grid;
@@ -3124,7 +3136,7 @@
             <div class="owner-tools" id="ownerTools" style="display: none;">
                 <div class="order-stats" id="ownerOrderStats"></div>
                 <div class="order-status-list" id="ownerOrdersList"></div>
-                <p class="owner-note">New product will be show in grid.</p>
+                <p class="owner-note">New products are saved permanently in the database.</p>
                 <input id="ownerProductTitle" type="text" placeholder="Product name">
                 <input id="ownerProductPrice" type="text" placeholder="Price, e.g. PKR 2,500">
                 <input id="ownerProductImage" type="url" placeholder="Image URL">
@@ -3148,8 +3160,8 @@
                     <option value="misc">Other Brands / Miscellaneous</option>
                 </select>
                 <textarea id="ownerProductDescription" placeholder="Short product description"></textarea>
-                <button class="btn btn-secondary" type="button" onclick="saveOwnerProduct()"><i class="fas fa-plus"></i> Add Product</button>
-                <button class="btn btn-primary" type="button" onclick="clearOwnerProducts()"><i class="fas fa-trash"></i> Clear Added Products</button>
+                <button class="btn btn-secondary" type="button" onclick="saveOwnerProduct()"><i class="fas fa-plus"></i> Save Product Permanently</button>
+                <button class="btn btn-primary" type="button" onclick="clearOwnerProducts()"><i class="fas fa-database"></i> Manage Products Below</button>
             </div>
         </aside>
     </div>
