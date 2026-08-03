@@ -348,7 +348,7 @@ def add_cart():
         pid = resolve_product_id(con, pid)
         p=con.execute('select stock,status from products where id=?',(pid,)).fetchone() if pid else None
         if not p or p['status']!='active' or p['stock']<=0: return jsonify({'error':'Product is not available.'}),400
-        con.execute('insert into cart_items values (?,?,?,?) on conflict(cart_key,product_id) do update set quantity=case when quantity+excluded.quantity < ? then quantity+excluded.quantity else ? end,updated_at=excluded.updated_at',(cart_key(),pid,min(qty,p['stock']),now_iso(),p['stock'],p['stock']))
+        con.execute('insert into cart_items values (?,?,?,?) on conflict(cart_key,product_id) do update set quantity=case when cart_items.quantity+excluded.quantity < ? then cart_items.quantity+excluded.quantity else ? end,updated_at=excluded.updated_at',(cart_key(),pid,min(qty,p['stock']),now_iso(),p['stock'],p['stock']))
     return jsonify(cart_payload())
 @app.patch('/api/cart/items/<pid>')
 def update_cart(pid):
