@@ -10,6 +10,10 @@ try:
     from PIL import Image
 except Exception:
     Image = None
+try:
+    import requests
+except Exception:
+    requests = None
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / '.env')
@@ -23,6 +27,11 @@ LOW_STOCK_THRESHOLD = int(os.getenv('LOW_STOCK_THRESHOLD', '5'))
 OWNER_EMAIL = os.getenv('OWNER_EMAIL', 'owner@friendstraders.local').lower()
 OWNER_PASSWORD = os.getenv('OWNER_PASSWORD', 'Friends@1122Local')
 ALLOWED_IMAGE_EXTS = {'.jpg', '.jpeg', '.png', '.webp'}
+
+SUPABASE_URL = (os.getenv('SUPABASE_URL') or '').rstrip('/')
+SUPABASE_SERVICE_KEY = os.getenv('SUPABASE_SERVICE_KEY') or os.getenv('SUPABASE_SERVICE_ROLE_KEY')
+SUPABASE_STORAGE_BUCKET = os.getenv('SUPABASE_STORAGE_BUCKET', 'product-images')
+USE_SUPABASE_STORAGE = bool(DATABASE_URL and SUPABASE_URL and SUPABASE_SERVICE_KEY and requests)
 
 app = Flask(__name__, static_folder=str(BASE_DIR), static_url_path='')
 app.secret_key = os.getenv('SECRET_KEY', secrets.token_hex(32))
@@ -168,11 +177,24 @@ def resolve_product_id(con, raw_id):
     row = con.execute("select id from products where lower(replace(sku,'_','-'))=?", (raw.lower(),)).fetchone()
     return row['id'] if row else None
 
-def images(pid):
-    with db() as con: return [dict(r) for r in con.execute('select id,url,alt_text,sort_order from product_images where product_id=? order by sort_order,id',(pid,))]
+def product_images_for(con, product_ids):
+    if not product_ids:
+        return {}
+    placeholders = ','.join('?' for _ in product_ids)
+    rows = con.execute(f'select product_id,id,url,alt_text,sort_order from product_images where product_id in ({placeholders}) order by product_id,sort_order,id', product_ids).fetchall()
+    out = {}
+    for row in rows:
+        d = dict(row)
+        pid = d.pop('product_id')
+        out.setdefault(pid, []).append(d)
+    return out
 
-def public_product(r):
-    d = dict(r); d['price']=float(d['price']); d['discount']=float(d['discount']); d['final_price']=max(0, round(d['price']-d['discount'],2)); d['low_stock']=d['stock']<=LOW_STOCK_THRESHOLD; d['out_of_stock']=d['stock']<=0; d['images']=images(d['id']); return d
+def images(pid):
+    with db() as con:
+        return product_images_for(con, [pid]).get(pid, [])
+
+def public_product(r, image_map=None):
+    d = dict(r); d['price']=float(d['price']); d['discount']=float(d['discount']); d['final_price']=max(0, round(d['price']-d['discount'],2)); d['low_stock']=d['stock']<=LOW_STOCK_THRESHOLD; d['out_of_stock']=d['stock']<=0; d['images']=(image_map or {}).get(d['id']) if image_map is not None else images(d['id']); return d
 
 migrate(); seed()
 
@@ -252,12 +274,15 @@ def list_products():
     with db() as con:
         total=con.execute(f'select count(*) c from products{clause}',params).fetchone()['c']
         rows=con.execute(f'select * from products{clause} order by {order} limit ? offset ?',[*params,per,(page-1)*per]).fetchall()
+        image_map=product_images_for(con, [r['id'] for r in rows])
         facets={'categories':[dict(r) for r in con.execute("select category_slug slug,category name,count(*) count from products where status='active' group by category_slug,category order by category")], 'brands':[r['brand'] for r in con.execute("select distinct brand from products where status='active' order by brand")]}
-    return jsonify({'products':[public_product(r) for r in rows],'total':total,'page':page,'per_page':per,'facets':facets})
+    return jsonify({'products':[public_product(r, image_map) for r in rows],'total':total,'page':page,'per_page':per,'facets':facets})
 @app.get('/api/products/<pid>')
 def product_detail(pid):
-    with db() as con: r=con.execute('select * from products where id=?',(pid,)).fetchone()
-    return (jsonify({'product':public_product(r)}) if r else (jsonify({'error':'Product not found.'}),404))
+    with db() as con:
+        r=con.execute('select * from products where id=?',(pid,)).fetchone()
+        image_map=product_images_for(con, [r['id']]) if r else {}
+    return (jsonify({'product':public_product(r, image_map)}) if r else (jsonify({'error':'Product not found.'}),404))
 
 def payload():
     s=request.form if request.form else (request.get_json(silent=True) or {})
@@ -265,16 +290,47 @@ def payload():
         if not clean(s.get(f),300): raise ValueError(f'{f} is required.')
     cat=clean(s.get('category'),120); slug=clean(s.get('category_slug'),120).lower().replace(' ','-') or cat.lower().replace(' ','-')
     return {'sku':clean(s.get('sku'),80),'name':clean(s.get('name'),180),'category':cat,'category_slug':slug,'brand':clean(s.get('brand'),120),'description':clean(s.get('description'),3000),'price':money(s.get('price')),'discount':money(s.get('discount')),'stock':max(0,int(float(s.get('stock') or 0))),'status':clean(s.get('status'),20) or 'active'}
+def supabase_upload(fn, data_bytes, content_type='image/webp'):
+    url = f'{SUPABASE_URL}/storage/v1/object/{SUPABASE_STORAGE_BUCKET}/{fn}'
+    headers = {'Authorization': f'Bearer {SUPABASE_SERVICE_KEY}', 'apikey': SUPABASE_SERVICE_KEY, 'Content-Type': content_type, 'x-upsert': 'true'}
+    resp = requests.post(url, headers=headers, data=data_bytes, timeout=30)
+    resp.raise_for_status()
+    return f'{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_STORAGE_BUCKET}/{fn}'
+
+def supabase_delete(fn):
+    headers = {'Authorization': f'Bearer {SUPABASE_SERVICE_KEY}', 'apikey': SUPABASE_SERVICE_KEY}
+    requests.delete(f'{SUPABASE_URL}/storage/v1/object/{SUPABASE_STORAGE_BUCKET}/{fn}', headers=headers, timeout=15)
+
+def delete_image_file(url):
+    if not url: return
+    try:
+        if url.startswith('/uploads/'):
+            p = UPLOAD_DIR/url.split('/uploads/',1)[1]
+            if p.exists(): p.unlink()
+        elif SUPABASE_URL and url.startswith(f'{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_STORAGE_BUCKET}/'):
+            fn = url.split(f'/storage/v1/object/public/{SUPABASE_STORAGE_BUCKET}/',1)[1]
+            supabase_delete(fn)
+    except Exception:
+        app.logger.exception('Could not delete old product image; continuing anyway')
+
 def save_images(files,pid,name):
     saved=[]
     for n,f in enumerate(files,1):
         if not f or not f.filename: continue
         ext=Path(f.filename).suffix.lower()
         if ext not in ALLOWED_IMAGE_EXTS: continue
-        fn=f'{pid}-{uuid.uuid4().hex[:10]}-{secure_filename(Path(f.filename).stem)[:50] or "product"}.webp'; target=UPLOAD_DIR/fn
+        fn=f'{pid}-{uuid.uuid4().hex[:10]}-{secure_filename(Path(f.filename).stem)[:50] or "product"}.webp'
         if Image:
-            img=Image.open(f.stream).convert('RGB'); img.thumbnail((1400,1400)); img.save(target,'WEBP',quality=82,method=6)
-        else: f.save(target)
+            img=Image.open(f.stream).convert('RGB'); img.thumbnail((1400,1400))
+            buf=io.BytesIO(); img.save(buf,'WEBP',quality=82,method=6); data_bytes=buf.getvalue()
+        else:
+            data_bytes=f.read()
+        if USE_SUPABASE_STORAGE:
+            try:
+                saved.append((supabase_upload(fn,data_bytes), n)); continue
+            except Exception:
+                app.logger.exception('Supabase Storage upload failed, saving to local disk instead')
+        target=UPLOAD_DIR/fn; target.write_bytes(data_bytes)
         saved.append(('/uploads/'+fn,n))
     return saved
 @app.post('/api/products')
@@ -323,9 +379,7 @@ def delete_product(pid):
     with db() as con:
         imgs=con.execute('select url from product_images where product_id=?',(pid,)).fetchall(); con.execute('delete from products where id=?',(pid,))
     for img in imgs:
-        if img['url'].startswith('/uploads/'):
-            p=UPLOAD_DIR/img['url'].split('/uploads/',1)[1]
-            if p.exists(): p.unlink()
+        delete_image_file(img['url'])
     return jsonify({'ok':True})
 
 def cart_key():
@@ -441,7 +495,9 @@ def dashboard():
         cards={'total_products':con.execute('select count(*) c from products').fetchone()['c'],'total_orders':con.execute('select count(*) c from orders').fetchone()['c'],'pending_orders':sc.get('pending',0),'processing_orders':sc.get('processing',0),'completed_orders':sc.get('completed',0),'cancelled_orders':sc.get('cancelled',0),'revenue':round(float(con.execute("select coalesce(sum(total),0) v from orders where order_status='completed'").fetchone()['v']),2),'today_sales':round(float(con.execute('select coalesce(sum(total),0) v from orders where substr(created_at,1,10)=?',(today,)).fetchone()['v']),2),'monthly_sales':round(float(con.execute('select coalesce(sum(total),0) v from orders where substr(created_at,1,7)=?',(month,)).fetchone()['v']),2)}
         best=[dict(r) for r in con.execute('select name,sum(quantity) quantity,sum(line_total) total from order_items group by product_id,name order by quantity desc limit 8')]
         recent=[order_payload(r['id']) for r in con.execute('select id from orders order by created_at desc limit 10')]
-        low=[public_product(r) for r in con.execute('select * from products where stock<=? order by stock asc limit 12',(LOW_STOCK_THRESHOLD,))]
+        low_rows=con.execute('select * from products where stock<=? order by stock asc limit 12',(LOW_STOCK_THRESHOLD,)).fetchall()
+        low_images=product_images_for(con, [r['id'] for r in low_rows])
+        low=[public_product(r, low_images) for r in low_rows]
         monthly=[dict(r) for r in con.execute('select substr(created_at,1,7) month,count(*) orders,coalesce(sum(total),0) revenue from orders group by substr(created_at,1,7) order by month limit 12')]
         growth=[dict(r) for r in con.execute("select substr(created_at,1,7) month,count(*) customers from users where role='customer' group by substr(created_at,1,7) order by month limit 12")]
         notes=[dict(r) for r in con.execute("select * from notifications where audience in ('owner','all') and read_at is null order by created_at desc limit 20")]
