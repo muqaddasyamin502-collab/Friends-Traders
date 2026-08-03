@@ -10,10 +10,6 @@ try:
     from PIL import Image
 except Exception:
     Image = None
-try:
-    import requests
-except Exception:
-    requests = None
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / '.env')
@@ -28,14 +24,15 @@ OWNER_EMAIL = os.getenv('OWNER_EMAIL', 'owner@friendstraders.local').lower()
 OWNER_PASSWORD = os.getenv('OWNER_PASSWORD', 'Friends@1122Local')
 ALLOWED_IMAGE_EXTS = {'.jpg', '.jpeg', '.png', '.webp'}
 
-SUPABASE_URL = (os.getenv('SUPABASE_URL') or '').rstrip('/')
-SUPABASE_SERVICE_KEY = os.getenv('SUPABASE_SERVICE_KEY') or os.getenv('SUPABASE_SERVICE_ROLE_KEY')
-SUPABASE_STORAGE_BUCKET = os.getenv('SUPABASE_STORAGE_BUCKET', 'product-images')
-USE_SUPABASE_STORAGE = bool(DATABASE_URL and SUPABASE_URL and SUPABASE_SERVICE_KEY and requests)
-
 app = Flask(__name__, static_folder=str(BASE_DIR), static_url_path='')
 app.secret_key = os.getenv('SECRET_KEY', secrets.token_hex(32))
-app.config.update(SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE='Lax', MAX_CONTENT_LENGTH=int(os.getenv('MAX_UPLOAD_BYTES', str(12*1024*1024))))
+_is_production = os.getenv('RENDER') or os.getenv('DATABASE_URL') or os.getenv('FLASK_ENV') == 'production'
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+    SESSION_COOKIE_SECURE=bool(_is_production),
+    MAX_CONTENT_LENGTH=int(os.getenv('MAX_UPLOAD_BYTES', str(12*1024*1024))),
+)
 
 def now_iso(): return datetime.now(timezone.utc).isoformat()
 def clean(v, limit=5000): return str(v or '').strip()[:limit]
@@ -290,47 +287,16 @@ def payload():
         if not clean(s.get(f),300): raise ValueError(f'{f} is required.')
     cat=clean(s.get('category'),120); slug=clean(s.get('category_slug'),120).lower().replace(' ','-') or cat.lower().replace(' ','-')
     return {'sku':clean(s.get('sku'),80),'name':clean(s.get('name'),180),'category':cat,'category_slug':slug,'brand':clean(s.get('brand'),120),'description':clean(s.get('description'),3000),'price':money(s.get('price')),'discount':money(s.get('discount')),'stock':max(0,int(float(s.get('stock') or 0))),'status':clean(s.get('status'),20) or 'active'}
-def supabase_upload(fn, data_bytes, content_type='image/webp'):
-    url = f'{SUPABASE_URL}/storage/v1/object/{SUPABASE_STORAGE_BUCKET}/{fn}'
-    headers = {'Authorization': f'Bearer {SUPABASE_SERVICE_KEY}', 'apikey': SUPABASE_SERVICE_KEY, 'Content-Type': content_type, 'x-upsert': 'true'}
-    resp = requests.post(url, headers=headers, data=data_bytes, timeout=30)
-    resp.raise_for_status()
-    return f'{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_STORAGE_BUCKET}/{fn}'
-
-def supabase_delete(fn):
-    headers = {'Authorization': f'Bearer {SUPABASE_SERVICE_KEY}', 'apikey': SUPABASE_SERVICE_KEY}
-    requests.delete(f'{SUPABASE_URL}/storage/v1/object/{SUPABASE_STORAGE_BUCKET}/{fn}', headers=headers, timeout=15)
-
-def delete_image_file(url):
-    if not url: return
-    try:
-        if url.startswith('/uploads/'):
-            p = UPLOAD_DIR/url.split('/uploads/',1)[1]
-            if p.exists(): p.unlink()
-        elif SUPABASE_URL and url.startswith(f'{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_STORAGE_BUCKET}/'):
-            fn = url.split(f'/storage/v1/object/public/{SUPABASE_STORAGE_BUCKET}/',1)[1]
-            supabase_delete(fn)
-    except Exception:
-        app.logger.exception('Could not delete old product image; continuing anyway')
-
 def save_images(files,pid,name):
     saved=[]
     for n,f in enumerate(files,1):
         if not f or not f.filename: continue
         ext=Path(f.filename).suffix.lower()
         if ext not in ALLOWED_IMAGE_EXTS: continue
-        fn=f'{pid}-{uuid.uuid4().hex[:10]}-{secure_filename(Path(f.filename).stem)[:50] or "product"}.webp'
+        fn=f'{pid}-{uuid.uuid4().hex[:10]}-{secure_filename(Path(f.filename).stem)[:50] or "product"}.webp'; target=UPLOAD_DIR/fn
         if Image:
-            img=Image.open(f.stream).convert('RGB'); img.thumbnail((1400,1400))
-            buf=io.BytesIO(); img.save(buf,'WEBP',quality=82,method=6); data_bytes=buf.getvalue()
-        else:
-            data_bytes=f.read()
-        if USE_SUPABASE_STORAGE:
-            try:
-                saved.append((supabase_upload(fn,data_bytes), n)); continue
-            except Exception:
-                app.logger.exception('Supabase Storage upload failed, saving to local disk instead')
-        target=UPLOAD_DIR/fn; target.write_bytes(data_bytes)
+            img=Image.open(f.stream).convert('RGB'); img.thumbnail((1400,1400)); img.save(target,'WEBP',quality=82,method=6)
+        else: f.save(target)
         saved.append(('/uploads/'+fn,n))
     return saved
 @app.post('/api/products')
@@ -379,7 +345,9 @@ def delete_product(pid):
     with db() as con:
         imgs=con.execute('select url from product_images where product_id=?',(pid,)).fetchall(); con.execute('delete from products where id=?',(pid,))
     for img in imgs:
-        delete_image_file(img['url'])
+        if img['url'].startswith('/uploads/'):
+            p=UPLOAD_DIR/img['url'].split('/uploads/',1)[1]
+            if p.exists(): p.unlink()
     return jsonify({'ok':True})
 
 def cart_key():
@@ -402,7 +370,7 @@ def add_cart():
         pid = resolve_product_id(con, pid)
         p=con.execute('select stock,status from products where id=?',(pid,)).fetchone() if pid else None
         if not p or p['status']!='active' or p['stock']<=0: return jsonify({'error':'Product is not available.'}),400
-        con.execute('insert into cart_items values (?,?,?,?) on conflict(cart_key,product_id) do update set quantity=case when cart_items.quantity+excluded.quantity < ? then cart_items.quantity+excluded.quantity else ? end,updated_at=excluded.updated_at',(cart_key(),pid,min(qty,p['stock']),now_iso(),p['stock'],p['stock']))
+        con.execute('insert into cart_items values (?,?,?,?) on conflict(cart_key,product_id) do update set quantity=case when quantity+excluded.quantity < ? then quantity+excluded.quantity else ? end,updated_at=excluded.updated_at',(cart_key(),pid,min(qty,p['stock']),now_iso(),p['stock'],p['stock']))
     return jsonify(cart_payload())
 @app.patch('/api/cart/items/<pid>')
 def update_cart(pid):
