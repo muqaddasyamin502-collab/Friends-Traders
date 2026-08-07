@@ -186,14 +186,34 @@ def product_images_for(con, product_ids):
         out.setdefault(pid, []).append(d)
     return out
 
+def product_features_for(con, product_ids):
+    if not product_ids:
+        return {}
+    placeholders = ','.join('?' for _ in product_ids)
+    rows = con.execute(f'select product_id,label,sort_order from product_features where product_id in ({placeholders}) order by product_id,sort_order,id', product_ids).fetchall()
+    out = {}
+    for row in rows:
+        out.setdefault(row['product_id'], []).append(row['label'])
+    return out
+
+def save_features(con, pid, raw):
+    con.execute('delete from product_features where product_id=?', (pid,))
+    parts = [clean(x, 140) for x in re.split(r'[\n|,]+', str(raw or ''))]
+    for order, label in enumerate([p for p in parts if p][:12], 1):
+        con.execute('insert into product_features values (?,?,?,?,?)', (uuid.uuid4().hex, pid, label, order, now_iso()))
+
+def ensure_runtime_schema():
+    with db() as con:
+        con.execute('create table if not exists product_features (id text primary key,product_id text not null references products(id) on delete cascade,label text not null,sort_order integer not null default 0,created_at text not null)')
+
 def images(pid):
     with db() as con:
         return product_images_for(con, [pid]).get(pid, [])
 
-def public_product(r, image_map=None):
-    d = dict(r); d['price']=float(d['price']); d['discount']=float(d['discount']); d['final_price']=max(0, round(d['price']-d['discount'],2)); d['low_stock']=d['stock']<=LOW_STOCK_THRESHOLD; d['out_of_stock']=d['stock']<=0; d['images']=(image_map or {}).get(d['id']) if image_map is not None else images(d['id']); return d
+def public_product(r, image_map=None, feature_map=None):
+    d = dict(r); d['price']=float(d['price']); d['discount']=float(d['discount']); d['final_price']=max(0, round(d['price']-d['discount'],2)); d['low_stock']=d['stock']<=LOW_STOCK_THRESHOLD; d['out_of_stock']=d['stock']<=0; d['images']=(image_map or {}).get(d['id']) if image_map is not None else images(d['id']); d['features']=(feature_map or {}).get(d['id'], []); return d
 
-migrate(); seed()
+migrate(); ensure_runtime_schema(); seed()
 
 @app.get('/')
 def home(): return send_from_directory(BASE_DIR, 'index.html')
@@ -275,13 +295,14 @@ def list_products():
         rows=con.execute(f'select * from products{clause} order by {order} limit ? offset ?',[*params,per,(page-1)*per]).fetchall()
         image_map=product_images_for(con, [r['id'] for r in rows])
         facets={'categories':[dict(r) for r in con.execute("select category_slug slug,category name,count(*) count from products where status='active' group by category_slug,category order by category")], 'brands':[r['brand'] for r in con.execute("select distinct brand from products where status='active' order by brand")]}
-    return jsonify({'products':[public_product(r, image_map) for r in rows],'total':total,'page':page,'per_page':per,'facets':facets})
+    return jsonify({'products':[public_product(r, image_map, feature_map) for r in rows],'total':total,'page':page,'per_page':per,'facets':facets})
 @app.get('/api/products/<pid>')
 def product_detail(pid):
     with db() as con:
         r=con.execute('select * from products where id=?',(pid,)).fetchone()
         image_map=product_images_for(con, [r['id']]) if r else {}
-    return (jsonify({'product':public_product(r, image_map)}) if r else (jsonify({'error':'Product not found.'}),404))
+        feature_map=product_features_for(con, [r['id']]) if r else {}
+    return (jsonify({'product':public_product(r, image_map, feature_map)}) if r else (jsonify({'error':'Product not found.'}),404))
 
 def payload():
     s=request.form if request.form else (request.get_json(silent=True) or {})
@@ -295,19 +316,12 @@ def save_images(files,pid,name):
         if not f or not f.filename: continue
         ext=Path(f.filename).suffix.lower()
         if ext not in ALLOWED_IMAGE_EXTS: continue
-
         if DATABASE_URL:
-
             raw = f.read()
-
             if len(raw) > int(os.getenv('MAX_DB_IMAGE_BYTES', str(1024*1024))):
-
                 continue
-
             mime = 'image/webp' if ext == '.webp' else ('image/png' if ext == '.png' else 'image/jpeg')
-
             saved.append(('data:' + mime + ';base64,' + base64.b64encode(raw).decode('ascii'), n))
-
             continue
         fn=f'{pid}-{uuid.uuid4().hex[:10]}-{secure_filename(Path(f.filename).stem)[:50] or "product"}.webp'; target=UPLOAD_DIR/fn
         if Image:
@@ -327,9 +341,10 @@ def create_product():
             con.execute('insert into products values (?,?,?,?,?,?,?,?,?,?,?,?,?)',(pid,d['sku'],d['name'],d['category'],d['category_slug'],d['brand'],d['description'],d['price'],d['discount'],d['stock'],d['status'],now_iso(),now_iso()))
             image_url = clean((request.form if request.form else {}).get('image_url'), 1000)
             if image_url: con.execute('insert into product_images values (?,?,?,?,?,?)',(uuid.uuid4().hex,pid,image_url,d['name'],0,now_iso()))
+            save_features(con, pid, (request.form if request.form else {}).get('features'))
             for url,order in save_images(request.files.getlist('images'),pid,d['name']): con.execute('insert into product_images values (?,?,?,?,?,?)',(uuid.uuid4().hex,pid,url,d['name'],order,now_iso()))
-        return product_detail(pid)
     except Exception: return jsonify({'error':'SKU already exists.'}),409
+    return product_detail(pid)
 @app.put('/api/products/<pid>')
 def update_product(pid):
     u,e=require_owner();
@@ -341,9 +356,12 @@ def update_product(pid):
             pid = resolve_product_id(con, pid) or pid
             if not con.execute('select id from products where id=?',(pid,)).fetchone(): return jsonify({'error':'Product not found.'}),404
             con.execute('update products set sku=?,name=?,category=?,category_slug=?,brand=?,description=?,price=?,discount=?,stock=?,status=?,updated_at=? where id=?',(d['sku'],d['name'],d['category'],d['category_slug'],d['brand'],d['description'],d['price'],d['discount'],d['stock'],d['status'],now_iso(),pid))
+            image_url = clean((request.form if request.form else {}).get('image_url'), 1000)
+            if image_url: con.execute('insert into product_images values (?,?,?,?,?,?)',(uuid.uuid4().hex,pid,image_url,d['name'],0,now_iso()))
+            save_features(con, pid, (request.form if request.form else {}).get('features'))
             for url,order in save_images(request.files.getlist('images'),pid,d['name']): con.execute('insert into product_images values (?,?,?,?,?,?)',(uuid.uuid4().hex,pid,url,d['name'],order,now_iso()))
-        return product_detail(pid)
     except Exception: return jsonify({'error':'SKU already exists.'}),409
+    return product_detail(pid)
 @app.patch('/api/products/<pid>')
 def patch_product(pid):
     u,e=require_owner();
@@ -412,6 +430,19 @@ def order_payload(oid):
         if not o: return None
         o['items']=[dict(r) for r in con.execute('select * from order_items where order_id=?',(oid,))]
     return o
+
+
+def order_payloads(con, ids):
+    if not ids:
+        return []
+    placeholders = ','.join('?' for _ in ids)
+    orders = [dict(r) for r in con.execute(f'select * from orders where id in ({placeholders})', ids).fetchall()]
+    order_map = {o['id']: o for o in orders}
+    for o in orders:
+        o['items'] = []
+    for item in con.execute(f'select * from order_items where order_id in ({placeholders}) order by order_id', ids).fetchall():
+        order_map[item['order_id']]['items'].append(dict(item))
+    return [order_map[i] for i in ids if i in order_map]
 @app.post('/api/checkout')
 def checkout():
     d=request.get_json(silent=True) or {}; u=current_user(); c=d.get('customer') or {}; name=clean(c.get('name') or (u or {}).get('name'),140); phone=clean(c.get('phone') or (u or {}).get('phone'),60); email=clean(c.get('email') or (u or {}).get('email'),180); addr=clean(c.get('address'),1200)
@@ -442,8 +473,9 @@ def list_orders():
     if e: return e
     with db() as con:
         rows=con.execute('select id from orders order by created_at desc limit 300' if u['role']=='owner' else 'select id from orders where user_id=? order by created_at desc',( () if u['role']=='owner' else (u['id'],) )).fetchall()
-    return jsonify({'orders':[order_payload(r['id']) for r in rows]})
-
+        ids=[r['id'] for r in rows]
+        orders=order_payloads(con, ids)
+    return jsonify({'orders':orders})
 
 @app.get('/api/owner/summary')
 def owner_summary():
@@ -454,12 +486,16 @@ def owner_summary():
         sc={r['order_status']:r['c'] for r in con.execute('select order_status,count(*) c from orders group by order_status')}
         cards={'total_products':con.execute('select count(*) c from products').fetchone()['c'],'total_orders':con.execute('select count(*) c from orders').fetchone()['c'],'pending_orders':sc.get('pending',0),'processing_orders':sc.get('processing',0),'completed_orders':sc.get('completed',0),'cancelled_orders':sc.get('cancelled',0),'revenue':round(float(con.execute("select coalesce(sum(total),0) v from orders where order_status='completed'").fetchone()['v']),2),'today_sales':round(float(con.execute('select coalesce(sum(total),0) v from orders where substr(created_at,1,10)=?',(today,)).fetchone()['v']),2),'monthly_sales':round(float(con.execute('select coalesce(sum(total),0) v from orders where substr(created_at,1,7)=?',(month,)).fetchone()['v']),2)}
         order_ids=con.execute('select id from orders order by created_at desc limit 300').fetchall()
+        ids=[r['id'] for r in order_ids]
+        orders=order_payloads(con, ids)
         product_rows=con.execute('select * from products order by updated_at desc limit 500').fetchall()
-        image_map=product_images_for(con, [r['id'] for r in product_rows])
-        products=[public_product(r, image_map) for r in product_rows]
+        product_ids=[r['id'] for r in product_rows]
+        image_map=product_images_for(con, product_ids)
+        feature_map=product_features_for(con, product_ids)
+        products=[public_product(r, image_map, feature_map) for r in product_rows]
         low=[p for p in products if p['stock'] <= LOW_STOCK_THRESHOLD][:30]
         notes=[dict(r) for r in con.execute("select * from notifications where audience in ('owner','all') and read_at is null order by created_at desc limit 30")]
-    return jsonify({'cards':cards,'orders':[order_payload(r['id']) for r in order_ids],'products':products,'low_stock':low,'notifications':notes})
+    return jsonify({'cards':cards,'orders':orders,'products':products,'low_stock':low,'notifications':notes})
 
 @app.patch('/api/orders/<oid>')
 def update_order(oid):
