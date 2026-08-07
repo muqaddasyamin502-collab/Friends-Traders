@@ -2,6 +2,8 @@
   let csrfToken = '';
   let ownerMode = false;
   let ownerRefreshTimer = null;
+  let currentUser = null;
+  let editingProductId = null;
   const backendHost = location.hostname === 'localhost' ? 'localhost' : '127.0.0.1';
   const isRenderHost = location.hostname.includes('onrender.com');
   const isStaticPreview = location.protocol === 'file:' || ['5500', '5501'].includes(location.port);
@@ -17,19 +19,29 @@
     const response = await fetch(apiUrl('/api/csrf'), { credentials: 'include' });
     const data = await response.json();
     csrfToken = data.csrf_token;
+    currentUser = data.user || null;
     return data;
   }
 
   async function api(url, options = {}, retry = true) {
     const headers = options.body instanceof FormData ? { 'X-CSRF-Token': csrfToken } : { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken };
-    const response = await fetch(apiUrl(url), { credentials: 'include', ...options, headers: { ...headers, ...(options.headers || {}) } });
-    const data = await response.json().catch(() => ({}));
-    if (response.status === 403 && retry && String(data.error || '').toLowerCase().includes('security token')) {
-      await initCsrf();
-      return api(url, options, false);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), options.timeoutMs || 20000);
+    try {
+      const response = await fetch(apiUrl(url), { credentials: 'include', ...options, signal: controller.signal, headers: { ...headers, ...(options.headers || {}) } });
+      const data = await response.json().catch(() => ({}));
+      if (response.status === 403 && retry && String(data.error || '').toLowerCase().includes('security token')) {
+        await initCsrf();
+        return api(url, options, false);
+      }
+      if (!response.ok) throw new Error(data.error || 'Request failed');
+      return data;
+    } catch (error) {
+      if (error.name === 'AbortError') throw new Error('Server response slow hai. Render/Supabase wake hone ke baad dobara try karein.');
+      throw error;
+    } finally {
+      clearTimeout(timeout);
     }
-    if (!response.ok) throw new Error(data.error || 'Request failed');
-    return data;
   }
 
   function statusClass(status) {
@@ -46,6 +58,37 @@
     return labels[category] || String(category || 'Premium Products');
   }
 
+  function productFeatures(product) {
+    const custom = Array.isArray(product.features) ? product.features.filter(Boolean) : [];
+    if (custom.length) return custom;
+    return [product.brand, product.category, product.low_stock ? 'Limited stock' : 'Ready stock'].filter(Boolean);
+  }
+
+  function renderCartData(cart) {
+    const cartItems = document.getElementById('cartItems');
+    const cartCount = document.getElementById('cartCount');
+    const cartTotal = document.getElementById('cartTotal');
+    if (cartCount) cartCount.textContent = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+    if (cartTotal) cartTotal.textContent = money(cart.total);
+    if (!cartItems) return;
+    if (!cart.items.length) {
+      cartItems.innerHTML = '<p class="owner-note">Cart is empty. Add products to place an order.</p>';
+      return;
+    }
+    cartItems.innerHTML = cart.items.map(item => `
+      <div class="cart-item">
+        <img src="${escapeHtml(assetUrl(item.image || '/assets/friends-traders-business-card.png'))}" alt="${escapeHtml(item.name)}">
+        <div><h4>${escapeHtml(item.name)}</h4><p>${money(item.unit_price)}</p><div class="qty-controls"><button type="button" onclick="updateCartQty('${escapeHtml(item.product_id)}', -1)">-</button><span>${item.quantity}</span><button type="button" onclick="updateCartQty('${escapeHtml(item.product_id)}', 1)">+</button></div></div>
+        <button class="remove-cart-btn" type="button" onclick="removeFromCart('${escapeHtml(item.product_id)}')" aria-label="Remove ${escapeHtml(item.name)}"><i class="fas fa-trash"></i></button>
+      </div>`).join('') + `<div class="owner-note">Shipping: ${money(cart.shipping)} | Grand Total: ${money(cart.total)}</div>`;
+  }
+
+  function showCartPanel() {
+    document.getElementById('cartPanel').classList.add('active');
+    document.getElementById('cartPanel').setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
   function backendProductCard(product) {
     const image = assetUrl((product.images && product.images[0] && product.images[0].url) || '/assets/friends-traders-business-card.png');
     const price = money(product.final_price);
@@ -53,7 +96,7 @@
     const availability = product.out_of_stock ? 'Out of stock' : (product.low_stock ? 'Limited stock' : 'In stock');
     const description = product.description || 'Quality product available at Friends Traders Multan.';
     return `
-      <div class="product-card owner-added-product" data-category="${escapeHtml(product.category_slug)}" data-id="${escapeHtml(product.id)}" data-title="${escapeHtml(product.name)}" data-brand="${escapeHtml(product.brand)}" data-category-label="${escapeHtml(product.category)}" data-price="${escapeHtml(price)}" data-old-price="${escapeHtml(oldPrice)}" data-availability="${escapeHtml(availability)}" data-description="${escapeHtml(description)}" data-image="${escapeHtml(image)}" data-features="Database Product|Available at Friends Traders|Multan delivery">
+      <div class="product-card owner-added-product" data-category="${escapeHtml(product.category_slug)}" data-id="${escapeHtml(product.id)}" data-title="${escapeHtml(product.name)}" data-brand="${escapeHtml(product.brand)}" data-category-label="${escapeHtml(product.category)}" data-price="${escapeHtml(price)}" data-old-price="${escapeHtml(oldPrice)}" data-availability="${escapeHtml(availability)}" data-description="${escapeHtml(description)}" data-image="${escapeHtml(image)}" data-features="${productFeatures(product).map(escapeHtml).join('|')}">
         <div class="product-img">
           <img src="${escapeHtml(image)}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async">
           <span class="stock-badge">${escapeHtml(availability)}</span>
@@ -63,7 +106,7 @@
           <h3 class="product-title">${escapeHtml(product.name)}</h3>
           <p class="product-description">${escapeHtml(description)}</p>
           <div class="product-price">${escapeHtml(price)} ${oldPrice ? '<span>' + escapeHtml(oldPrice) + '</span>' : ''}</div>
-          <ul class="product-features"><li><i class="fas fa-check"></i> Permanent database product</li><li><i class="fas fa-check"></i> Stock: ${Number(product.stock || 0)}</li><li><i class="fas fa-check"></i> Multan delivery</li></ul>
+          <ul class="product-features">${productFeatures(product).slice(0,4).map(feature => '<li><i class="fas fa-check"></i> ' + escapeHtml(feature) + '</li>').join('')}<li><i class="fas fa-check"></i> Stock: ${Number(product.stock || 0)}</li></ul>
           <div class="product-actions">
             <button class="product-btn details-btn" type="button" onclick="viewProductDetails('${escapeHtml(product.id)}')"><i class="fas fa-eye"></i> View Details</button>
             <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('${escapeHtml(product.name)}')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
@@ -106,23 +149,7 @@
   }
 
   async function renderBackendCart() {
-    const cart = await getCart();
-    const cartItems = document.getElementById('cartItems');
-    const cartCount = document.getElementById('cartCount');
-    const cartTotal = document.getElementById('cartTotal');
-    if (cartCount) cartCount.textContent = cart.items.reduce((sum, item) => sum + item.quantity, 0);
-    if (cartTotal) cartTotal.textContent = money(cart.total);
-    if (!cartItems) return;
-    if (!cart.items.length) {
-      cartItems.innerHTML = '<p class="owner-note">Cart is empty. Add products to place an order.</p>';
-      return;
-    }
-    cartItems.innerHTML = cart.items.map(item => `
-      <div class="cart-item">
-        <img src="${escapeHtml(assetUrl(item.image || '/assets/friends-traders-business-card.png'))}" alt="${escapeHtml(item.name)}">
-        <div><h4>${escapeHtml(item.name)}</h4><p>${money(item.unit_price)}</p><div class="qty-controls"><button type="button" onclick="updateCartQty('${escapeHtml(item.product_id)}', -1)">-</button><span>${item.quantity}</span><button type="button" onclick="updateCartQty('${escapeHtml(item.product_id)}', 1)">+</button></div></div>
-        <button class="remove-cart-btn" type="button" onclick="removeFromCart('${escapeHtml(item.product_id)}')" aria-label="Remove ${escapeHtml(item.name)}"><i class="fas fa-trash"></i></button>
-      </div>`).join('') + `<div class="owner-note">Shipping: ${money(cart.shipping)} | Grand Total: ${money(cart.total)}</div>`;
+    renderCartData(await getCart());
   }
 
   window.addToCart = async function(productId, button) {
@@ -130,8 +157,9 @@
     const oldHtml = btn ? btn.innerHTML : '';
     if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...'; }
     try {
-      await api('/api/cart/items', { method: 'POST', body: JSON.stringify({ product_id: productId, quantity: 1 }) });
-      await window.openCart();
+      const cart = await api('/api/cart/items', { method: 'POST', body: JSON.stringify({ product_id: productId, quantity: 1 }), timeoutMs: 20000 });
+      renderCartData(cart);
+      showCartPanel();
     } catch (error) {
       alert(error.message || 'Could not add to cart. Please try again.');
     } finally {
@@ -153,15 +181,17 @@
 
   window.openCart = async function() {
     await renderBackendCart();
-    await renderCustomerOrderStatus();
-    document.getElementById('cartPanel').classList.add('active');
-    document.getElementById('cartPanel').setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+    if (currentUser) await renderCustomerOrderStatus();
+    showCartPanel();
   };
 
   async function renderCustomerOrderStatus() {
     const box = document.getElementById('customerOrderStatus');
     if (!box) return;
+    if (!currentUser) {
+      box.innerHTML = '<p class="owner-note">Guest orders owner panel me save hotay hain. Login users apni history yahan dekh sakte hain.</p>';
+      return;
+    }
     try {
       const data = await api('/api/orders', { method: 'GET' });
       if (!data.orders.length) { box.innerHTML = '<p class="owner-note">No order placed yet.</p>'; return; }
@@ -202,7 +232,9 @@
       <input id="ownerProductDiscount" type="number" min="0" step="1" placeholder="Discount amount">
       <input id="ownerProductStock" type="number" min="0" step="1" placeholder="Stock quantity">
       <select id="ownerProductStatus"><option value="active">Active</option><option value="hidden">Hidden</option><option value="draft">Draft</option></select>
+      <textarea id="ownerProductFeatures" placeholder="Characteristics/features: one per line, e.g. Stainless steel body"></textarea>
       <input id="ownerProductImages" type="file" accept="image/*" multiple>
+      <input id="ownerEditingProductId" type="hidden">
       <div class="owner-note">Render par permanent images ke liye Image URL best hai. Supabase database mode mein small uploads bhi store ho jati hain.</div>
       <div id="ownerProductManager" class="order-status-list"></div>
       <div class="owner-note">Exports and backup</div>
@@ -236,7 +268,8 @@
     const oldText = loginButton ? loginButton.innerHTML : '';
     if (loginButton) { loginButton.disabled = true; loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening...'; }
     try {
-      await api('/api/auth/owner-login', { method: 'POST', body: JSON.stringify({ password: typed }) });
+      const loginData = await api('/api/auth/owner-login', { method: 'POST', body: JSON.stringify({ password: typed }) });
+      currentUser = loginData.user || currentUser;
       ownerMode = true;
       document.getElementById('ownerLogin').style.display = 'none';
       document.getElementById('ownerTools').style.display = 'grid';
@@ -280,8 +313,10 @@
         <div class="owner-order">
           <strong>${escapeHtml(product.name)}</strong>
           <span>${escapeHtml(product.sku)} | ${escapeHtml(product.brand)} | ${money(product.final_price)} | ${escapeHtml(product.status)}</span>
+          <span>Features: ${productFeatures(product).map(escapeHtml).join(', ') || 'Not added'}</span>
           <input type="number" min="0" step="1" value="${Number(product.stock || 0)}" aria-label="Stock for ${escapeHtml(product.name)}" data-stock-for="${escapeHtml(product.id)}">
           <select data-status-for="${escapeHtml(product.id)}">${['active','hidden','draft'].map(status => `<option value="${status}" ${product.status === status ? 'selected' : ''}>${status}</option>`).join('')}</select>
+          <button class="btn btn-secondary" type="button" onclick="editOwnerProduct('${escapeHtml(product.id)}')"><i class="fas fa-edit"></i> Edit Full Product</button>
           <button class="btn btn-secondary" type="button" onclick="updateProductQuick('${escapeHtml(product.id)}')"><i class="fas fa-save"></i> Save Stock/Status</button>
           <button class="btn btn-primary" type="button" onclick="deleteOwnerProduct('${escapeHtml(product.id)}')"><i class="fas fa-trash"></i> Delete Product</button>
         </div>`).join('') : '<p class="owner-note">No products in database.</p>');
@@ -291,6 +326,25 @@
   window.updateOrderStatus = async function(orderId, status) {
     await api('/api/orders/' + encodeURIComponent(orderId), { method: 'PATCH', body: JSON.stringify({ order_status: status }) });
     await renderOwnerDashboard();
+  };
+
+  window.editOwnerProduct = async function(productId) {
+    const data = await api('/api/products/' + encodeURIComponent(productId), { method: 'GET' });
+    const p = data.product;
+    editingProductId = p.id;
+    document.getElementById('ownerEditingProductId').value = p.id;
+    document.getElementById('ownerProductTitle').value = p.name || '';
+    document.getElementById('ownerProductPrice').value = p.price || '';
+    document.getElementById('ownerProductImage').value = (p.images && p.images[0] && !String(p.images[0].url).startsWith('data:')) ? p.images[0].url : '';
+    document.getElementById('ownerProductCategory').value = p.category_slug || 'misc';
+    document.getElementById('ownerProductDescription').value = p.description || '';
+    document.getElementById('ownerProductSku').value = p.sku || '';
+    document.getElementById('ownerProductBrand').value = p.brand || '';
+    document.getElementById('ownerProductDiscount').value = p.discount || 0;
+    document.getElementById('ownerProductStock').value = p.stock || 0;
+    document.getElementById('ownerProductStatus').value = p.status || 'active';
+    document.getElementById('ownerProductFeatures').value = productFeatures(p).join('\n');
+    document.getElementById('ownerProductTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   window.updateProductQuick = async function(productId) {
@@ -322,17 +376,20 @@
     form.append('category', category.selectedOptions[0].textContent);
     form.append('brand', document.getElementById('ownerProductBrand')?.value.trim() || 'Friends Traders');
     form.append('description', document.getElementById('ownerProductDescription').value.trim());
+    form.append('features', document.getElementById('ownerProductFeatures')?.value.trim() || '');
     form.append('discount', document.getElementById('ownerProductDiscount')?.value || 0);
     form.append('stock', document.getElementById('ownerProductStock')?.value || 10);
     form.append('status', document.getElementById('ownerProductStatus')?.value || 'active');
     Array.from(document.getElementById('ownerProductImages')?.files || []).forEach(file => form.append('images', file));
     try {
-      const response = await fetch(apiUrl('/api/products'), { method: 'POST', credentials: 'include', headers: { 'X-CSRF-Token': csrfToken }, body: form });
+      const editId = editingProductId || document.getElementById('ownerEditingProductId')?.value;
+      const response = await fetch(apiUrl(editId ? '/api/products/' + encodeURIComponent(editId) : '/api/products'), { method: editId ? 'PUT' : 'POST', credentials: 'include', headers: { 'X-CSRF-Token': csrfToken }, body: form });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || 'Could not save product');
-      ['ownerProductTitle','ownerProductPrice','ownerProductImage','ownerProductDescription','ownerProductSku','ownerProductBrand','ownerProductDiscount','ownerProductStock'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      ['ownerProductTitle','ownerProductPrice','ownerProductImage','ownerProductDescription','ownerProductSku','ownerProductBrand','ownerProductDiscount','ownerProductStock','ownerProductFeatures','ownerEditingProductId'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      editingProductId = null;
       const files = document.getElementById('ownerProductImages'); if (files) files.value = '';
-      alert('Product saved permanently and website grid me show ho ga.');
+      alert(editId ? 'Product updated.' : 'Product saved permanently and website grid me show ho ga.');
       await renderBackendProducts();
       await renderOwnerDashboard();
     } catch (error) { alert(error.message); }
