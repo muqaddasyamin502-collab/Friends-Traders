@@ -205,6 +205,7 @@ def save_features(con, pid, raw):
 def ensure_runtime_schema():
     with db() as con:
         con.execute('create table if not exists product_features (id text primary key,product_id text not null references products(id) on delete cascade,label text not null,sort_order integer not null default 0,created_at text not null)')
+        con.execute('create table if not exists reviews (id text primary key,name text not null,phone text,rating integer not null default 5,message text not null,active integer not null default 1,created_at text not null)')
 
 def images(pid):
     with db() as con:
@@ -213,7 +214,19 @@ def images(pid):
 def public_product(r, image_map=None, feature_map=None):
     d = dict(r); d['price']=float(d['price']); d['discount']=float(d['discount']); d['final_price']=max(0, round(d['price']-d['discount'],2)); d['low_stock']=d['stock']<=LOW_STOCK_THRESHOLD; d['out_of_stock']=d['stock']<=0; d['images']=(image_map or {}).get(d['id']) if image_map is not None else images(d['id']); d['features']=(feature_map or {}).get(d['id'], []); return d
 
-migrate(); ensure_runtime_schema(); seed()
+def hide_duplicate_products():
+    """Keep the newest copy when the same product was saved repeatedly."""
+    with db() as con:
+        rows = con.execute("select id,name,category_slug,updated_at from products where status='active' order by updated_at desc,id desc").fetchall()
+        seen = set()
+        for row in rows:
+            key = (clean(row['name'], 180).lower(), clean(row['category_slug'], 120).lower())
+            if key in seen:
+                con.execute("update products set status='hidden',updated_at=? where id=?", (now_iso(), row['id']))
+            else:
+                seen.add(key)
+
+migrate(); ensure_runtime_schema(); seed(); hide_duplicate_products()
 
 @app.get('/')
 def home(): return send_from_directory(BASE_DIR, 'index.html')
@@ -275,6 +288,24 @@ def add_address():
         con.execute('insert into addresses values (?,?,?,?,?,?,?,?)',(uuid.uuid4().hex,u['id'],clean(d.get('label'),60) or 'Home',addr,city,1 if d.get('is_default') else 0,now_iso(),now_iso()))
     return me()
 
+@app.get('/api/reviews')
+def list_reviews():
+    with db() as con:
+        rows=[dict(r) for r in con.execute('select id,name,phone,rating,message,created_at from reviews where active=1 order by created_at desc limit 30')]
+    return jsonify({'reviews':rows})
+
+@app.post('/api/reviews')
+def add_review():
+    d=request.get_json(silent=True) or {}
+    name=clean(d.get('name'),120); phone=clean(d.get('phone'),60); message=clean(d.get('message'),1000)
+    try: rating=max(1,min(5,int(d.get('rating') or 5)))
+    except Exception: rating=5
+    if not name or not message: return jsonify({'error':'Name and review message are required.'}),400
+    rid=uuid.uuid4().hex
+    with db() as con:
+        con.execute('insert into reviews values (?,?,?,?,?,?,?)',(rid,name,phone,rating,message,1,now_iso()))
+    return jsonify({'review':{'id':rid,'name':name,'phone':phone,'rating':rating,'message':message,'created_at':now_iso()}})
+
 @app.get('/api/products')
 def list_products():
     u=current_user(); q=clean(request.args.get('q'),120).lower(); cat=clean(request.args.get('category'),80); brand=clean(request.args.get('brand'),80); status=clean(request.args.get('status'),30); sort=request.args.get('sort','newest'); page=max(1,int(request.args.get('page',1))); per=min(48,max(1,int(request.args.get('per_page',12))))
@@ -294,6 +325,7 @@ def list_products():
         total=con.execute(f'select count(*) c from products{clause}',params).fetchone()['c']
         rows=con.execute(f'select * from products{clause} order by {order} limit ? offset ?',[*params,per,(page-1)*per]).fetchall()
         image_map=product_images_for(con, [r['id'] for r in rows])
+        feature_map=product_features_for(con, [r['id'] for r in rows])
         facets={'categories':[dict(r) for r in con.execute("select category_slug slug,category name,count(*) count from products where status='active' group by category_slug,category order by category")], 'brands':[r['brand'] for r in con.execute("select distinct brand from products where status='active' order by brand")]}
     return jsonify({'products':[public_product(r, image_map, feature_map) for r in rows],'total':total,'page':page,'per_page':per,'facets':facets})
 @app.get('/api/products/<pid>')
@@ -335,10 +367,16 @@ def create_product():
     if e: return e
     try: d=payload()
     except ValueError as ex: return jsonify({'error':str(ex)}),400
-    pid=uuid.uuid4().hex
     try:
         with db() as con:
-            con.execute('insert into products values (?,?,?,?,?,?,?,?,?,?,?,?,?)',(pid,d['sku'],d['name'],d['category'],d['category_slug'],d['brand'],d['description'],d['price'],d['discount'],d['stock'],d['status'],now_iso(),now_iso()))
+            # A repeated Save click should update the same named product in the
+            # selected category instead of creating a second card and cart item.
+            existing=con.execute("select id from products where lower(trim(name))=lower(trim(?)) and category_slug=? order by updated_at desc limit 1",(d['name'],d['category_slug'])).fetchone()
+            pid=existing['id'] if existing else uuid.uuid4().hex
+            if existing:
+                con.execute('update products set sku=?,name=?,category=?,category_slug=?,brand=?,description=?,price=?,discount=?,stock=?,status=?,updated_at=? where id=?',(d['sku'],d['name'],d['category'],d['category_slug'],d['brand'],d['description'],d['price'],d['discount'],d['stock'],d['status'],now_iso(),pid))
+            else:
+                con.execute('insert into products values (?,?,?,?,?,?,?,?,?,?,?,?,?)',(pid,d['sku'],d['name'],d['category'],d['category_slug'],d['brand'],d['description'],d['price'],d['discount'],d['stock'],d['status'],now_iso(),now_iso()))
             image_url = clean((request.form if request.form else {}).get('image_url'), 1000)
             if image_url: con.execute('insert into product_images values (?,?,?,?,?,?)',(uuid.uuid4().hex,pid,image_url,d['name'],0,now_iso()))
             save_features(con, pid, (request.form if request.form else {}).get('features'))
