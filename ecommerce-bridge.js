@@ -1,101 +1,158 @@
 (function() {
-  let csrfToken = '';
-  let ownerMode = false;
-  let ownerRefreshTimer = null;
-  let currentUser = null;
-  let editingProductId = null;
-  const backendHost = location.hostname === 'localhost' ? 'localhost' : '127.0.0.1';
-  const isRenderHost = location.hostname.includes('onrender.com');
-  const isStaticPreview = location.protocol === 'file:' || ['5500', '5501'].includes(location.port);
-  const apiBase = isStaticPreview ? `http://${backendHost}:5001` : '';
-  const apiUrl = url => apiBase + url;
-  const assetUrl = url => (url && url.startsWith('/')) ? apiBase + url : url;
-  const money = value => 'PKR ' + Number(value || 0).toLocaleString('en-PK');
-  const escapeHtml = value => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
-  const slugify = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'product';
-  window.useBackendCart = true;
+        let csrfToken = '';
+        let ownerMode = false;
+        let ownerRefreshTimer = null;
+        let currentUser = null;
+        let editingProductId = null;
+        let productSaveInProgress = false;
+        const backendHost = location.hostname === 'localhost' ? 'localhost' : '127.0.0.1';
+        const isRenderHost = location.hostname.includes('onrender.com');
+        const isStaticPreview = location.protocol === 'file:' || ['5500', '5501'].includes(location.port);
+        const apiBase = isStaticPreview ? `http://${backendHost}:5001` : '';
+        const apiUrl = url => apiBase + url;
+        const assetUrl = url => (url && url.startsWith('/')) ? apiBase + url : url;
+        const money = value => 'PKR ' + Number(value || 0).toLocaleString('en-PK');
+        const escapeHtml = value => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
+        const slugify = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'product';
+        const cartCacheKey = 'friendsTradersBackendCart';
+        window.useBackendCart = true;
 
-  async function initCsrf() {
-    const response = await fetch(apiUrl('/api/csrf'), { credentials: 'include' });
-    const data = await response.json();
-    csrfToken = data.csrf_token;
-    currentUser = data.user || null;
-    return data;
-  }
+        function cachedCart() {
+            try { return JSON.parse(localStorage.getItem(cartCacheKey) || 'null'); } catch (_) { return null; }
+        }
 
-  async function api(url, options = {}, retry = true) {
-    const headers = options.body instanceof FormData ? { 'X-CSRF-Token': csrfToken } : { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken };
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), options.timeoutMs || 20000);
-    try {
-      const response = await fetch(apiUrl(url), { credentials: 'include', ...options, signal: controller.signal, headers: { ...headers, ...(options.headers || {}) } });
-      const data = await response.json().catch(() => ({}));
-      if (response.status === 403 && retry && String(data.error || '').toLowerCase().includes('security token')) {
-        await initCsrf();
-        return api(url, options, false);
-      }
-      if (!response.ok) throw new Error(data.error || 'Request failed');
-      return data;
-    } catch (error) {
-      if (error.name === 'AbortError') throw new Error('Server response slow hai. Render/Supabase wake hone ke baad dobara try karein.');
-      throw error;
-    } finally {
-      clearTimeout(timeout);
-    }
-  }
+        function cacheCart(cart) {
+            if (cart && Array.isArray(cart.items)) localStorage.setItem(cartCacheKey, JSON.stringify(cart));
+            return cart;
+        }
 
-  function statusClass(status) {
-    return 'status-' + String(status || 'pending').toLowerCase();
-  }
+        async function initCsrf() {
+            const response = await fetch(apiUrl('/api/csrf'), { credentials: 'include' });
+            const data = await response.json();
+            csrfToken = data.csrf_token;
+            currentUser = data.user || null;
+            return data;
+        }
 
-  function categoryLabel(category) {
-    const labels = {
-      rosepetal: 'Rose Petal', chef: 'Chef', sk: 'SK', thermos: 'Thermos', plates: 'Plates',
-      'cups-mugs': 'Cups & Mugs', 'glasses-drinkware': 'Glasses & Drinkware', 'lunch-boxes': 'Lunch Boxes',
-      'water-bottles': 'Water Bottles', dinnerware: 'Dinner Sets', utensils: 'Kitchen Essentials', storage: 'Storage Containers',
-      appliances: 'Electric Kitchen Appliances', 'stainless-steel': 'Stainless Steel', 'air-fryers': 'Air Fryers', random: 'Random Products', misc: 'Other Brands / Miscellaneous'
-    };
-    return labels[category] || String(category || 'Premium Products');
-  }
+        async function api(url, options = {}, retry = true) {
+            const headers = options.body instanceof FormData ? { 'X-CSRF-Token': csrfToken } : { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken };
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), options.timeoutMs || 60000);
+            try {
+                const response = await fetch(apiUrl(url), { credentials: 'include', ...options, signal: controller.signal, headers: {...headers, ...(options.headers || {}) } });
+                const data = await response.json().catch(() => ({}));
+                if (response.status === 403 && retry && String(data.error || '').toLowerCase().includes('security token')) {
+                    await initCsrf();
+                    return api(url, options, false);
+                }
+                if (!response.ok) throw new Error(data.error || 'Request failed');
+                return data;
+            } catch (error) {
+                if (error.name === 'AbortError') throw new Error('Server response abhi slow hai. Please dobara try karein.');
+                throw error;
+            } finally {
+                clearTimeout(timeout);
+            }
+        }
 
-  function productFeatures(product) {
-    const custom = Array.isArray(product.features) ? product.features.filter(Boolean) : [];
-    if (custom.length) return custom;
-    return [product.brand, product.category, product.low_stock ? 'Limited stock' : 'Ready stock'].filter(Boolean);
-  }
+        function statusClass(status) {
+            return 'status-' + String(status || 'pending').toLowerCase();
+        }
 
-  function renderCartData(cart) {
-    const cartItems = document.getElementById('cartItems');
-    const cartCount = document.getElementById('cartCount');
-    const cartTotal = document.getElementById('cartTotal');
-    if (cartCount) cartCount.textContent = cart.items.reduce((sum, item) => sum + item.quantity, 0);
-    if (cartTotal) cartTotal.textContent = money(cart.total);
-    if (!cartItems) return;
-    if (!cart.items.length) {
-      cartItems.innerHTML = '<p class="owner-note">Cart is empty. Add products to place an order.</p>';
-      return;
-    }
-    cartItems.innerHTML = cart.items.map(item => `
+        function categoryLabel(category) {
+            const labels = {
+                rosepetal: 'Rose Petal',
+                chef: 'Chef',
+                sk: 'SK',
+                thermos: 'Thermos',
+                plates: 'Plates',
+                'cups-mugs': 'Cups & Mugs',
+                'glasses-drinkware': 'Glasses & Drinkware',
+                'lunch-boxes': 'Lunch Boxes',
+                'water-bottles': 'Water Bottles',
+                dinnerware: 'Dinner Sets',
+                utensils: 'Kitchen Essentials',
+                storage: 'Storage Containers',
+                appliances: 'Electric Kitchen Appliances',
+                'stainless-steel': 'Stainless Steel',
+                'air-fryers': 'Air Fryers',
+                random: 'Random Products',
+                misc: 'Other Brands / Miscellaneous'
+            };
+            return labels[category] || String(category || 'Premium Products');
+        }
+
+        function productFeatures(product) {
+            const custom = Array.isArray(product.features) ? product.features.filter(Boolean) : [];
+            if (custom.length) return custom;
+            return [product.brand, product.category, product.low_stock ? 'Limited stock' : 'Ready stock'].filter(Boolean);
+        }
+
+        function renderCartData(cart) {
+            const cartItems = document.getElementById('cartItems');
+            const cartCount = document.getElementById('cartCount');
+            const cartTotal = document.getElementById('cartTotal');
+            if (cartCount) cartCount.textContent = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+            if (cartTotal) cartTotal.textContent = money(cart.total);
+            if (!cartItems) return;
+            if (!cart.items.length) {
+                cartItems.innerHTML = '<p class="owner-note">Cart is empty. Add products to place an order.</p>';
+                return;
+            }
+            cartItems.innerHTML = cart.items.map(item => `
       <div class="cart-item">
         <img src="${escapeHtml(assetUrl(item.image || '/assets/friends-traders-business-card.png'))}" alt="${escapeHtml(item.name)}">
         <div><h4>${escapeHtml(item.name)}</h4><p>${money(item.unit_price)}</p><div class="qty-controls"><button type="button" onclick="updateCartQty('${escapeHtml(item.product_id)}', -1)">-</button><span>${item.quantity}</span><button type="button" onclick="updateCartQty('${escapeHtml(item.product_id)}', 1)">+</button></div></div>
         <button class="remove-cart-btn" type="button" onclick="removeFromCart('${escapeHtml(item.product_id)}')" aria-label="Remove ${escapeHtml(item.name)}"><i class="fas fa-trash"></i></button>
       </div>`).join('') + `<div class="owner-note">Shipping: ${money(cart.shipping)} | Grand Total: ${money(cart.total)}</div>`;
-  }
+        }
 
-  function showCartPanel() {
-    document.getElementById('cartPanel').classList.add('active');
-    document.getElementById('cartPanel').setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-  }
+        function showCartPanel() {
+            document.getElementById('cartPanel').classList.add('active');
+            document.getElementById('cartPanel').setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
 
-  function backendProductCard(product) {
-    const image = assetUrl((product.images && product.images[0] && product.images[0].url) || '/assets/friends-traders-business-card.png');
-    const price = money(product.final_price);
-    const oldPrice = product.discount ? money(product.price) : '';
-    const availability = product.out_of_stock ? 'Out of stock' : (product.low_stock ? 'Limited stock' : 'In stock');
-    const description = product.description || 'Quality product available at Friends Traders Multan.';
-    return `
+        function productCardCountFor(filter) {
+            const cards = Array.from(document.querySelectorAll('.product-card'));
+            if (filter === 'all') return cards.length;
+            // Use the exact same matching rule as the button click. Categories
+            // such as Thermos and SK may be represented by product text/brand,
+            // not only by a database slug.
+            if (typeof window.productMatchesFilter === 'function') {
+                return cards.filter(card => window.productMatchesFilter(card, filter)).length;
+            }
+            return cards.filter(card => card.getAttribute('data-category') === filter).length;
+        }
+
+        function updateCategoryCounts() {
+            document.querySelectorAll('.category-card.filter-btn').forEach(button => {
+                const filter = button.dataset.filter || 'all';
+                const count = productCardCountFor(filter);
+                const span = button.querySelector('span');
+                if (span) span.textContent = count + ' ' + (count === 1 ? 'product' : 'products');
+            });
+        }
+
+        function upsertProductCard(product) {
+            const grid = document.querySelector('.products-grid');
+            if (!grid || !product) return;
+            const id = String(product.id || '');
+            const title = String(product.name || '').trim().toLowerCase();
+            const cards = Array.from(document.querySelectorAll('.product-card'));
+            const existing = cards.find(card => String(card.dataset.id || '') === id || String(card.dataset.title || '').trim().toLowerCase() === title);
+            const html = backendProductCard(product);
+            if (existing) existing.outerHTML = html;
+            else grid.insertAdjacentHTML('beforeend', html);
+        }
+
+        function backendProductCard(product) {
+            const image = assetUrl((product.images && product.images[0] && product.images[0].url) || '/assets/friends-traders-business-card.png');
+            const price = money(product.final_price);
+            const oldPrice = product.discount ? money(product.price) : '';
+            const availability = product.out_of_stock ? 'Out of stock' : (product.low_stock ? 'Limited stock' : 'In stock');
+            const description = product.description || 'Quality product available at Friends Traders Multan.';
+            return `
       <div class="product-card owner-added-product" data-category="${escapeHtml(product.category_slug)}" data-id="${escapeHtml(product.id)}" data-title="${escapeHtml(product.name)}" data-brand="${escapeHtml(product.brand)}" data-category-label="${escapeHtml(product.category)}" data-price="${escapeHtml(price)}" data-old-price="${escapeHtml(oldPrice)}" data-availability="${escapeHtml(availability)}" data-description="${escapeHtml(description)}" data-image="${escapeHtml(image)}" data-features="${productFeatures(product).map(escapeHtml).join('|')}">
         <div class="product-img">
           <img src="${escapeHtml(image)}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async">
@@ -110,123 +167,174 @@
           <div class="product-actions">
             <button class="product-btn details-btn" type="button" onclick="viewProductDetails('${escapeHtml(product.id)}')"><i class="fas fa-eye"></i> View Details</button>
             <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('${escapeHtml(product.name)}')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
-            <button class="product-btn add-cart-btn" type="button" onclick="window.addToCart('${escapeHtml(product.id)}', this)" ${product.out_of_stock ? 'disabled' : ''}><i class="fas fa-cart-plus"></i> Add to Cart</button>
+            <button class="product-btn add-cart-btn" type="button" ${product.out_of_stock ? 'disabled' : ''}><i class="fas fa-cart-plus"></i> Add to Cart</button>
           </div>
         </div>
       </div>`;
-  }
+        }
 
-  async function renderBackendProducts() {
-    const grid = document.querySelector('.products-grid');
-    if (!grid) return;
-    const data = await api('/api/products?per_page=500', { method: 'GET' });
-    const existing = new Set(Array.from(document.querySelectorAll('.product-card')).map(card => String(card.dataset.title || '').trim().toLowerCase()));
-    const fresh = data.products.filter(product => !existing.has(String(product.name || '').trim().toLowerCase()));
-    if (fresh.length) grid.insertAdjacentHTML('beforeend', fresh.map(backendProductCard).join(''));
-    wireBackendCartButtons();
-  }
+        async function renderBackendProducts() {
+            const grid = document.querySelector('.products-grid');
+            if (!grid) return;
+            const data = await api('/api/products?per_page=500', { method: 'GET' });
+            // The database is the single source of truth. Replacing the static
+            // starter cards prevents duplicate cards and keeps category counts exact.
+            grid.innerHTML = data.products.map(backendProductCard).join('');
+            wireBackendCartButtons();
+            updateCategoryCounts();
+        }
 
-  function wireBackendCartButtons() {
-    document.querySelectorAll('.product-card').forEach(card => {
-      const actions = card.querySelector('.product-actions');
-      if (!actions) return;
-      let button = actions.querySelector('.add-cart-btn');
-      if (!button) {
-        button = document.createElement('button');
-        button.className = 'product-btn add-cart-btn';
-        button.type = 'button';
-        button.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
-        actions.appendChild(button);
-      }
-      const fresh = button.cloneNode(true);
-      fresh.addEventListener('click', event => window.addToCart(card.dataset.id, event.currentTarget));
-      button.replaceWith(fresh);
-    });
-  }
+        function wireBackendCartButtons() {
+            document.querySelectorAll('.product-card').forEach(card => {
+                const actions = card.querySelector('.product-actions');
+                if (!actions) return;
+                let button = actions.querySelector('.add-cart-btn');
+                if (!button) {
+                    button = document.createElement('button');
+                    button.className = 'product-btn add-cart-btn';
+                    button.type = 'button';
+                    button.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
+                    actions.appendChild(button);
+                }
+                const fresh = button.cloneNode(true);
+                fresh.addEventListener('click', event => window.addToCart(card.dataset.id, event.currentTarget));
+                button.replaceWith(fresh);
+            });
+        }
 
-  async function getCart() {
-    return api('/api/cart', { method: 'GET' });
-  }
+        async function getCart() {
+            return api('/api/cart', { method: 'GET' });
+        }
 
-  async function renderBackendCart() {
-    renderCartData(await getCart());
-  }
+        async function renderBackendCart() {
+            renderCartData(cacheCart(await getCart()));
+        }
 
-  window.addToCart = async function(productId, button) {
-    const btn = button || null;
-    const oldHtml = btn ? btn.innerHTML : '';
-    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...'; }
-    try {
-      const cart = await api('/api/cart/items', { method: 'POST', body: JSON.stringify({ product_id: productId, quantity: 1 }), timeoutMs: 20000 });
-      renderCartData(cart);
-      showCartPanel();
-    } catch (error) {
-      alert(error.message || 'Could not add to cart. Please try again.');
-    } finally {
-      if (btn) { btn.disabled = false; btn.innerHTML = oldHtml || '<i class="fas fa-cart-plus"></i> Add to Cart'; }
-    }
-  };
+        function optimisticCartItem(productId) {
+            const card = document.querySelector(`.product-card[data-id="${CSS.escape(productId)}"]`);
+            if (!card) return null;
+            const rawPrice = String(card.dataset.price || '0').replace(/[^0-9.]/g, '');
+            return {
+                product_id: productId,
+                name: card.dataset.title || 'Product',
+                image: card.dataset.image || '',
+                quantity: 1,
+                unit_price: Number(rawPrice || 0),
+                line_total: Number(rawPrice || 0)
+            };
+        }
 
-  window.updateCartQty = async function(productId, delta) {
-    const cart = await getCart();
-    const item = cart.items.find(row => row.product_id === productId);
-    await api('/api/cart/items/' + encodeURIComponent(productId), { method: 'PATCH', body: JSON.stringify({ quantity: Math.max(0, (item ? item.quantity : 0) + delta) }) });
-    await renderBackendCart();
-  };
+        function addToCachedCart(productId) {
+            const cart = cachedCart() || { items: [], subtotal: 0, shipping: 0, total: 0 };
+            const existing = cart.items.find(item => item.product_id === productId);
+            if (existing) existing.quantity += 1;
+            else {
+                const item = optimisticCartItem(productId);
+                if (!item) return null;
+                cart.items.push(item);
+            }
+            cart.subtotal = cart.items.reduce((sum, item) => sum + Number(item.unit_price || 0) * Number(item.quantity || 0), 0);
+            cart.shipping = cart.subtotal >= 10000 || cart.subtotal === 0 ? 0 : 300;
+            cart.total = cart.subtotal + cart.shipping;
+            cart.items.forEach(item => item.line_total = Number(item.unit_price || 0) * Number(item.quantity || 0));
+            return cacheCart(cart);
+        }
 
-  window.removeFromCart = async function(productId) {
-    await api('/api/cart/items/' + encodeURIComponent(productId), { method: 'PATCH', body: JSON.stringify({ quantity: 0 }) });
-    await renderBackendCart();
-  };
+        window.addToCart = async function(productId, button) {
+            const btn = button || null;
+            const oldHtml = btn ? btn.innerHTML : '';
+            const cartItems = document.getElementById('cartItems');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            }
+            showCartPanel();
+            const optimistic = addToCachedCart(productId);
+            if (optimistic) renderCartData(optimistic);
+            else if (cartItems) cartItems.innerHTML = '<p class="owner-note">Adding product...</p>';
+            try {
+                const cart = await api('/api/cart/items', { method: 'POST', body: JSON.stringify({ product_id: productId, quantity: 1 }), timeoutMs: 60000 });
+                renderCartData(cacheCart(cart));
+            } catch (error) {
+                if (optimistic && cartItems) cartItems.insertAdjacentHTML('beforeend', '<p class="owner-note">Cart is shown instantly. It will sync when the server is available.</p>');
+                else if (cartItems) cartItems.innerHTML = '<p class="owner-note">Could not add product. Please try again.</p>';
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = oldHtml || '<i class="fas fa-cart-plus"></i> Add to Cart';
+                }
+            }
+        };
 
-  window.openCart = async function() {
-    await renderBackendCart();
-    if (currentUser) await renderCustomerOrderStatus();
-    showCartPanel();
-  };
+        window.updateCartQty = async function(productId, delta) {
+            const cart = await getCart();
+            const item = cart.items.find(row => row.product_id === productId);
+            await api('/api/cart/items/' + encodeURIComponent(productId), { method: 'PATCH', body: JSON.stringify({ quantity: Math.max(0, (item ? item.quantity : 0) + delta) }) });
+            await renderBackendCart();
+        };
 
-  async function renderCustomerOrderStatus() {
-    const box = document.getElementById('customerOrderStatus');
-    if (!box) return;
-    if (!currentUser) {
-      box.innerHTML = '<p class="owner-note">Guest orders owner panel me save hotay hain. Login users apni history yahan dekh sakte hain.</p>';
-      return;
-    }
-    try {
-      const data = await api('/api/orders', { method: 'GET' });
-      if (!data.orders.length) { box.innerHTML = '<p class="owner-note">No order placed yet.</p>'; return; }
-      box.innerHTML = '<h4>My Order Status</h4>' + data.orders.map(order => `<div class="order-status-card"><h4>${escapeHtml(order.id)}</h4><p>${escapeHtml(order.customer_name)} | ${escapeHtml(order.phone)}</p><p>${order.items.length} items | ${money(order.total)}</p><span class="status-badge ${statusClass(order.order_status)}">${escapeHtml(order.order_status)}</span></div>`).join('');
-    } catch (_) {
-      box.innerHTML = '<p class="owner-note">Login to view saved order history. Guest orders still appear in owner panel.</p>';
-    }
-  }
+        window.removeFromCart = async function(productId) {
+            await api('/api/cart/items/' + encodeURIComponent(productId), { method: 'PATCH', body: JSON.stringify({ quantity: 0 }) });
+            await renderBackendCart();
+        };
 
-  window.placeOrder = async function() {
-    const customerName = document.getElementById('customerName').value.trim();
-    const customerPhone = document.getElementById('customerPhone').value.trim();
-    const customerAddress = document.getElementById('customerAddress').value.trim();
-    if (!customerName || !customerPhone || !customerAddress) { alert('Name, mobile number and complete address are compulsory.'); return; }
-    if (!customerAddress.toLowerCase().includes('multan')) { alert('Abhi delivery sirf Multan ke liye available hai. Address me Multan zaroor likhein.'); return; }
-    try {
-      const data = await api('/api/checkout', { method: 'POST', body: JSON.stringify({ customer: { name: customerName, phone: customerPhone, address: customerAddress }, payment_method: 'cod' }) });
-      document.getElementById('customerName').value = '';
-      document.getElementById('customerPhone').value = '';
-      document.getElementById('customerAddress').value = '';
-      alert('Order saved permanently: ' + data.order.id + '. Owner panel me lazmi show ho ga.');
-      await renderBackendCart();
-      await renderCustomerOrderStatus();
-      if (ownerMode) await renderOwnerDashboard();
-    } catch (error) { alert(error.message); }
-  };
-  window.checkoutCart = window.placeOrder;
+        window.openCart = async function() {
+            const cartItems = document.getElementById('cartItems');
+            showCartPanel();
+            const cached = cachedCart();
+            if (cached) renderCartData(cached);
+            else if (cartItems) cartItems.innerHTML = '<p class="owner-note">Loading cart...</p>';
+            try {
+                await renderBackendCart();
+                if (currentUser) await renderCustomerOrderStatus();
+                else await renderCustomerOrderStatus();
+            } catch (error) {
+                if (cartItems) cartItems.innerHTML = '<p class="owner-note">Cart load nahi ho saka. Please try again.</p>';
+            }
+        };
 
-  function ensureOwnerExtras() {
-    const tools = document.getElementById('ownerTools');
-    if (!tools || document.getElementById('ownerExtraFields')) return;
-    const div = document.createElement('div');
-    div.id = 'ownerExtraFields';
-    div.className = 'owner-tools';
-    div.innerHTML = `
+        async function renderCustomerOrderStatus() {
+            const box = document.getElementById('customerOrderStatus');
+            if (!box) return;
+            if (!currentUser) {
+                box.innerHTML = '<p class="owner-note">Guest orders owner panel me save hotay hain. Login users apni history yahan dekh sakte hain.</p>';
+                return;
+            }
+            try {
+                const data = await api('/api/orders', { method: 'GET' });
+                if (!data.orders.length) { box.innerHTML = '<p class="owner-note">No order placed yet.</p>'; return; }
+                box.innerHTML = '<h4>My Order Status</h4>' + data.orders.map(order => `<div class="order-status-card"><h4>${escapeHtml(order.id)}</h4><p>${escapeHtml(order.customer_name)} | ${escapeHtml(order.phone)}</p><p>${order.items.length} items | ${money(order.total)}</p><span class="status-badge ${statusClass(order.order_status)}">${escapeHtml(order.order_status)}</span></div>`).join('');
+            } catch (_) {
+                box.innerHTML = '<p class="owner-note">Login to view saved order history. Guest orders still appear in owner panel.</p>';
+            }
+        }
+
+        window.placeOrder = async function() {
+            const customerName = document.getElementById('customerName').value.trim();
+            const customerPhone = document.getElementById('customerPhone').value.trim();
+            const customerAddress = document.getElementById('customerAddress').value.trim();
+            if (!customerName || !customerPhone || !customerAddress) { alert('Name, mobile number and complete address are compulsory.'); return; }
+            if (!customerAddress.toLowerCase().includes('multan')) { alert('Abhi delivery sirf Multan ke liye available hai. Address me Multan zaroor likhein.'); return; }
+            try {
+                const data = await api('/api/checkout', { method: 'POST', body: JSON.stringify({ customer: { name: customerName, phone: customerPhone, address: customerAddress }, payment_method: 'cod' }) });
+                document.getElementById('customerName').value = '';
+                document.getElementById('customerPhone').value = '';
+                document.getElementById('customerAddress').value = '';
+                alert('Order saved permanently: ' + data.order.id + '. Owner panel me lazmi show ho ga.');
+                await renderBackendCart();
+                await renderCustomerOrderStatus();
+                if (ownerMode) await renderOwnerDashboard();
+            } catch (error) { alert(error.message); }
+        };
+        window.checkoutCart = window.placeOrder;
+
+        function ensureOwnerExtras() {
+            const tools = document.getElementById('ownerTools');
+            if (!tools || document.getElementById('ownerExtraFields')) return;
+            const div = document.createElement('div');
+            div.id = 'ownerExtraFields';
+            div.className = 'owner-tools';
+            div.innerHTML = `
       <input id="ownerProductSku" type="text" placeholder="SKU / product code">
       <input id="ownerProductBrand" type="text" placeholder="Brand">
       <input id="ownerProductDiscount" type="number" min="0" step="1" placeholder="Discount amount">
@@ -244,59 +352,72 @@
       <button class="btn btn-primary" type="button" onclick="createBackup()"><i class="fas fa-download"></i> Backup Database</button>
       <textarea id="restorePayload" placeholder="Paste backup JSON to restore"></textarea>
       <button class="btn btn-secondary" type="button" onclick="restoreBackup()"><i class="fas fa-upload"></i> Restore Backup</button>`;
-    tools.appendChild(div);
-    const clearBtn = Array.from(tools.querySelectorAll('button')).find(btn => /Clear Added Products/i.test(btn.textContent));
-    if (clearBtn) clearBtn.style.display = 'none';
-  }
+            tools.appendChild(div);
+            const clearBtn = Array.from(tools.querySelectorAll('button')).find(btn => /Clear Added Products/i.test(btn.textContent));
+            if (clearBtn) clearBtn.style.display = 'none';
+        }
 
-  window.openOwnerPanel = async function() {
-    document.getElementById('ownerPanel').classList.add('active');
-    document.getElementById('ownerPanel').setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    if (ownerMode) await renderOwnerDashboard();
-  };
+        window.openOwnerPanel = async function() {
+            document.getElementById('ownerPanel').classList.add('active');
+            document.getElementById('ownerPanel').setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            if (ownerMode) await renderOwnerDashboard();
+        };
 
-  window.closeOwnerPanel = function() {
-    document.getElementById('ownerPanel').classList.remove('active');
-    document.getElementById('ownerPanel').setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  };
+        window.closeOwnerPanel = function() {
+            document.getElementById('ownerPanel').classList.remove('active');
+            document.getElementById('ownerPanel').setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        };
 
-  window.unlockOwnerPanel = async function() {
-    const typed = document.getElementById('ownerPassword').value;
-    const loginButton = document.querySelector('#ownerLogin .btn-primary');
-    const oldText = loginButton ? loginButton.innerHTML : '';
-    if (loginButton) { loginButton.disabled = true; loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening...'; }
-    try {
-      const loginData = await api('/api/auth/owner-login', { method: 'POST', body: JSON.stringify({ password: typed }) });
-      currentUser = loginData.user || currentUser;
-      ownerMode = true;
-      document.getElementById('ownerLogin').style.display = 'none';
-      document.getElementById('ownerTools').style.display = 'grid';
-      ensureOwnerExtras();
-      await renderOwnerDashboard();
-      if (!ownerRefreshTimer) ownerRefreshTimer = setInterval(() => { if (ownerMode) renderOwnerDashboard().catch(() => {}); }, 8000);
-    } catch (error) {
-      alert(error.message + ' Please check OWNER_PASSWORD in Render Environment.');
-    } finally {
-      if (loginButton && !ownerMode) { loginButton.disabled = false; loginButton.innerHTML = oldText; }
-    }
-  };
+        window.unlockOwnerPanel = async function() {
+            const typed = document.getElementById('ownerPassword').value;
+            const loginButton = document.querySelector('#ownerLogin .btn-primary');
+            const oldText = loginButton ? loginButton.innerHTML : '';
+            if (loginButton) {
+                loginButton.disabled = true;
+                loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening...';
+            }
+            try {
+                const loginData = await api('/api/auth/owner-login', { method: 'POST', body: JSON.stringify({ password: typed }) });
+                currentUser = loginData.user || currentUser;
+                ownerMode = true;
+                document.getElementById('ownerLogin').style.display = 'none';
+                document.getElementById('ownerTools').style.display = 'grid';
+                ensureOwnerExtras();
+                await renderOwnerDashboard();
+                if (!ownerRefreshTimer) ownerRefreshTimer = setInterval(() => { if (ownerMode) renderOwnerDashboard().catch(() => {}); }, 8000);
+            } catch (error) {
+                alert(error.message + ' Please check OWNER_PASSWORD in Render Environment.');
+            } finally {
+                if (loginButton && !ownerMode) {
+                    loginButton.disabled = false;
+                    loginButton.innerHTML = oldText;
+                }
+            }
+        };
 
-  async function renderOwnerDashboard() {
-    const data = await api('/api/owner/summary', { method: 'GET' });
-    const statsBox = document.getElementById('ownerOrderStats');
-    const listBox = document.getElementById('ownerOrdersList');
-    const manager = document.getElementById('ownerProductManager');
-    const cards = data.cards || {};
-    if (statsBox) {
-      statsBox.innerHTML = [
-        ['Products', cards.total_products], ['Orders', cards.total_orders], ['Pending', cards.pending_orders], ['Processing', cards.processing_orders],
-        ['Completed', cards.completed_orders], ['Cancelled', cards.cancelled_orders], ['Revenue', money(cards.revenue)], ['Today', money(cards.today_sales)], ['Month', money(cards.monthly_sales)]
-      ].map(([label, value]) => `<div class="order-stat"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label)}</span></div>`).join('');
-    }
-    if (listBox) {
-      listBox.innerHTML = '<h4>All Orders</h4>' + (data.orders.length ? data.orders.map(order => `
+        async function renderOwnerDashboard() {
+            const data = await api('/api/owner/summary', { method: 'GET' });
+            const statsBox = document.getElementById('ownerOrderStats');
+            const listBox = document.getElementById('ownerOrdersList');
+            const manager = document.getElementById('ownerProductManager');
+            const cards = data.cards || {};
+            if (statsBox) {
+                statsBox.innerHTML = [
+                    ['Products', cards.total_products],
+                    ['Orders', cards.total_orders],
+                    ['Pending', cards.pending_orders],
+                    ['Processing', cards.processing_orders],
+                    ['Completed', cards.completed_orders],
+                    ['Cancelled', cards.cancelled_orders],
+                    ['Revenue', money(cards.revenue)],
+                    ['Today', money(cards.today_sales)],
+                    ['Month', money(cards.monthly_sales)]
+                ].map(([label, value]) => `<div class="order-stat"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label)}</span></div>`).join('');
+            }
+            if (listBox) {
+                listBox.innerHTML = '<h4>All Orders</h4>' + (data.orders.length ? data.orders.map(order => `
         <div class="owner-order">
           <strong>${escapeHtml(order.id)} - ${money(order.total)}</strong>
           <span>${escapeHtml(order.customer_name)} | ${escapeHtml(order.phone)} | ${escapeHtml(order.payment_method)}</span>
@@ -363,6 +484,7 @@
   };
 
   window.saveOwnerProduct = async function() {
+    if (productSaveInProgress) return;
     const title = document.getElementById('ownerProductTitle').value.trim();
     const rawPrice = document.getElementById('ownerProductPrice').value.trim().replace(/[^0-9.]/g, '');
     if (!title || !rawPrice) { alert('Product name aur price zaroori hain.'); return; }
@@ -381,6 +503,10 @@
     form.append('stock', document.getElementById('ownerProductStock')?.value || 10);
     form.append('status', document.getElementById('ownerProductStatus')?.value || 'active');
     Array.from(document.getElementById('ownerProductImages')?.files || []).forEach(file => form.append('images', file));
+    productSaveInProgress = true;
+    const saveButton = document.querySelector('#ownerTools button[onclick="saveOwnerProduct()"]');
+    const originalSaveButton = saveButton?.innerHTML;
+    if (saveButton) { saveButton.disabled = true; saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...'; }
     try {
       const editId = editingProductId || document.getElementById('ownerEditingProductId')?.value;
       const response = await fetch(apiUrl(editId ? '/api/products/' + encodeURIComponent(editId) : '/api/products'), { method: editId ? 'PUT' : 'POST', credentials: 'include', headers: { 'X-CSRF-Token': csrfToken }, body: form });
@@ -390,9 +516,15 @@
       editingProductId = null;
       const files = document.getElementById('ownerProductImages'); if (files) files.value = '';
       alert(editId ? 'Product updated.' : 'Product saved permanently and website grid me show ho ga.');
-      await renderBackendProducts();
+      if (data.product) upsertProductCard(data.product);
+      wireBackendCartButtons();
+      updateCategoryCounts();
       await renderOwnerDashboard();
     } catch (error) { alert(error.message); }
+    finally {
+      productSaveInProgress = false;
+      if (saveButton) { saveButton.disabled = false; saveButton.innerHTML = originalSaveButton; }
+    }
   };
 
   window.clearOwnerProducts = function() {
@@ -412,12 +544,60 @@
     await renderOwnerDashboard();
   };
 
+  function reviewCard(review) {
+    const name = escapeHtml(review.name || 'Customer');
+    const initials = name.split(/\s+/).map(part => part[0]).join('').slice(0,2).toUpperCase() || 'FT';
+    const rating = Math.max(1, Math.min(5, Number(review.rating || 5)));
+    return `<div class="review-card"><div class="review-header"><div class="review-avatar">${initials}</div><div class="review-info"><h4>${name}</h4><div class="review-rating">${'<i class="fas fa-star"></i>'.repeat(rating)}</div><div class="review-date">Customer Review</div></div></div><div class="review-content">"${escapeHtml(review.message || '')}"</div></div>`;
+  }
+
+  function ensureReviewForm() {
+    const reviewsSection = document.getElementById('reviews');
+    const container = document.getElementById('reviewsContainer');
+    if (!reviewsSection || !container || document.getElementById('customerReviewForm')) return;
+    const form = document.createElement('div');
+    form.className = 'review-form';
+    form.id = 'customerReviewForm';
+    form.innerHTML = `<h3>Share Your Review</h3><div class="review-form-grid"><input id="reviewName" type="text" placeholder="Your name"><input id="reviewPhone" type="tel" placeholder="Phone optional"><select id="reviewRating"><option value="5">5 Stars</option><option value="4">4 Stars</option><option value="3">3 Stars</option><option value="2">2 Stars</option><option value="1">1 Star</option></select></div><textarea id="reviewMessage" placeholder="Write your review"></textarea><button class="btn btn-secondary" type="button" onclick="submitCustomerReview()"><i class="fas fa-star"></i> Submit Review</button>`;
+    container.parentElement.insertAdjacentElement('afterend', form);
+  }
+
+  async function loadCustomerReviews() {
+    const container = document.getElementById('reviewsContainer');
+    if (!container) return;
+    try {
+      const data = await api('/api/reviews', { method: 'GET' });
+      if (data.reviews && data.reviews.length) {
+        container.insertAdjacentHTML('afterbegin', data.reviews.map(reviewCard).join(''));
+      }
+    } catch (_) {}
+  }
+
+  window.submitCustomerReview = async function() {
+    const name = document.getElementById('reviewName')?.value.trim();
+    const phone = document.getElementById('reviewPhone')?.value.trim();
+    const rating = document.getElementById('reviewRating')?.value || 5;
+    const message = document.getElementById('reviewMessage')?.value.trim();
+    if (!name || !message) { alert('Name aur review message zaroori hain.'); return; }
+    try {
+      const data = await api('/api/reviews', { method: 'POST', body: JSON.stringify({ name, phone, rating, message }) });
+      document.getElementById('reviewsContainer')?.insertAdjacentHTML('afterbegin', reviewCard(data.review));
+      ['reviewName','reviewPhone','reviewMessage'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      alert('Review added. Thank you.');
+    } catch (error) { alert(error.message || 'Review save nahi ho saka.'); }
+  };
+
   document.addEventListener('DOMContentLoaded', async () => {
+    // Keep the visible page usable immediately. Reviews and category counts
+    // must not wait for the products request (which can be slow on a cold server).
+    ensureReviewForm();
+    updateCategoryCounts();
+    const cached = cachedCart();
+    if (cached) renderCartData(cached);
     try {
       await initCsrf();
-      await renderBackendProducts();
-      wireBackendCartButtons();
-      await renderBackendCart();
+      await Promise.allSettled([renderBackendProducts(), loadCustomerReviews()]);
+      renderBackendCart().catch(() => {});
     } catch (error) {
       console.warn('Backend ecommerce unavailable:', error.message);
     }
