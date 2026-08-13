@@ -1013,6 +1013,50 @@
             transition: var(--transition);
         }
         
+        .review-form {
+            max-width: 900px;
+            margin: 34px auto 0;
+            background: white;
+            border: 1px solid #ead8c1;
+            border-radius: 8px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+            display: grid;
+            gap: 12px;
+        }
+        
+        .review-form h3 {
+            color: var(--primary);
+            font-size: 1.45rem;
+        }
+        
+        .review-form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        
+        .review-form input,
+        .review-form select,
+        .review-form textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font: inherit;
+        }
+        
+        .review-form textarea {
+            min-height: 96px;
+            resize: vertical;
+        }
+        
+        @media (max-width: 720px) {
+            .review-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
         .review-header {
             display: flex;
             align-items: center;
@@ -3212,7 +3256,11 @@
         const cartStorageKey = 'friendsTradersCart';
         const ownerProductsStorageKey = 'friendsTradersOwnerProducts';
         const ordersStorageKey = 'friendsTradersOrders';
-        const useLocalCart = !['', '5001'].includes(location.port) && !location.hostname.includes('onrender.com');
+        // Live Server is used with the Flask backend on port 5001. Local-only
+        // storage is reserved for opening index.html directly as a file.
+        // This prevents old browser-saved owner products from appearing as
+        // duplicate cards before the database products load.
+        const useLocalCart = location.protocol === 'file:';
         let cart = useLocalCart ? JSON.parse(localStorage.getItem(cartStorageKey) || '[]') : [];
         let orders = useLocalCart ? JSON.parse(localStorage.getItem(ordersStorageKey) || '[]') : [];
 
@@ -3707,7 +3755,7 @@
         window.addEventListener('load', hideLoadingScreen);
         setTimeout(hideLoadingScreen, 1800);
 
-        loadOwnerProducts();
+        if (useLocalCart) loadOwnerProducts();
         if (useLocalCart) {
             addCartButtons();
             renderCart();
