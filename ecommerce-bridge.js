@@ -15,7 +15,12 @@
         const escapeHtml = value => String(value || '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
         const slugify = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'product';
         const cartCacheKey = 'friendsTradersBackendCart';
+        const wishlistCacheKey = 'friendsTradersWishlist';
         window.useBackendCart = true;
+
+        function localWishlist() { try { return JSON.parse(localStorage.getItem(wishlistCacheKey) || '[]'); } catch (_) { return []; } }
+
+        function saveLocalWishlist(items) { localStorage.setItem(wishlistCacheKey, JSON.stringify(items)); }
 
         function cachedCart() {
             try { return JSON.parse(localStorage.getItem(cartCacheKey) || 'null'); } catch (_) { return null; }
@@ -168,6 +173,7 @@
             <button class="product-btn details-btn" type="button" onclick="viewProductDetails('${escapeHtml(product.id)}')"><i class="fas fa-eye"></i> View Details</button>
             <button class="product-btn whatsapp-order-btn" type="button" onclick="inquireProduct('${escapeHtml(product.name)}')"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
             <button class="product-btn add-cart-btn" type="button" ${product.out_of_stock ? 'disabled' : ''}><i class="fas fa-cart-plus"></i> Add to Cart</button>
+            <button class="product-btn details-btn wishlist-btn" type="button" onclick="toggleWishlist('${escapeHtml(product.id)}', this)"><i class="far fa-heart"></i> Wishlist</button>
           </div>
         </div>
       </div>`;
@@ -205,6 +211,70 @@
         async function getCart() {
             return api('/api/cart', { method: 'GET' });
         }
+
+        window.toggleWishlist = async function(productId, button) {
+            const card = document.querySelector('.product-card[data-id="' + CSS.escape(productId) + '"]');
+            const item = { id: productId, name: (card ? card.dataset.title : '') || 'Product', image: (card ? card.dataset.image : '') || '', price: (card ? card.dataset.price : '') || '' };
+            const saved = localWishlist(),
+                has = saved.some(p => p.id === productId);
+            const next = has ? saved.filter(p => p.id !== productId) : [...saved, item];
+            try { if (currentUser) await api('/api/wishlist/' + encodeURIComponent(productId), { method: has ? 'DELETE' : 'POST', body: '{}' }); } catch (_) {}
+            saveLocalWishlist(next);
+            if (button) { button.innerHTML = has ? '<i class="far fa-heart"></i> Wishlist' : '<i class="fas fa-heart"></i> Saved';
+                button.classList.toggle('wishlist-saved', !has); }
+            showWishlistPanel();
+        };
+
+        async function installOptionalIntegrations() {
+            try {
+                const config = await api('/api/public-config', { method: 'GET' });
+                if (config.ga_measurement_id && /^G-[A-Z0-9]+$/i.test(config.ga_measurement_id) && !document.querySelector('[data-ft-ga]')) {
+                    const s = document.createElement('script');
+                    s.async = true;
+                    s.dataset.ftGa = '1';
+                    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(config.ga_measurement_id);
+                    document.head.appendChild(s);
+                    window.dataLayer = window.dataLayer || [];
+                    window.gtag = window.gtag || function() { window.dataLayer.push(arguments) };
+                    window.gtag('js', new Date());
+                    window.gtag('config', config.ga_measurement_id);
+                }
+                document.documentElement.dataset.aiAssistant = config.ai_assistant_enabled ? 'enabled' : 'disabled';
+            } catch (_) {}
+        }
+
+        window.showWishlistPanel = function() {
+            const panel = document.getElementById('ftWishlistPanel');
+            if (!panel) return;
+            const items = localWishlist();
+            panel.innerHTML = '<div class="ft-panel-head"><strong><i class="fas fa-heart"></i> My Wishlist</strong><button type="button" onclick="document.getElementById(\'ftWishlistPanel\').classList.remove(\'active\')">×</button></div>' + (items.length ? items.map(p => '<div class="ft-wish-item"><img src="' + escapeHtml(assetUrl(p.image || '/assets/friends-traders-business-card.png')) + '" alt=""><span>' + escapeHtml(p.name) + '</span><button type="button" onclick="addToCart(\'' + escapeHtml(p.id) + '\')"><i class="fas fa-cart-plus"></i></button></div>').join('') : '<p class="owner-note">Save products here and come back when you are ready to order.</p>');
+            panel.classList.add('active');
+        };
+
+        function installStorefrontEnhancements() {
+            if (document.getElementById('ftStorefrontEnhancements')) return;
+            const style = document.createElement('style');
+            style.id = 'ftStorefrontEnhancements';
+            style.textContent = `
+              .ft-store-tools{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:20px 0;padding:14px;border-radius:14px;background:#fff7e9;border:1px solid #ecd4a2}.ft-search{flex:1;min-width:180px;padding:13px 16px;border:1px solid #d7b879;border-radius:9px;font:inherit}.ft-link-btn{border:0;border-radius:9px;padding:12px 14px;background:#152024;color:#fff;font-weight:700;cursor:pointer}.ft-wishlist-panel{position:fixed;z-index:2000;right:18px;bottom:78px;width:min(360px,calc(100vw - 36px));padding:18px;background:#fff;border-radius:16px;box-shadow:0 15px 50px #0004;display:none}.ft-wishlist-panel.active{display:block}.ft-panel-head{display:flex;justify-content:space-between;align-items:center;font-size:18px}.ft-panel-head button,.ft-wish-item button{border:0;background:none;font-size:22px;cursor:pointer}.ft-wish-item{display:flex;gap:10px;align-items:center;border-top:1px solid #eee;padding:10px 0}.ft-wish-item img{width:44px;height:44px;border-radius:7px;object-fit:cover}.ft-wish-item span{flex:1}.ft-mobile-nav{display:none}.ft-assistant{position:fixed;z-index:1800;right:20px;bottom:20px;border:0;border-radius:999px;padding:14px 18px;background:#15803d;color:#fff;font-weight:800;box-shadow:0 6px 20px #0004;cursor:pointer}.ft-assistant-box{position:fixed;right:20px;bottom:78px;z-index:1800;width:min(350px,calc(100vw - 40px));background:#fff;border-radius:16px;padding:16px;box-shadow:0 15px 50px #0004;display:none}.ft-assistant-box.active{display:block}.ft-assistant-box input{width:100%;box-sizing:border-box;padding:11px;border:1px solid #ddd;border-radius:8px;margin:10px 0}.checkout-extras{display:grid;gap:10px;margin-top:10px}.checkout-extras select,.checkout-extras input{padding:12px;border:1px solid #ddd;border-radius:8px;font:inherit}@media(max-width:700px){.ft-store-tools{position:sticky;top:65px;z-index:20;flex-wrap:wrap}.ft-mobile-nav{display:flex;position:fixed;z-index:1700;bottom:0;left:0;right:0;justify-content:space-around;padding:9px;background:#152024;color:#fff}.ft-mobile-nav button{background:none;border:0;color:#fff;font:inherit}.ft-assistant{bottom:66px}.ft-wishlist-panel{bottom:66px}}`;
+            document.head.appendChild(style);
+            const grid = document.querySelector('.products-grid');
+            if (grid) { const tools = document.createElement('div');
+                tools.className = 'ft-store-tools';
+                tools.innerHTML = '<input id="ftProductSearch" class="ft-search" placeholder="🔍 Search products, brands or categories"><button class="ft-link-btn" type="button" onclick="showWishlistPanel()">♡ My Wishlist</button>';
+                grid.parentElement.insertBefore(tools, grid);
+                document.getElementById('ftProductSearch').addEventListener('input', e => { const q = e.target.value.toLowerCase();
+                    document.querySelectorAll('.product-card').forEach(c => c.style.display = (c.dataset.title + ' ' + c.dataset.brand + ' ' + c.dataset.categoryLabel).toLowerCase().includes(q) ? '' : 'none'); }); }
+            document.body.insertAdjacentHTML('beforeend', '<aside id="ftWishlistPanel" class="ft-wishlist-panel" aria-live="polite"></aside><button class="ft-assistant" type="button" onclick="document.getElementById(\'ftAssistantBox\').classList.toggle(\'active\')">🤖 Ask FT</button><section id="ftAssistantBox" class="ft-assistant-box"><strong>Friends Traders Assistant</strong><p>Tell us your budget or product need.</p><input id="ftAssistantQuestion" placeholder="e.g. Gift set under 10,000"><button class="ft-link-btn" type="button" onclick="ftAskAssistant()">Find products</button><div id="ftAssistantAnswer" class="owner-note"></div></section><nav class="ft-mobile-nav"><button onclick="window.scrollTo({top:0,behavior:\'smooth\'})">⌂ Home</button><button onclick="var p=document.querySelector(\'.products-grid\');if(p){p.scrollIntoView({behavior:\'smooth\'})}">Shop</button><button onclick="showWishlistPanel()">♡ Saved</button><button onclick="openCart()">🛒 Cart</button></nav>');
+            const checkout = document.querySelector('.checkout-form');
+            if (checkout && !document.getElementById('checkoutPayment')) { const extras = document.createElement('div');
+                extras.className = 'checkout-extras';
+                extras.innerHTML = '<input id="customerEmail" type="email" placeholder="Email (optional)"><select id="checkoutPayment"><option value="cod">Cash on Delivery</option><option value="bank_transfer">Bank Transfer</option><option value="easypaisa">Easypaisa / JazzCash</option></select><input id="checkoutCoupon" placeholder="Coupon code (e.g. WELCOME5)"><small>Free delivery in Multan on orders above PKR 10,000.</small>';
+                checkout.appendChild(extras); }
+        }
+
+        window.ftAskAssistant = function() { var question = document.getElementById('ftAssistantQuestion'); const q = (question ? question.value : '').toLowerCase(); const matches = Array.from(document.querySelectorAll('.product-card')).filter(c => (c.dataset.title + ' ' + c.dataset.description + ' ' + c.dataset.categoryLabel).toLowerCase().includes(q.split(/\s+/).find(x => x.length > 2) || '')).slice(0, 3);
+            document.getElementById('ftAssistantAnswer').textContent = matches.length ? 'Try: ' + matches.map(c => c.dataset.title).join(', ') : 'Please browse our products or contact us on WhatsApp for a personal recommendation.'; };
 
         async function renderBackendCart() {
             renderCartData(cacheCart(await getCart()));
@@ -313,10 +383,16 @@
             const customerName = document.getElementById('customerName').value.trim();
             const customerPhone = document.getElementById('customerPhone').value.trim();
             const customerAddress = document.getElementById('customerAddress').value.trim();
+            const emailField = document.getElementById('customerEmail');
+            const paymentField = document.getElementById('checkoutPayment');
+            const couponField = document.getElementById('checkoutCoupon');
+            const customerEmail = emailField ? emailField.value.trim() : '';
+            const paymentMethod = paymentField ? paymentField.value : 'cod';
+            const couponCode = couponField ? couponField.value.trim() : '';
             if (!customerName || !customerPhone || !customerAddress) { alert('Name, mobile number and complete address are compulsory.'); return; }
             if (!customerAddress.toLowerCase().includes('multan')) { alert('Abhi delivery sirf Multan ke liye available hai. Address me Multan zaroor likhein.'); return; }
             try {
-                const data = await api('/api/checkout', { method: 'POST', body: JSON.stringify({ customer: { name: customerName, phone: customerPhone, address: customerAddress }, payment_method: 'cod' }) });
+                const data = await api('/api/checkout', { method: 'POST', body: JSON.stringify({ customer: { name: customerName, phone: customerPhone, email: customerEmail, address: customerAddress }, payment_method: paymentMethod, coupon_code: couponCode }) });
                 document.getElementById('customerName').value = '';
                 document.getElementById('customerPhone').value = '';
                 document.getElementById('customerAddress').value = '';
@@ -591,6 +667,7 @@
     // Keep the visible page usable immediately. Reviews and category counts
     // must not wait for the products request (which can be slow on a cold server).
     ensureReviewForm();
+    installStorefrontEnhancements();
     updateCategoryCounts();
     const cached = cachedCart();
     if (cached) renderCartData(cached);
@@ -598,6 +675,7 @@
       await initCsrf();
       await Promise.allSettled([renderBackendProducts(), loadCustomerReviews()]);
       renderBackendCart().catch(() => {});
+      installOptionalIntegrations();
     } catch (error) {
       console.warn('Backend ecommerce unavailable:', error.message);
     }
