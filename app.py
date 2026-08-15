@@ -21,7 +21,10 @@ MIGRATIONS_DIR = BASE_DIR / 'migrations'
 SEED_FILE = BASE_DIR / 'data' / 'seed_products.json'
 LOW_STOCK_THRESHOLD = int(os.getenv('LOW_STOCK_THRESHOLD', '5'))
 OWNER_EMAIL = os.getenv('OWNER_EMAIL', 'owner@friendstraders.local').lower()
-OWNER_PASSWORD = os.getenv('OWNER_PASSWORD', 'Friends@1122Local')
+OWNER_PASSWORD = os.getenv('OWNER_PASSWORD')
+GA_MEASUREMENT_ID = os.getenv('GA_MEASUREMENT_ID', '').strip()[:40]
+AI_ASSISTANT_ENABLED = os.getenv('AI_ASSISTANT_ENABLED', 'false').lower() == 'true'
+ORDER_WEBHOOK_URL = os.getenv('ORDER_WEBHOOK_URL', '').strip()
 ALLOWED_IMAGE_EXTS = {'.jpg', '.jpeg', '.png', '.webp'}
 
 app = Flask(__name__, static_folder=str(BASE_DIR), static_url_path='')
@@ -39,6 +42,25 @@ def clean(v, limit=5000): return str(v or '').strip()[:limit]
 def money(v):
     try: return round(float(v or 0), 2)
     except Exception: return 0.0
+
+_login_attempts = {}
+def login_allowed(key):
+    now = datetime.now(timezone.utc).timestamp()
+    hits = [t for t in _login_attempts.get(key, []) if now - t < 900]
+    if len(hits) >= 8: return False
+    _login_attempts[key] = hits
+    return True
+def note_login_attempt(key): _login_attempts.setdefault(key, []).append(datetime.now(timezone.utc).timestamp())
+
+def notify_order_hook(order):
+    """Optional server-to-server notification hook; configuration remains in env."""
+    if not ORDER_WEBHOOK_URL: return
+    try:
+        import urllib.request
+        payload=json.dumps({'event':'order.created','order_id':order['id'],'total':order['total'],'status':order['order_status']}).encode()
+        req=urllib.request.Request(ORDER_WEBHOOK_URL,data=payload,headers={'Content-Type':'application/json'},method='POST')
+        urllib.request.urlopen(req,timeout=3).close()
+    except Exception: app.logger.warning('Order notification webhook failed')
 
 class PgConn:
     def __init__(self):
@@ -104,9 +126,12 @@ def seed():
     with db() as con:
         owner = con.execute("select id,email,password_hash from users where role='owner' order by created_at limit 1").fetchone()
         if owner:
-            if owner['email'] != OWNER_EMAIL or not check_password_hash(owner['password_hash'], OWNER_PASSWORD):
-                con.execute('update users set email=?,password_hash=?,updated_at=? where id=?', (OWNER_EMAIL, generate_password_hash(OWNER_PASSWORD), now_iso(), owner['id']))
+            # A restart must never silently replace an administrator password.
+            if owner['email'] != OWNER_EMAIL:
+                con.execute('update users set email=?,updated_at=? where id=?', (OWNER_EMAIL, now_iso(), owner['id']))
         else:
+            if not OWNER_PASSWORD:
+                raise RuntimeError('Set OWNER_PASSWORD before first startup to create the owner account.')
             con.execute('insert into users values (?,?,?,?,?,?,?,?)', (uuid.uuid4().hex, OWNER_EMAIL, generate_password_hash(OWNER_PASSWORD), 'Friends Traders Owner', '03007195451', 'owner', now_iso(), now_iso()))
         
         if DATABASE_URL:
@@ -206,6 +231,9 @@ def ensure_runtime_schema():
     with db() as con:
         con.execute('create table if not exists product_features (id text primary key,product_id text not null references products(id) on delete cascade,label text not null,sort_order integer not null default 0,created_at text not null)')
         con.execute('create table if not exists reviews (id text primary key,name text not null,phone text,rating integer not null default 5,message text not null,active integer not null default 1,created_at text not null)')
+        con.execute('create table if not exists wishlists (user_id text not null references users(id) on delete cascade,product_id text not null references products(id) on delete cascade,created_at text not null,primary key(user_id,product_id))')
+        con.execute('create table if not exists order_status_events (id text primary key,order_id text not null references orders(id) on delete cascade,status text not null,note text,created_at text not null)')
+        con.execute('create table if not exists product_reviews (id text primary key,product_id text not null references products(id) on delete cascade,user_id text references users(id),order_id text references orders(id),rating integer not null,message text not null,verified_purchase integer not null default 0,active integer not null default 1,created_at text not null)')
 
 def images(pid):
     with db() as con:
@@ -230,6 +258,14 @@ migrate(); ensure_runtime_schema(); seed(); hide_duplicate_products()
 
 @app.get('/')
 def home(): return send_from_directory(BASE_DIR, 'index.html')
+@app.get('/robots.txt')
+def robots(): return Response('User-agent: *\nAllow: /\nSitemap: '+request.url_root.rstrip('/')+'/sitemap.xml\n',mimetype='text/plain')
+@app.get('/sitemap.xml')
+def sitemap():
+    root=request.url_root.rstrip('/')
+    with db() as con: rows=con.execute("select id,updated_at from products where status='active'").fetchall()
+    items=[f'<url><loc>{root}/</loc></url>']+[f'<url><loc>{root}/?product={r["id"]}</loc><lastmod>{r["updated_at"][:10]}</lastmod></url>' for r in rows]
+    return Response('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(items)+'</urlset>',mimetype='application/xml')
 @app.get('/uploads/<path:p>')
 def uploaded(p): return send_from_directory(UPLOAD_DIR, p)
 @app.get('/api/health')
@@ -238,6 +274,8 @@ def health():
         return jsonify({'ok':True,'database':('supabase' if DATABASE_URL else str(DB_PATH)),'products':con.execute('select count(*) c from products').fetchone()['c'],'orders':con.execute('select count(*) c from orders').fetchone()['c'],'storage':('supabase-postgres' if DATABASE_URL else 'sqlite-local; Supabase SQL schema included')})
 @app.get('/api/csrf')
 def csrf(): session['csrf_token']=secrets.token_urlsafe(32); return jsonify({'csrf_token':session['csrf_token'],'user':current_user()})
+@app.get('/api/public-config')
+def public_config(): return jsonify({'ga_measurement_id':GA_MEASUREMENT_ID or None,'ai_assistant_enabled':AI_ASSISTANT_ENABLED})
 
 @app.post('/api/auth/register')
 def register():
@@ -251,14 +289,18 @@ def register():
 @app.post('/api/auth/login')
 def login():
     data=request.get_json(silent=True) or {}; email=clean(data.get('email'),180).lower(); pw=str(data.get('password') or '')
+    key='login:'+str(request.remote_addr)
+    if not login_allowed(key): return jsonify({'error':'Too many attempts. Please try again later.'}),429
     with db() as con: u=con.execute('select * from users where email=?',(email,)).fetchone()
-    if not u or not check_password_hash(u['password_hash'], pw): return jsonify({'error':'Invalid email or password.'}),401
+    if not u or not check_password_hash(u['password_hash'], pw): note_login_attempt(key); return jsonify({'error':'Invalid email or password.'}),401
     session['user_id']=u['id']; return jsonify({'user':current_user()})
 @app.post('/api/auth/owner-login')
 def owner_login():
     data=request.get_json(silent=True) or {}; pw=str(data.get('password') or '')
+    key='owner:'+str(request.remote_addr)
+    if not login_allowed(key): return jsonify({'error':'Too many attempts. Please try again later.'}),429
     with db() as con: u=con.execute("select * from users where role='owner' order by created_at limit 1").fetchone()
-    if not u or not check_password_hash(u['password_hash'], pw): return jsonify({'error':'Invalid owner password.'}),401
+    if not u or not check_password_hash(u['password_hash'], pw): note_login_attempt(key); return jsonify({'error':'Invalid owner password.'}),401
     session['user_id']=u['id']; return jsonify({'user':current_user()})
 @app.post('/api/auth/logout')
 def logout(): session.pop('user_id',None); return jsonify({'ok':True})
@@ -271,6 +313,17 @@ def forgot():
     out={'ok':True,'message':'If that email exists, a reset token was created for the owner to share securely.'}
     if app.debug or os.getenv('SHOW_RESET_TOKEN')=='true': out['reset_token']=token
     return jsonify(out)
+@app.post('/api/auth/reset-password')
+def reset_password():
+    data=request.get_json(silent=True) or {}; token=str(data.get('token') or ''); password=str(data.get('password') or '')
+    if len(password)<12: return jsonify({'error':'Use a password with at least 12 characters.'}),400
+    with db() as con:
+        rows=con.execute('select * from password_resets where used=0 order by created_at desc limit 20').fetchall()
+        reset=next((r for r in rows if check_password_hash(r['token'],token)),None)
+        if not reset: return jsonify({'error':'Invalid or used reset token.'}),400
+        con.execute('update users set password_hash=?,updated_at=? where id=?',(generate_password_hash(password),now_iso(),reset['user_id']))
+        con.execute('update password_resets set used=1 where id=?',(reset['id'],))
+    return jsonify({'ok':True,'message':'Password updated. Please sign in again.'})
 @app.get('/api/me')
 def me():
     u=current_user(); add=[]
@@ -287,6 +340,44 @@ def add_address():
         if d.get('is_default'): con.execute('update addresses set is_default=0 where user_id=?',(u['id'],))
         con.execute('insert into addresses values (?,?,?,?,?,?,?,?)',(uuid.uuid4().hex,u['id'],clean(d.get('label'),60) or 'Home',addr,city,1 if d.get('is_default') else 0,now_iso(),now_iso()))
     return me()
+
+@app.get('/api/wishlist')
+def wishlist():
+    u,e=require_login()
+    if e: return e
+    with db() as con:
+        rows=con.execute('select p.* from wishlists w join products p on p.id=w.product_id where w.user_id=? order by w.created_at desc',(u['id'],)).fetchall()
+        imgs=product_images_for(con,[r['id'] for r in rows]); features=product_features_for(con,[r['id'] for r in rows])
+    return jsonify({'products':[public_product(r,imgs,features) for r in rows]})
+@app.post('/api/wishlist/<pid>')
+def add_wishlist(pid):
+    u,e=require_login()
+    if e: return e
+    with db() as con:
+        pid=resolve_product_id(con,pid)
+        if not pid or not con.execute("select id from products where id=? and status='active'",(pid,)).fetchone(): return jsonify({'error':'Product not found.'}),404
+        if DATABASE_URL: con.execute('insert into wishlists values (?,?,?) on conflict(user_id,product_id) do nothing',(u['id'],pid,now_iso()))
+        else: con.execute('insert or ignore into wishlists values (?,?,?)',(u['id'],pid,now_iso()))
+    return jsonify({'ok':True})
+@app.delete('/api/wishlist/<pid>')
+def remove_wishlist(pid):
+    u,e=require_login()
+    if e: return e
+    with db() as con: con.execute('delete from wishlists where user_id=? and product_id=?',(u['id'],pid))
+    return jsonify({'ok':True})
+
+@app.post('/api/assistant')
+def shopping_assistant():
+    if not AI_ASSISTANT_ENABLED: return jsonify({'error':'Shopping assistant is not enabled yet.'}),503
+    question=clean((request.get_json(silent=True) or {}).get('question'),500).lower()
+    if not question: return jsonify({'error':'Ask a product question first.'}),400
+    # Safe local recommendation baseline; replace behind this route with an approved AI provider later.
+    terms=[t for t in re.findall(r'[a-z0-9]{3,}',question) if t not in {'please','need','want','under','with','from'}]
+    with db() as con:
+        rows=con.execute("select * from products where status='active' and stock>0 order by (price-discount) asc limit 100").fetchall()
+        imgs=product_images_for(con,[r['id'] for r in rows]); features=product_features_for(con,[r['id'] for r in rows])
+    scored=sorted(rows,key=lambda r:sum(t in (' '.join([r['name'],r['category'],r['brand'],r['description'] or '']).lower()) for t in terms),reverse=True)[:4]
+    return jsonify({'answer':'Here are the closest available products from Friends Traders. Please confirm features and stock with us before ordering.','products':[public_product(r,imgs,features) for r in scored]})
 
 @app.get('/api/reviews')
 def list_reviews():
@@ -504,7 +595,9 @@ def checkout():
             con.execute('update products set stock=stock-?,updated_at=? where id=?',(r['quantity'],now_iso(),r['product_id']))
         con.execute('delete from cart_items where cart_key=?',(cart_key(),))
         con.execute('insert into notifications values (?,?,?,?,?,?,null)',(uuid.uuid4().hex,'owner','new_order',f'New order {oid} received',oid,now_iso()))
-    return jsonify({'order':order_payload(oid)})
+        con.execute('insert into order_status_events values (?,?,?,?,?)',(uuid.uuid4().hex,oid,'pending','Order placed',now_iso()))
+    order=order_payload(oid); notify_order_hook(order)
+    return jsonify({'order':order})
 @app.get('/api/orders')
 def list_orders():
     u,e=require_login();
@@ -554,6 +647,7 @@ def update_order(oid):
         if sets:
             con.execute(f"update orders set {','.join(sets)},updated_at=? where id=?",[*params,now_iso(),oid])
             con.execute('insert into notifications values (?,?,?,?,?,?,null)',(uuid.uuid4().hex,'customer','order_status',f"Order {oid} is now {status or 'updated'}",oid,now_iso()))
+            if status: con.execute('insert into order_status_events values (?,?,?,?,?)',(uuid.uuid4().hex,oid,status,clean(d.get('note'),500),now_iso()))
     return jsonify({'order':order_payload(oid)})
 
 def make_pdf(text):
