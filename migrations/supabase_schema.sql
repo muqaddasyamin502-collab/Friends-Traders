@@ -1,4 +1,4 @@
-﻿create table if not exists users (id text primary key,email text not null unique,password_hash text not null,name text not null,phone text,role text not null check (role in ('customer','owner')),created_at text not null,updated_at text not null);
+create table if not exists users (id text primary key,email text not null unique,password_hash text not null,name text not null,phone text,role text not null check (role in ('customer','owner')),created_at text not null,updated_at text not null);
 create table if not exists password_resets (id text primary key,user_id text not null references users(id) on delete cascade,token text not null,created_at text not null,used integer not null default 0);
 create table if not exists addresses (id text primary key,user_id text not null references users(id) on delete cascade,label text not null,address text not null,city text not null,is_default integer not null default 0,created_at text not null,updated_at text not null);
 create table if not exists products (id text primary key,sku text not null unique,name text not null,category text not null,category_slug text not null,brand text not null,description text,price real not null default 0,discount real not null default 0,stock integer not null default 0,status text not null default 'active' check (status in ('active','hidden','draft')),created_at text not null,updated_at text not null);
@@ -12,3 +12,9 @@ create table if not exists order_items (id text primary key,order_id text not nu
 create table if not exists notifications (id text primary key,audience text not null,type text not null,message text not null,entity_id text,created_at text not null,read_at text);
 
 -- Supabase: run this schema in the free SQL editor. Keep service-role credentials on the server only.
+
+create table if not exists product_features (id text primary key,product_id text not null references products(id) on delete cascade,label text not null,sort_order integer not null default 0,created_at text not null);
+create table if not exists reviews (id text primary key,name text not null,phone text,rating integer not null default 5,message text not null,active integer not null default 1,created_at text not null);
+create table if not exists wishlists (user_id text not null references users(id) on delete cascade,product_id text not null references products(id) on delete cascade,created_at text not null,primary key(user_id,product_id));
+create table if not exists order_status_events (id text primary key,order_id text not null references orders(id) on delete cascade,status text not null,note text,created_at text not null);
+create table if not exists product_reviews (id text primary key,product_id text not null references products(id) on delete cascade,user_id text references users(id),order_id text references orders(id),rating integer not null, message text not null,verified_purchase integer not null default 0,active integer not null default 1,created_at text not null);
