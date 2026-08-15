@@ -3670,13 +3670,7 @@
         }
 
         function unlockOwnerPanel() {
-            if (document.getElementById('ownerPassword').value !== 'Friends@1122Local') {
-                alert('Wrong password');
-                return;
-            }
-            document.getElementById('ownerLogin').style.display = 'none';
-            document.getElementById('ownerTools').style.display = 'grid';
-            renderOwnerOrders();
+            alert('Owner access requires the Flask server. Open this site through the deployed app, not as a local HTML file.');
         }
 
         function saveOwnerProduct() {
