@@ -25,6 +25,8 @@ OWNER_PASSWORD = os.getenv('OWNER_PASSWORD')
 GA_MEASUREMENT_ID = os.getenv('GA_MEASUREMENT_ID', '').strip()[:40]
 AI_ASSISTANT_ENABLED = os.getenv('AI_ASSISTANT_ENABLED', 'false').lower() == 'true'
 ORDER_WEBHOOK_URL = os.getenv('ORDER_WEBHOOK_URL', '').strip()
+GROQ_API_KEY = os.getenv('GROQ_API_KEY', '').strip()
+GROQ_MODEL = os.getenv('GROQ_MODEL', 'llama-3.1-8b-instant').strip()
 ALLOWED_IMAGE_EXTS = {'.jpg', '.jpeg', '.png', '.webp'}
 
 app = Flask(__name__, static_folder=str(BASE_DIR), static_url_path='')
@@ -368,16 +370,29 @@ def remove_wishlist(pid):
 
 @app.post('/api/assistant')
 def shopping_assistant():
-    if not AI_ASSISTANT_ENABLED: return jsonify({'error':'Shopping assistant is not enabled yet.'}),503
     question=clean((request.get_json(silent=True) or {}).get('question'),500).lower()
     if not question: return jsonify({'error':'Ask a product question first.'}),400
-    # Safe local recommendation baseline; replace behind this route with an approved AI provider later.
     terms=[t for t in re.findall(r'[a-z0-9]{3,}',question) if t not in {'please','need','want','under','with','from'}]
     with db() as con:
         rows=con.execute("select * from products where status='active' and stock>0 order by (price-discount) asc limit 100").fetchall()
         imgs=product_images_for(con,[r['id'] for r in rows]); features=product_features_for(con,[r['id'] for r in rows])
     scored=sorted(rows,key=lambda r:sum(t in (' '.join([r['name'],r['category'],r['brand'],r['description'] or '']).lower()) for t in terms),reverse=True)[:4]
-    return jsonify({'answer':'Here are the closest available products from Friends Traders. Please confirm features and stock with us before ordering.','products':[public_product(r,imgs,features) for r in scored]})
+    products=[public_product(r,imgs,features) for r in scored]
+    answer='Here are the closest available products from Friends Traders. Please confirm features and stock with us before ordering.'
+    if GROQ_API_KEY:
+        try:
+            import urllib.request
+            catalog='\n'.join(f"- {p['name']} | {p['category']} | PKR {p['final_price']} | stock {p['stock']}" for p in products)
+            prompt=("You are Friends Traders Multan shopping assistant. Reply in short helpful Urdu/Roman Urdu or English matching the customer. "
+                    "Only recommend available catalog products and never invent prices, stock, policies, or delivery areas. "
+                    "If catalog is not enough, ask customer to contact WhatsApp 03007195451.\nCatalog:\n"+catalog+"\nCustomer: "+question)
+            body=json.dumps({'model':GROQ_MODEL,'messages':[{'role':'system','content':'You are a precise local-store assistant.'},{'role':'user','content':prompt}],'temperature':0.3,'max_tokens':220}).encode()
+            req=urllib.request.Request('https://api.groq.com/openai/v1/chat/completions',data=body,headers={'Authorization':'Bearer '+GROQ_API_KEY,'Content-Type':'application/json'},method='POST')
+            response=json.loads(urllib.request.urlopen(req,timeout=12).read().decode())
+            answer=clean(response['choices'][0]['message']['content'],1200) or answer
+        except Exception:
+            app.logger.warning('AI assistant provider failed; using catalog fallback')
+    return jsonify({'answer':answer,'products':products})
 
 @app.get('/api/reviews')
 def list_reviews():
