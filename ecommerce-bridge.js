@@ -16,11 +16,13 @@
         const slugify = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'product';
         const cartCacheKey = 'friendsTradersBackendCart';
         const wishlistCacheKey = 'friendsTradersWishlist';
+        const chatCacheKey = 'friendsTradersChatHistory';
         window.useBackendCart = true;
 
         function localWishlist() { try { return JSON.parse(localStorage.getItem(wishlistCacheKey) || '[]'); } catch (_) { return []; } }
-
         function saveLocalWishlist(items) { localStorage.setItem(wishlistCacheKey, JSON.stringify(items)); }
+        function chatHistory() { try { return JSON.parse(localStorage.getItem(chatCacheKey) || '[]'); } catch (_) { return []; } }
+        function saveChatHistory(items) { localStorage.setItem(chatCacheKey, JSON.stringify(items.slice(-20))); }
 
         function cachedCart() {
             try { return JSON.parse(localStorage.getItem(cartCacheKey) || 'null'); } catch (_) { return null; }
@@ -213,15 +215,13 @@
         }
 
         window.toggleWishlist = async function(productId, button) {
-            const card = document.querySelector('.product-card[data-id="' + CSS.escape(productId) + '"]');
-            const item = { id: productId, name: (card ? card.dataset.title : '') || 'Product', image: (card ? card.dataset.image : '') || '', price: (card ? card.dataset.price : '') || '' };
-            const saved = localWishlist(),
-                has = saved.some(p => p.id === productId);
-            const next = has ? saved.filter(p => p.id !== productId) : [...saved, item];
+            const card=document.querySelector('.product-card[data-id="'+CSS.escape(productId)+'"]');
+            const item={id:productId,name:(card ? card.dataset.title : '') || 'Product',image:(card ? card.dataset.image : '') || '',price:(card ? card.dataset.price : '') || ''};
+            const saved=localWishlist(), has=saved.some(p => p.id === productId);
+            const next=has ? saved.filter(p => p.id !== productId) : [...saved,item];
             try { if (currentUser) await api('/api/wishlist/' + encodeURIComponent(productId), { method: has ? 'DELETE' : 'POST', body: '{}' }); } catch (_) {}
             saveLocalWishlist(next);
-            if (button) { button.innerHTML = has ? '<i class="far fa-heart"></i> Wishlist' : '<i class="fas fa-heart"></i> Saved';
-                button.classList.toggle('wishlist-saved', !has); }
+            if (button) { button.innerHTML=has ? '<i class="far fa-heart"></i> Wishlist' : '<i class="fas fa-heart"></i> Saved'; button.classList.toggle('wishlist-saved',!has); }
             showWishlistPanel();
         };
 
@@ -244,39 +244,29 @@
         }
 
         window.showWishlistPanel = function() {
-            const panel = document.getElementById('ftWishlistPanel');
+            const panel=document.getElementById('ftWishlistPanel');
             if (!panel) return;
-            const items = localWishlist();
-            panel.innerHTML = '<div class="ft-panel-head"><strong><i class="fas fa-heart"></i> My Wishlist</strong><button type="button" onclick="document.getElementById(\'ftWishlistPanel\').classList.remove(\'active\')">×</button></div>' + (items.length ? items.map(p => '<div class="ft-wish-item"><img src="' + escapeHtml(assetUrl(p.image || '/assets/friends-traders-business-card.png')) + '" alt=""><span>' + escapeHtml(p.name) + '</span><button type="button" onclick="addToCart(\'' + escapeHtml(p.id) + '\')"><i class="fas fa-cart-plus"></i></button></div>').join('') : '<p class="owner-note">Save products here and come back when you are ready to order.</p>');
+            const items=localWishlist();
+            panel.innerHTML='<div class="ft-panel-head"><strong><i class="fas fa-heart"></i> My Wishlist</strong><button type="button" onclick="document.getElementById(\'ftWishlistPanel\').classList.remove(\'active\')">×</button></div>' + (items.length ? items.map(p=>'<div class="ft-wish-item"><img src="'+escapeHtml(assetUrl(p.image || '/assets/friends-traders-business-card.png'))+'" alt=""><span>'+escapeHtml(p.name)+'</span><button type="button" onclick="addToCart(\''+escapeHtml(p.id)+'\')"><i class="fas fa-cart-plus"></i></button></div>').join('') : '<p class="owner-note">Save products here and come back when you are ready to order.</p>');
             panel.classList.add('active');
         };
 
         function installStorefrontEnhancements() {
             if (document.getElementById('ftStorefrontEnhancements')) return;
-            const style = document.createElement('style');
-            style.id = 'ftStorefrontEnhancements';
-            style.textContent = `
+            const style=document.createElement('style'); style.id='ftStorefrontEnhancements'; style.textContent=`
               .ft-store-tools{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:20px 0;padding:14px;border-radius:14px;background:#fff7e9;border:1px solid #ecd4a2}.ft-search{flex:1;min-width:180px;padding:13px 16px;border:1px solid #d7b879;border-radius:9px;font:inherit}.ft-link-btn{border:0;border-radius:9px;padding:12px 14px;background:#152024;color:#fff;font-weight:700;cursor:pointer}.ft-wishlist-panel{position:fixed;z-index:2000;right:18px;bottom:78px;width:min(360px,calc(100vw - 36px));padding:18px;background:#fff;border-radius:16px;box-shadow:0 15px 50px #0004;display:none}.ft-wishlist-panel.active{display:block}.ft-panel-head{display:flex;justify-content:space-between;align-items:center;font-size:18px}.ft-panel-head button,.ft-wish-item button{border:0;background:none;font-size:22px;cursor:pointer}.ft-wish-item{display:flex;gap:10px;align-items:center;border-top:1px solid #eee;padding:10px 0}.ft-wish-item img{width:44px;height:44px;border-radius:7px;object-fit:cover}.ft-wish-item span{flex:1}.ft-mobile-nav{display:none}.ft-assistant{position:fixed;z-index:1800;right:20px;bottom:20px;border:0;border-radius:999px;padding:14px 18px;background:#15803d;color:#fff;font-weight:800;box-shadow:0 6px 20px #0004;cursor:pointer}.ft-assistant-box{position:fixed;right:20px;bottom:78px;z-index:1800;width:min(350px,calc(100vw - 40px));background:#fff;border-radius:16px;padding:16px;box-shadow:0 15px 50px #0004;display:none}.ft-assistant-box.active{display:block}.ft-assistant-close{float:right;border:0;background:none;font-size:25px;cursor:pointer}.ft-assistant-box input{width:100%;box-sizing:border-box;padding:11px;border:1px solid #ddd;border-radius:8px;margin:10px 0}.checkout-extras{display:grid;gap:10px;margin-top:10px}.checkout-extras select,.checkout-extras input{padding:12px;border:1px solid #ddd;border-radius:8px;font:inherit}.reviews-container{flex-wrap:nowrap!important}@media(max-width:700px){.ft-store-tools{position:sticky;top:65px;z-index:20;flex-wrap:wrap}.ft-mobile-nav{display:flex;position:fixed;z-index:1700;bottom:0;left:0;right:0;justify-content:space-around;padding:9px;background:#152024;color:#fff}.ft-mobile-nav button{background:none;border:0;color:#fff;font:inherit}.ft-assistant{bottom:66px}.ft-wishlist-panel{bottom:66px}}`;
             document.head.appendChild(style);
-            const grid = document.querySelector('.products-grid');
-            if (grid) { const tools = document.createElement('div');
-                tools.className = 'ft-store-tools';
-                tools.innerHTML = '<input id="ftProductSearch" class="ft-search" placeholder="🔍 Search products, brands or categories"><button class="ft-link-btn" type="button" onclick="showWishlistPanel()">♡ My Wishlist</button>';
-                grid.parentElement.insertBefore(tools, grid);
-                document.getElementById('ftProductSearch').addEventListener('input', e => { const q = e.target.value.toLowerCase();
-                    document.querySelectorAll('.product-card').forEach(c => c.style.display = (c.dataset.title + ' ' + c.dataset.brand + ' ' + c.dataset.categoryLabel).toLowerCase().includes(q) ? '' : 'none'); }); }
-            document.body.insertAdjacentHTML('beforeend', '<aside id="ftWishlistPanel" class="ft-wishlist-panel" aria-live="polite"></aside><button class="ft-assistant" type="button" onclick="document.getElementById(\'ftAssistantBox\').classList.toggle(\'active\')">🤖 Ask FT</button><section id="ftAssistantBox" class="ft-assistant-box"><button class="ft-assistant-close" type="button" aria-label="Close assistant" onclick="document.getElementById(\'ftAssistantBox\').classList.remove(\'active\')">×</button><strong>Friends Traders Assistant</strong><p>Tell us your budget or product need.</p><input id="ftAssistantQuestion" placeholder="e.g. Gift set under 10,000"><button class="ft-link-btn" type="button" onclick="ftAskAssistant()">Find products</button><div id="ftAssistantAnswer" class="owner-note"></div></section><nav class="ft-mobile-nav"><button onclick="window.scrollTo({top:0,behavior:\'smooth\'})">⌂ Home</button><button onclick="var p=document.querySelector(\'.products-grid\');if(p){p.scrollIntoView({behavior:\'smooth\'})}">Shop</button><button onclick="showWishlistPanel()">♡ Saved</button><button onclick="openCart()">🛒 Cart</button></nav>');
-            const checkout = document.querySelector('.checkout-form');
-            if (checkout && !document.getElementById('checkoutPayment')) { const extras = document.createElement('div');
-                extras.className = 'checkout-extras';
-                extras.innerHTML = '<input id="customerEmail" type="email" placeholder="Email (optional)"><select id="checkoutPayment"><option value="cod">Cash on Delivery</option><option value="bank_transfer">Bank Transfer</option><option value="easypaisa">Easypaisa / JazzCash</option></select><input id="checkoutCoupon" placeholder="Coupon code (e.g. WELCOME5)"><small>Free delivery in Multan on orders above PKR 10,000.</small>';
-                checkout.appendChild(extras); }
+            const chatStyle=document.createElement('style'); chatStyle.textContent=`.ft-assistant-box{padding:0;overflow:hidden}.ft-chat-head{padding:15px 16px;background:#152024;color:#fff;display:flex;align-items:center;justify-content:space-between}.ft-chat-head p{font-size:12px;margin:3px 0 0;color:#d8ecee}.ft-chat-close{border:0;background:transparent;color:#fff;font-size:28px;cursor:pointer}.ft-chat-messages{height:280px;overflow-y:auto;padding:14px;background:#f6f8f8;display:flex;flex-direction:column;gap:10px}.ft-chat-bubble{max-width:86%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.45;white-space:pre-wrap}.ft-chat-user{align-self:flex-end;background:#15803d;color:#fff;border-bottom-right-radius:3px}.ft-chat-ai{align-self:flex-start;background:#fff;color:#172025;border:1px solid #e1e6e6;border-bottom-left-radius:3px}.ft-chat-typing{font-style:italic;color:#64748b}.ft-chat-suggestions{display:flex;gap:7px;overflow-x:auto;padding:10px 14px;background:#fff}.ft-chat-suggestions button{white-space:nowrap;border:1px solid #d0dddd;background:#fff;border-radius:999px;padding:7px 10px;color:#152024;cursor:pointer}.ft-chat-compose{display:flex;gap:8px;padding:12px;background:#fff;border-top:1px solid #e5e7eb}.ft-chat-compose input{margin:0;flex:1}.ft-chat-send{border:0;border-radius:8px;background:#15803d;color:#fff;padding:0 14px;font-weight:700;cursor:pointer}.ft-chat-actions{padding:0 14px 14px;background:#fff}.ft-chat-actions a{font-size:13px;color:#087f3f;font-weight:700;text-decoration:none}`; document.head.appendChild(chatStyle);
+            const grid=document.querySelector('.products-grid');
+            if (grid) { const tools=document.createElement('div'); tools.className='ft-store-tools'; tools.innerHTML='<input id="ftProductSearch" class="ft-search" placeholder="🔍 Search products, brands or categories"><button class="ft-link-btn" type="button" onclick="showWishlistPanel()">♡ My Wishlist</button>'; grid.parentElement.insertBefore(tools,grid); document.getElementById('ftProductSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase(); document.querySelectorAll('.product-card').forEach(c=>c.style.display=(c.dataset.title+' '+c.dataset.brand+' '+c.dataset.categoryLabel).toLowerCase().includes(q)?'':'none');}); }
+            document.body.insertAdjacentHTML('beforeend','<aside id="ftWishlistPanel" class="ft-wishlist-panel" aria-live="polite"></aside><button class="ft-assistant" type="button" onclick="ftToggleChat()">🤖 Ask FT</button><section id="ftAssistantBox" class="ft-assistant-box" aria-label="Friends Traders chat"><div class="ft-chat-head"><div><strong>Friends Traders Assistant</strong><p>Product, budget & delivery help</p></div><button class="ft-chat-close" type="button" aria-label="Close chat" onclick="ftToggleChat(false)">×</button></div><div id="ftChatMessages" class="ft-chat-messages"></div><div class="ft-chat-suggestions"><button type="button" onclick="ftUseSuggestion(\'Best air fryer under 20000\')">Air fryer under 20k</button><button type="button" onclick="ftUseSuggestion(\'Gift set under 10000\')">Gift set under 10k</button><button type="button" onclick="ftUseSuggestion(\'Delivery in Multan\')">Delivery in Multan</button></div><div class="ft-chat-compose"><input id="ftAssistantQuestion" placeholder="Type your message..." onkeydown="if(event.key===\'Enter\'){ftAskAssistant()}"><button class="ft-chat-send" type="button" onclick="ftAskAssistant()">Send</button></div><div class="ft-chat-actions"><a target="_blank" href="https://wa.me/923007195451?text=Assalam%20o%20Alaikum%20Friends%20Traders%2C%20I%20need%20help%20with%20a%20product."><i class="fab fa-whatsapp"></i> Talk to our team on WhatsApp</a></div></section><nav class="ft-mobile-nav"><button onclick="window.scrollTo({top:0,behavior:\'smooth\'})">⌂ Home</button><button onclick="var p=document.querySelector(\'.products-grid\');if(p){p.scrollIntoView({behavior:\'smooth\'})}">Shop</button><button onclick="showWishlistPanel()">♡ Saved</button><button onclick="openCart()">🛒 Cart</button></nav>');
+            window.ftRenderChat=function(){var box=document.getElementById('ftChatMessages');if(!box)return;var history=chatHistory();if(!history.length){history=[{role:'assistant',content:'Assalam o Alaikum! Main Friends Traders assistant hoon. Aap product, budget, delivery ya stock ke bare mein pooch sakte hain.'}];}box.innerHTML=history.map(function(row){return '<div class="ft-chat-bubble '+(row.role==='user'?'ft-chat-user':'ft-chat-ai')+'">'+escapeHtml(row.content)+'</div>';}).join('');box.scrollTop=box.scrollHeight;};
+            window.ftToggleChat=function(force){var box=document.getElementById('ftAssistantBox');var open=typeof force==='boolean'?force:!box.classList.contains('active');box.classList.toggle('active',open);if(open)window.ftRenderChat();};
+            window.ftUseSuggestion=function(text){document.getElementById('ftAssistantQuestion').value=text;window.ftAskAssistant();};
+            const checkout=document.querySelector('.checkout-form'); if (checkout && !document.getElementById('checkoutPayment')) { const extras=document.createElement('div'); extras.className='checkout-extras'; extras.innerHTML='<input id="customerEmail" type="email" placeholder="Email (optional)"><select id="checkoutPayment"><option value="cod">Cash on Delivery</option><option value="bank_transfer">Bank Transfer</option><option value="easypaisa">Easypaisa / JazzCash</option></select><input id="checkoutCoupon" placeholder="Coupon code (e.g. WELCOME5)"><small>Free delivery in Multan on orders above PKR 10,000.</small>'; checkout.appendChild(extras); }
         }
 
-        window.ftAskAssistant = async function() { var question = document.getElementById('ftAssistantQuestion'); var answer = document.getElementById('ftAssistantAnswer'); var q = (question ? question.value : '').trim(); if (!q) { answer.textContent = 'Please write your question first.'; return; }
-            answer.textContent = 'Finding the best answer...'; try { var data = await api('/api/assistant', { method: 'POST', body: JSON.stringify({ question: q }) });
-                answer.textContent = data.answer || 'Please contact WhatsApp 03007195451 for help.'; } catch (_) { var term = q.toLowerCase().split(/\s+/).find(function(word) { return word.length > 2; }) || ''; var matches = Array.from(document.querySelectorAll('.product-card')).filter(function(card) { return (card.dataset.title + ' ' + card.dataset.description + ' ' + card.dataset.categoryLabel).toLowerCase().includes(term); }).slice(0, 3);
-                answer.textContent = matches.length ? 'Available options: ' + matches.map(function(card) { return card.dataset.title; }).join(', ') + '. For ordering, WhatsApp 03007195451.' : 'Tell me your budget or product type. You can also contact WhatsApp 03007195451.'; } };
+        window.ftAskAssistant = async function() { var input=document.getElementById('ftAssistantQuestion'); var q=(input ? input.value : '').trim(); if(!q)return;var history=chatHistory();history.push({role:'user',content:q});saveChatHistory(history);input.value='';window.ftRenderChat();var box=document.getElementById('ftChatMessages');var typing=document.createElement('div');typing.className='ft-chat-bubble ft-chat-ai ft-chat-typing';typing.textContent='Friends Traders is typing...';box.appendChild(typing);box.scrollTop=box.scrollHeight;try { var data=await api('/api/assistant',{method:'POST',body:JSON.stringify({question:q,history:history.slice(-8)})});history.push({role:'assistant',content:data.answer || 'Please contact WhatsApp 03007195451 for help.'}); } catch (_) { var term=q.toLowerCase().split(/\s+/).find(function(word){return word.length>2;}) || '';var matches=Array.from(document.querySelectorAll('.product-card')).filter(function(card){return (card.dataset.title+' '+card.dataset.description+' '+card.dataset.categoryLabel).toLowerCase().includes(term);}).slice(0,3);history.push({role:'assistant',content:matches.length?'Available options: '+matches.map(function(card){return card.dataset.title;}).join(', ')+'. For ordering, WhatsApp 03007195451.':'Tell me your budget or product type. You can also contact WhatsApp 03007195451.'});}saveChatHistory(history);window.ftRenderChat(); };
 
         async function renderBackendCart() {
             renderCartData(cacheCart(await getCart()));
@@ -341,15 +331,9 @@
         window.updateCartQty = async function(productId, delta) {
             const cart = cachedCart() || await getCart();
             const item = cart.items.find(row => row.product_id === productId);
-            const quantity = Math.max(0, (item ? item.quantity : 0) + delta);
-            if (item) { item.quantity = quantity;
-                cart.items = cart.items.filter(row => row.quantity > 0);
-                cart.subtotal = cart.items.reduce((sum, row) => sum + Number(row.unit_price || 0) * Number(row.quantity || 0), 0);
-                cart.shipping = cart.subtotal >= 10000 || cart.subtotal === 0 ? 0 : 300;
-                cart.total = cart.subtotal + cart.shipping;
-                renderCartData(cacheCart(cart)); }
-            try { const fresh = await api('/api/cart/items/' + encodeURIComponent(productId), { method: 'PATCH', body: JSON.stringify({ quantity: quantity }) });
-                renderCartData(cacheCart(fresh)); } catch (_) { renderCartData(cart); }
+            const quantity=Math.max(0,(item ? item.quantity : 0)+delta);
+            if(item){item.quantity=quantity;cart.items=cart.items.filter(row=>row.quantity>0);cart.subtotal=cart.items.reduce((sum,row)=>sum+Number(row.unit_price||0)*Number(row.quantity||0),0);cart.shipping=cart.subtotal>=10000||cart.subtotal===0?0:300;cart.total=cart.subtotal+cart.shipping;renderCartData(cacheCart(cart));}
+            try { const fresh=await api('/api/cart/items/' + encodeURIComponent(productId), { method: 'PATCH', body: JSON.stringify({ quantity: quantity }) }); renderCartData(cacheCart(fresh)); } catch (_) { renderCartData(cart); }
         };
 
         window.removeFromCart = async function(productId) {
@@ -406,9 +390,9 @@
                 document.getElementById('customerPhone').value = '';
                 document.getElementById('customerAddress').value = '';
                 alert('Order saved permanently: ' + data.order.id + '. Owner panel me lazmi show ho ga.');
-                const lines = data.order.items.map(item => item.name + ' x ' + item.quantity + ' = PKR ' + item.line_total).join('\n');
-                const message = 'Assalam o Alaikum Friends Traders, new website order ' + data.order.id + '%0A%0A' + encodeURIComponent(lines) + '%0A%0ATotal: PKR ' + data.order.total + '%0AName: ' + encodeURIComponent(data.order.customer_name) + '%0APhone: ' + encodeURIComponent(data.order.phone) + '%0AAddress: ' + encodeURIComponent(data.order.address);
-                window.open('https://wa.me/923007195451?text=' + message, '_blank');
+                const lines=data.order.items.map(item=>item.name+' x '+item.quantity+' = PKR '+item.line_total).join('\n');
+                const message='Assalam o Alaikum Friends Traders, new website order '+data.order.id+'%0A%0A'+encodeURIComponent(lines)+'%0A%0ATotal: PKR '+data.order.total+'%0AName: '+encodeURIComponent(data.order.customer_name)+'%0APhone: '+encodeURIComponent(data.order.phone)+'%0AAddress: '+encodeURIComponent(data.order.address);
+                window.open('https://wa.me/923007195451?text='+message,'_blank');
                 await renderBackendCart();
                 await renderCustomerOrderStatus();
                 if (ownerMode) await renderOwnerDashboard();
