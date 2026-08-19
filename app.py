@@ -1,6 +1,8 @@
 import base64, csv, io, json, os, re, secrets, sqlite3, uuid
 from datetime import datetime, timezone, date
 from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 from dotenv import load_dotenv
 from flask import Flask, Response, jsonify, request, send_from_directory, session
 from werkzeug.exceptions import HTTPException
@@ -27,6 +29,8 @@ AI_ASSISTANT_ENABLED = os.getenv('AI_ASSISTANT_ENABLED', 'false').lower() == 'tr
 ORDER_WEBHOOK_URL = os.getenv('ORDER_WEBHOOK_URL', '').strip()
 GROQ_API_KEY = os.getenv('GROQ_API_KEY', '').strip()
 GROQ_MODEL = os.getenv('GROQ_MODEL', 'openai/gpt-oss-20b').strip()
+GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
+AI_REQUEST_TIMEOUT_SECONDS = max(3, min(int(os.getenv('AI_REQUEST_TIMEOUT_SECONDS', '20')), 60))
 ALLOWED_IMAGE_EXTS = {'.jpg', '.jpeg', '.png', '.webp'}
 
 app = Flask(__name__, static_folder=str(BASE_DIR), static_url_path='')
@@ -277,7 +281,9 @@ def health():
 @app.get('/api/csrf')
 def csrf(): session['csrf_token']=secrets.token_urlsafe(32); return jsonify({'csrf_token':session['csrf_token'],'user':current_user()})
 @app.get('/api/public-config')
-def public_config(): return jsonify({'ga_measurement_id':GA_MEASUREMENT_ID or None,'ai_assistant_enabled':AI_ASSISTANT_ENABLED})
+def public_config():
+    # This intentionally exposes only configuration state, never a key or provider response.
+    return jsonify({'ga_measurement_id':GA_MEASUREMENT_ID or None,'ai_assistant_enabled':AI_ASSISTANT_ENABLED and bool(GROQ_API_KEY)})
 
 @app.post('/api/auth/register')
 def register():
@@ -368,6 +374,34 @@ def remove_wishlist(pid):
     with db() as con: con.execute('delete from wishlists where user_id=? and product_id=?',(u['id'],pid))
     return jsonify({'ok':True})
 
+def groq_chat(messages):
+    """Make one bounded Groq Chat Completions call without leaking credentials."""
+    payload = json.dumps({
+        'model': GROQ_MODEL,
+        'messages': messages,
+        'temperature': 0.3,
+        # Groq's current Chat Completions API uses max_completion_tokens.
+        'max_completion_tokens': 220,
+    }).encode('utf-8')
+    req = Request(
+        GROQ_API_URL,
+        data=payload,
+        headers={
+            'Authorization': f'Bearer {GROQ_API_KEY}',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        method='POST',
+    )
+    with urlopen(req, timeout=AI_REQUEST_TIMEOUT_SECONDS) as response:
+        result = json.loads(response.read().decode('utf-8'))
+    choices = result.get('choices') if isinstance(result, dict) else None
+    content = choices[0].get('message', {}).get('content') if isinstance(choices, list) and choices else None
+    if not isinstance(content, str) or not content.strip():
+        raise ValueError('provider returned no assistant message')
+    return clean(content, 1200)
+
+
 @app.post('/api/assistant')
 def shopping_assistant():
     data=request.get_json(silent=True) or {}
@@ -382,20 +416,25 @@ def shopping_assistant():
     scored=sorted(rows,key=lambda r:sum(t in (' '.join([r['name'],r['category'],r['brand'],r['description'] or '']).lower()) for t in terms),reverse=True)[:4]
     products=[public_product(r,imgs,features) for r in scored]
     answer='Here are the closest available products from Friends Traders. Please confirm features and stock with us before ordering.'
-    if GROQ_API_KEY:
+    provider_used=False
+    if AI_ASSISTANT_ENABLED and GROQ_API_KEY:
         try:
-            import urllib.request
             catalog='\n'.join(f"- {p['name']} | {p['category']} | PKR {p['final_price']} | stock {p['stock']}" for p in products)
             prompt=("You are Friends Traders Multan shopping assistant. Reply in short helpful Urdu/Roman Urdu or English matching the customer. "
                     "Only recommend available catalog products and never invent prices, stock, policies, or delivery areas. "
                     "If catalog is not enough, ask customer to contact WhatsApp 03007195451.\nCatalog:\n"+catalog+"\nCustomer: "+question)
-            body=json.dumps({'model':GROQ_MODEL,'messages':[{'role':'system','content':'You are a precise local-store assistant.'},*history,{'role':'user','content':prompt}],'temperature':0.3,'max_tokens':220}).encode()
-            req=urllib.request.Request('https://api.groq.com/openai/v1/chat/completions',data=body,headers={'Authorization':'Bearer '+GROQ_API_KEY,'Content-Type':'application/json'},method='POST')
-            response=json.loads(urllib.request.urlopen(req,timeout=12).read().decode())
-            answer=clean(response['choices'][0]['message']['content'],1200) or answer
+            answer=groq_chat([{'role':'system','content':'You are a precise local-store assistant.'},*history,{'role':'user','content':prompt}]) or answer
+            provider_used=True
+        except HTTPError as exc:
+            # Do not log a provider body: it could echo sensitive request data.
+            app.logger.warning('AI assistant provider rejected request (HTTP %s); using catalog fallback', exc.code)
+        except URLError as exc:
+            app.logger.warning('AI assistant provider connection failed (%s); using catalog fallback', getattr(exc, 'reason', 'network error'))
+        except (TimeoutError, ValueError, json.JSONDecodeError) as exc:
+            app.logger.warning('AI assistant provider returned an unusable response (%s); using catalog fallback', type(exc).__name__)
         except Exception:
-            app.logger.warning('AI assistant provider failed; using catalog fallback')
-    return jsonify({'answer':answer,'products':products})
+            app.logger.exception('AI assistant provider failed unexpectedly; using catalog fallback')
+    return jsonify({'answer':answer,'products':products,'assistant_mode':'ai' if provider_used else 'catalog'})
 
 @app.get('/api/reviews')
 def list_reviews():
