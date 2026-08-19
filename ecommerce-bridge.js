@@ -256,7 +256,7 @@
             const style = document.createElement('style');
             style.id = 'ftStorefrontEnhancements';
             style.textContent = `
-              .ft-store-tools{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:20px 0;padding:14px;border-radius:14px;background:#fff7e9;border:1px solid #ecd4a2}.ft-search{flex:1;min-width:180px;padding:13px 16px;border:1px solid #d7b879;border-radius:9px;font:inherit}.ft-link-btn{border:0;border-radius:9px;padding:12px 14px;background:#152024;color:#fff;font-weight:700;cursor:pointer}.ft-wishlist-panel{position:fixed;z-index:2000;right:18px;bottom:78px;width:min(360px,calc(100vw - 36px));padding:18px;background:#fff;border-radius:16px;box-shadow:0 15px 50px #0004;display:none}.ft-wishlist-panel.active{display:block}.ft-panel-head{display:flex;justify-content:space-between;align-items:center;font-size:18px}.ft-panel-head button,.ft-wish-item button{border:0;background:none;font-size:22px;cursor:pointer}.ft-wish-item{display:flex;gap:10px;align-items:center;border-top:1px solid #eee;padding:10px 0}.ft-wish-item img{width:44px;height:44px;border-radius:7px;object-fit:cover}.ft-wish-item span{flex:1}.ft-mobile-nav{display:none}.ft-assistant{position:fixed;z-index:1800;right:20px;bottom:20px;border:0;border-radius:999px;padding:14px 18px;background:#15803d;color:#fff;font-weight:800;box-shadow:0 6px 20px #0004;cursor:pointer}.ft-assistant-box{position:fixed;right:20px;bottom:78px;z-index:1800;width:min(350px,calc(100vw - 40px));background:#fff;border-radius:16px;padding:16px;box-shadow:0 15px 50px #0004;display:none}.ft-assistant-box.active{display:block}.ft-assistant-box input{width:100%;box-sizing:border-box;padding:11px;border:1px solid #ddd;border-radius:8px;margin:10px 0}.checkout-extras{display:grid;gap:10px;margin-top:10px}.checkout-extras select,.checkout-extras input{padding:12px;border:1px solid #ddd;border-radius:8px;font:inherit}@media(max-width:700px){.ft-store-tools{position:sticky;top:65px;z-index:20;flex-wrap:wrap}.ft-mobile-nav{display:flex;position:fixed;z-index:1700;bottom:0;left:0;right:0;justify-content:space-around;padding:9px;background:#152024;color:#fff}.ft-mobile-nav button{background:none;border:0;color:#fff;font:inherit}.ft-assistant{bottom:66px}.ft-wishlist-panel{bottom:66px}}`;
+              .ft-store-tools{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:20px 0;padding:14px;border-radius:14px;background:#fff7e9;border:1px solid #ecd4a2}.ft-search{flex:1;min-width:180px;padding:13px 16px;border:1px solid #d7b879;border-radius:9px;font:inherit}.ft-link-btn{border:0;border-radius:9px;padding:12px 14px;background:#152024;color:#fff;font-weight:700;cursor:pointer}.ft-wishlist-panel{position:fixed;z-index:2000;right:18px;bottom:78px;width:min(360px,calc(100vw - 36px));padding:18px;background:#fff;border-radius:16px;box-shadow:0 15px 50px #0004;display:none}.ft-wishlist-panel.active{display:block}.ft-panel-head{display:flex;justify-content:space-between;align-items:center;font-size:18px}.ft-panel-head button,.ft-wish-item button{border:0;background:none;font-size:22px;cursor:pointer}.ft-wish-item{display:flex;gap:10px;align-items:center;border-top:1px solid #eee;padding:10px 0}.ft-wish-item img{width:44px;height:44px;border-radius:7px;object-fit:cover}.ft-wish-item span{flex:1}.ft-mobile-nav{display:none}.ft-assistant{position:fixed;z-index:1800;right:20px;bottom:20px;border:0;border-radius:999px;padding:14px 18px;background:#15803d;color:#fff;font-weight:800;box-shadow:0 6px 20px #0004;cursor:pointer}.ft-assistant-box{position:fixed;right:20px;bottom:78px;z-index:1800;width:min(350px,calc(100vw - 40px));background:#fff;border-radius:16px;padding:16px;box-shadow:0 15px 50px #0004;display:none}.ft-assistant-box.active{display:block}.ft-assistant-close{float:right;border:0;background:none;font-size:25px;cursor:pointer}.ft-assistant-box input{width:100%;box-sizing:border-box;padding:11px;border:1px solid #ddd;border-radius:8px;margin:10px 0}.checkout-extras{display:grid;gap:10px;margin-top:10px}.checkout-extras select,.checkout-extras input{padding:12px;border:1px solid #ddd;border-radius:8px;font:inherit}.reviews-container{flex-wrap:nowrap!important}@media(max-width:700px){.ft-store-tools{position:sticky;top:65px;z-index:20;flex-wrap:wrap}.ft-mobile-nav{display:flex;position:fixed;z-index:1700;bottom:0;left:0;right:0;justify-content:space-around;padding:9px;background:#152024;color:#fff}.ft-mobile-nav button{background:none;border:0;color:#fff;font:inherit}.ft-assistant{bottom:66px}.ft-wishlist-panel{bottom:66px}}`;
             document.head.appendChild(style);
             const grid = document.querySelector('.products-grid');
             if (grid) { const tools = document.createElement('div');
@@ -265,7 +265,7 @@
                 grid.parentElement.insertBefore(tools, grid);
                 document.getElementById('ftProductSearch').addEventListener('input', e => { const q = e.target.value.toLowerCase();
                     document.querySelectorAll('.product-card').forEach(c => c.style.display = (c.dataset.title + ' ' + c.dataset.brand + ' ' + c.dataset.categoryLabel).toLowerCase().includes(q) ? '' : 'none'); }); }
-            document.body.insertAdjacentHTML('beforeend', '<aside id="ftWishlistPanel" class="ft-wishlist-panel" aria-live="polite"></aside><button class="ft-assistant" type="button" onclick="document.getElementById(\'ftAssistantBox\').classList.toggle(\'active\')">🤖 Ask FT</button><section id="ftAssistantBox" class="ft-assistant-box"><strong>Friends Traders Assistant</strong><p>Tell us your budget or product need.</p><input id="ftAssistantQuestion" placeholder="e.g. Gift set under 10,000"><button class="ft-link-btn" type="button" onclick="ftAskAssistant()">Find products</button><div id="ftAssistantAnswer" class="owner-note"></div></section><nav class="ft-mobile-nav"><button onclick="window.scrollTo({top:0,behavior:\'smooth\'})">⌂ Home</button><button onclick="var p=document.querySelector(\'.products-grid\');if(p){p.scrollIntoView({behavior:\'smooth\'})}">Shop</button><button onclick="showWishlistPanel()">♡ Saved</button><button onclick="openCart()">🛒 Cart</button></nav>');
+            document.body.insertAdjacentHTML('beforeend', '<aside id="ftWishlistPanel" class="ft-wishlist-panel" aria-live="polite"></aside><button class="ft-assistant" type="button" onclick="document.getElementById(\'ftAssistantBox\').classList.toggle(\'active\')">🤖 Ask FT</button><section id="ftAssistantBox" class="ft-assistant-box"><button class="ft-assistant-close" type="button" aria-label="Close assistant" onclick="document.getElementById(\'ftAssistantBox\').classList.remove(\'active\')">×</button><strong>Friends Traders Assistant</strong><p>Tell us your budget or product need.</p><input id="ftAssistantQuestion" placeholder="e.g. Gift set under 10,000"><button class="ft-link-btn" type="button" onclick="ftAskAssistant()">Find products</button><div id="ftAssistantAnswer" class="owner-note"></div></section><nav class="ft-mobile-nav"><button onclick="window.scrollTo({top:0,behavior:\'smooth\'})">⌂ Home</button><button onclick="var p=document.querySelector(\'.products-grid\');if(p){p.scrollIntoView({behavior:\'smooth\'})}">Shop</button><button onclick="showWishlistPanel()">♡ Saved</button><button onclick="openCart()">🛒 Cart</button></nav>');
             const checkout = document.querySelector('.checkout-form');
             if (checkout && !document.getElementById('checkoutPayment')) { const extras = document.createElement('div');
                 extras.className = 'checkout-extras';
@@ -273,8 +273,10 @@
                 checkout.appendChild(extras); }
         }
 
-        window.ftAskAssistant = function() { var question = document.getElementById('ftAssistantQuestion'); const q = (question ? question.value : '').toLowerCase(); const matches = Array.from(document.querySelectorAll('.product-card')).filter(c => (c.dataset.title + ' ' + c.dataset.description + ' ' + c.dataset.categoryLabel).toLowerCase().includes(q.split(/\s+/).find(x => x.length > 2) || '')).slice(0, 3);
-            document.getElementById('ftAssistantAnswer').textContent = matches.length ? 'Try: ' + matches.map(c => c.dataset.title).join(', ') : 'Please browse our products or contact us on WhatsApp for a personal recommendation.'; };
+        window.ftAskAssistant = async function() { var question = document.getElementById('ftAssistantQuestion'); var answer = document.getElementById('ftAssistantAnswer'); var q = (question ? question.value : '').trim(); if (!q) { answer.textContent = 'Please write your question first.'; return; }
+            answer.textContent = 'Finding the best answer...'; try { var data = await api('/api/assistant', { method: 'POST', body: JSON.stringify({ question: q }) });
+                answer.textContent = data.answer || 'Please contact WhatsApp 03007195451 for help.'; } catch (_) { var term = q.toLowerCase().split(/\s+/).find(function(word) { return word.length > 2; }) || ''; var matches = Array.from(document.querySelectorAll('.product-card')).filter(function(card) { return (card.dataset.title + ' ' + card.dataset.description + ' ' + card.dataset.categoryLabel).toLowerCase().includes(term); }).slice(0, 3);
+                answer.textContent = matches.length ? 'Available options: ' + matches.map(function(card) { return card.dataset.title; }).join(', ') + '. For ordering, WhatsApp 03007195451.' : 'Tell me your budget or product type. You can also contact WhatsApp 03007195451.'; } };
 
         async function renderBackendCart() {
             renderCartData(cacheCart(await getCart()));
@@ -337,10 +339,17 @@
         };
 
         window.updateCartQty = async function(productId, delta) {
-            const cart = await getCart();
+            const cart = cachedCart() || await getCart();
             const item = cart.items.find(row => row.product_id === productId);
-            await api('/api/cart/items/' + encodeURIComponent(productId), { method: 'PATCH', body: JSON.stringify({ quantity: Math.max(0, (item ? item.quantity : 0) + delta) }) });
-            await renderBackendCart();
+            const quantity = Math.max(0, (item ? item.quantity : 0) + delta);
+            if (item) { item.quantity = quantity;
+                cart.items = cart.items.filter(row => row.quantity > 0);
+                cart.subtotal = cart.items.reduce((sum, row) => sum + Number(row.unit_price || 0) * Number(row.quantity || 0), 0);
+                cart.shipping = cart.subtotal >= 10000 || cart.subtotal === 0 ? 0 : 300;
+                cart.total = cart.subtotal + cart.shipping;
+                renderCartData(cacheCart(cart)); }
+            try { const fresh = await api('/api/cart/items/' + encodeURIComponent(productId), { method: 'PATCH', body: JSON.stringify({ quantity: quantity }) });
+                renderCartData(cacheCart(fresh)); } catch (_) { renderCartData(cart); }
         };
 
         window.removeFromCart = async function(productId) {
@@ -397,6 +406,9 @@
                 document.getElementById('customerPhone').value = '';
                 document.getElementById('customerAddress').value = '';
                 alert('Order saved permanently: ' + data.order.id + '. Owner panel me lazmi show ho ga.');
+                const lines = data.order.items.map(item => item.name + ' x ' + item.quantity + ' = PKR ' + item.line_total).join('\n');
+                const message = 'Assalam o Alaikum Friends Traders, new website order ' + data.order.id + '%0A%0A' + encodeURIComponent(lines) + '%0A%0ATotal: PKR ' + data.order.total + '%0AName: ' + encodeURIComponent(data.order.customer_name) + '%0APhone: ' + encodeURIComponent(data.order.phone) + '%0AAddress: ' + encodeURIComponent(data.order.address);
+                window.open('https://wa.me/923007195451?text=' + message, '_blank');
                 await renderBackendCart();
                 await renderCustomerOrderStatus();
                 if (ownerMode) await renderOwnerDashboard();
@@ -667,7 +679,27 @@
     // Keep the visible page usable immediately. Reviews and category counts
     // must not wait for the products request (which can be slow on a cold server).
     ensureReviewForm();
+    // Two original review cards were accidentally placed outside the slider.
+    // Move only those stray cards into the existing slider; do not alter its layout.
+    const reviewTrack=document.getElementById('reviewsContainer');
+    const reviewSection=document.getElementById('reviews');
+    if (reviewTrack && reviewSection) {
+      Array.from(reviewSection.querySelectorAll(':scope > .container > .review-card, :scope > .container > .reviews-slider > .review-card')).forEach(card => reviewTrack.appendChild(card));
+    }
     installStorefrontEnhancements();
+    document.addEventListener('click', function(event) {
+      const details=event.target.closest('.details-btn');
+      if (!details) return;
+      const card=details.closest('.product-card');
+      if (!card) return;
+      setTimeout(function() {
+        const productId=card.dataset.id, productName=card.dataset.title || 'Product';
+        const add=document.getElementById('detailAddCartBtn');
+        const order=document.getElementById('detailOrderBtn');
+        if (add) add.onclick=function(){ window.addToCart(productId,add); };
+        if (order) order.onclick=function(){ window.addToCart(productId); window.inquireProduct(productName); };
+      },0);
+    });
     updateCategoryCounts();
     const cached = cachedCart();
     if (cached) renderCartData(cached);
