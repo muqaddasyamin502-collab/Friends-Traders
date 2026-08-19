@@ -1466,10 +1466,19 @@
             nav {
                 width: 100%;
                 margin-top: 8px;
-                display: none;
+                display: block;
+                max-height: 0;
+                opacity: 0;
+                overflow: hidden;
+                transform: translateY(-12px);
+                pointer-events: none;
+                transition: max-height .35s ease, opacity .25s ease, transform .35s ease;
             }
             nav.active {
-                display: block;
+                max-height: 460px;
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: auto;
             }
             nav ul {
                 flex-direction: column;
@@ -3137,6 +3146,7 @@
                     <p id="detailDescription"></p>
                     <div class="detail-price" id="detailPrice"></div>
                     <ul class="detail-list" id="detailFeatures"></ul>
+                    <button class="btn btn-primary" type="button" id="detailAddCartBtn"><i class="fas fa-cart-plus"></i> Add to Cart</button>
                     <button class="btn btn-whatsapp" type="button" id="detailOrderBtn"><i class="fab fa-whatsapp"></i> WhatsApp Order</button>
                 </div>
             </div>
