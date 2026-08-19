@@ -370,9 +370,12 @@ def remove_wishlist(pid):
 
 @app.post('/api/assistant')
 def shopping_assistant():
-    question=clean((request.get_json(silent=True) or {}).get('question'),500).lower()
+    data=request.get_json(silent=True) or {}
+    question=clean(data.get('question'),500)
     if not question: return jsonify({'error':'Ask a product question first.'}),400
-    terms=[t for t in re.findall(r'[a-z0-9]{3,}',question) if t not in {'please','need','want','under','with','from'}]
+    history=data.get('history') if isinstance(data.get('history'),list) else []
+    history=[{'role':'assistant' if row.get('role')=='assistant' else 'user','content':clean(row.get('content'),600)} for row in history[-8:] if isinstance(row,dict) and clean(row.get('content'),600)]
+    terms=[t for t in re.findall(r'[a-z0-9]{3,}',question.lower()) if t not in {'please','need','want','under','with','from','mujhe','chahiye','karo'}]
     with db() as con:
         rows=con.execute("select * from products where status='active' and stock>0 order by (price-discount) asc limit 100").fetchall()
         imgs=product_images_for(con,[r['id'] for r in rows]); features=product_features_for(con,[r['id'] for r in rows])
@@ -386,7 +389,7 @@ def shopping_assistant():
             prompt=("You are Friends Traders Multan shopping assistant. Reply in short helpful Urdu/Roman Urdu or English matching the customer. "
                     "Only recommend available catalog products and never invent prices, stock, policies, or delivery areas. "
                     "If catalog is not enough, ask customer to contact WhatsApp 03007195451.\nCatalog:\n"+catalog+"\nCustomer: "+question)
-            body=json.dumps({'model':GROQ_MODEL,'messages':[{'role':'system','content':'You are a precise local-store assistant.'},{'role':'user','content':prompt}],'temperature':0.3,'max_tokens':220}).encode()
+            body=json.dumps({'model':GROQ_MODEL,'messages':[{'role':'system','content':'You are a precise local-store assistant.'},*history,{'role':'user','content':prompt}],'temperature':0.3,'max_tokens':220}).encode()
             req=urllib.request.Request('https://api.groq.com/openai/v1/chat/completions',data=body,headers={'Authorization':'Bearer '+GROQ_API_KEY,'Content-Type':'application/json'},method='POST')
             response=json.loads(urllib.request.urlopen(req,timeout=12).read().decode())
             answer=clean(response['choices'][0]['message']['content'],1200) or answer
