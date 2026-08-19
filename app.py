@@ -26,7 +26,7 @@ GA_MEASUREMENT_ID = os.getenv('GA_MEASUREMENT_ID', '').strip()[:40]
 AI_ASSISTANT_ENABLED = os.getenv('AI_ASSISTANT_ENABLED', 'false').lower() == 'true'
 ORDER_WEBHOOK_URL = os.getenv('ORDER_WEBHOOK_URL', '').strip()
 GROQ_API_KEY = os.getenv('GROQ_API_KEY', '').strip()
-GROQ_MODEL = os.getenv('GROQ_MODEL', 'llama-3.1-8b-instant').strip()
+GROQ_MODEL = os.getenv('GROQ_MODEL', 'openai/gpt-oss-20b').strip()
 ALLOWED_IMAGE_EXTS = {'.jpg', '.jpeg', '.png', '.webp'}
 
 app = Flask(__name__, static_folder=str(BASE_DIR), static_url_path='')
