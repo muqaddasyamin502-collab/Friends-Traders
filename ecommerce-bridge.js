@@ -20,8 +20,11 @@
         window.useBackendCart = true;
 
         function localWishlist() { try { return JSON.parse(localStorage.getItem(wishlistCacheKey) || '[]'); } catch (_) { return []; } }
+
         function saveLocalWishlist(items) { localStorage.setItem(wishlistCacheKey, JSON.stringify(items)); }
+
         function chatHistory() { try { return JSON.parse(localStorage.getItem(chatCacheKey) || '[]'); } catch (_) { return []; } }
+
         function saveChatHistory(items) { localStorage.setItem(chatCacheKey, JSON.stringify(items.slice(-20))); }
 
         function cachedCart() {
@@ -194,6 +197,13 @@
 
         function wireBackendCartButtons() {
             document.querySelectorAll('.product-card').forEach(card => {
+                if (!card.querySelector('.ft-product-delivery-note')) {
+                    const note = document.createElement('div');
+                    note.className = 'ft-product-delivery-note';
+                    note.innerHTML = '<span>🚚 Free Delivery</span><span>📍 Available in Multan</span><span>💵 Cash on Delivery Available</span>';
+                    const actions = card.querySelector('.product-actions');
+                    if (actions) actions.parentElement.insertBefore(note, actions);
+                }
                 const actions = card.querySelector('.product-actions');
                 if (!actions) return;
                 let button = actions.querySelector('.add-cart-btn');
@@ -215,13 +225,15 @@
         }
 
         window.toggleWishlist = async function(productId, button) {
-            const card=document.querySelector('.product-card[data-id="'+CSS.escape(productId)+'"]');
-            const item={id:productId,name:(card ? card.dataset.title : '') || 'Product',image:(card ? card.dataset.image : '') || '',price:(card ? card.dataset.price : '') || ''};
-            const saved=localWishlist(), has=saved.some(p => p.id === productId);
-            const next=has ? saved.filter(p => p.id !== productId) : [...saved,item];
+            const card = document.querySelector('.product-card[data-id="' + CSS.escape(productId) + '"]');
+            const item = { id: productId, name: (card ? card.dataset.title : '') || 'Product', image: (card ? card.dataset.image : '') || '', price: (card ? card.dataset.price : '') || '' };
+            const saved = localWishlist(),
+                has = saved.some(p => p.id === productId);
+            const next = has ? saved.filter(p => p.id !== productId) : [...saved, item];
             try { if (currentUser) await api('/api/wishlist/' + encodeURIComponent(productId), { method: has ? 'DELETE' : 'POST', body: '{}' }); } catch (_) {}
             saveLocalWishlist(next);
-            if (button) { button.innerHTML=has ? '<i class="far fa-heart"></i> Wishlist' : '<i class="fas fa-heart"></i> Saved'; button.classList.toggle('wishlist-saved',!has); }
+            if (button) { button.innerHTML = has ? '<i class="far fa-heart"></i> Wishlist' : '<i class="fas fa-heart"></i> Saved';
+                button.classList.toggle('wishlist-saved', !has); }
             showWishlistPanel();
         };
 
@@ -244,32 +256,67 @@
         }
 
         window.showWishlistPanel = function() {
-            const panel=document.getElementById('ftWishlistPanel');
+            const panel = document.getElementById('ftWishlistPanel');
             if (!panel) return;
-            const items=localWishlist();
-            panel.innerHTML='<div class="ft-panel-head"><strong><i class="fas fa-heart"></i> My Wishlist</strong><button type="button" onclick="document.getElementById(\'ftWishlistPanel\').classList.remove(\'active\')">×</button></div>' + (items.length ? items.map(p=>'<div class="ft-wish-item"><img src="'+escapeHtml(assetUrl(p.image || '/assets/friends-traders-business-card.png'))+'" alt=""><span>'+escapeHtml(p.name)+'</span><button type="button" onclick="addToCart(\''+escapeHtml(p.id)+'\')"><i class="fas fa-cart-plus"></i></button></div>').join('') : '<p class="owner-note">Save products here and come back when you are ready to order.</p>');
+            const items = localWishlist();
+            panel.innerHTML = '<div class="ft-panel-head"><strong><i class="fas fa-heart"></i> My Wishlist</strong><button type="button" onclick="document.getElementById(\'ftWishlistPanel\').classList.remove(\'active\')">×</button></div>' + (items.length ? items.map(p => '<div class="ft-wish-item"><img src="' + escapeHtml(assetUrl(p.image || '/assets/friends-traders-business-card.png')) + '" alt=""><span>' + escapeHtml(p.name) + '</span><button type="button" onclick="addToCart(\'' + escapeHtml(p.id) + '\')"><i class="fas fa-cart-plus"></i></button></div>').join('') : '<p class="owner-note">Save products here and come back when you are ready to order.</p>');
             panel.classList.add('active');
         };
 
         function installStorefrontEnhancements() {
             if (document.getElementById('ftStorefrontEnhancements')) return;
-            const style=document.createElement('style'); style.id='ftStorefrontEnhancements'; style.textContent=`
+            const style = document.createElement('style');
+            style.id = 'ftStorefrontEnhancements';
+            style.textContent = `
               .ft-store-tools{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:20px 0;padding:14px;border-radius:14px;background:#fff7e9;border:1px solid #ecd4a2}.ft-search{flex:1;min-width:180px;padding:13px 16px;border:1px solid #d7b879;border-radius:9px;font:inherit}.ft-link-btn{border:0;border-radius:9px;padding:12px 14px;background:#152024;color:#fff;font-weight:700;cursor:pointer}.ft-wishlist-panel{position:fixed;z-index:2000;right:18px;bottom:78px;width:min(360px,calc(100vw - 36px));padding:18px;background:#fff;border-radius:16px;box-shadow:0 15px 50px #0004;display:none}.ft-wishlist-panel.active{display:block}.ft-panel-head{display:flex;justify-content:space-between;align-items:center;font-size:18px}.ft-panel-head button,.ft-wish-item button{border:0;background:none;font-size:22px;cursor:pointer}.ft-wish-item{display:flex;gap:10px;align-items:center;border-top:1px solid #eee;padding:10px 0}.ft-wish-item img{width:44px;height:44px;border-radius:7px;object-fit:cover}.ft-wish-item span{flex:1}.ft-mobile-nav{display:none}.ft-assistant{position:fixed;z-index:1800;right:20px;bottom:20px;border:0;border-radius:999px;padding:14px 18px;background:#15803d;color:#fff;font-weight:800;box-shadow:0 6px 20px #0004;cursor:pointer}.ft-assistant-box{position:fixed;right:20px;bottom:78px;z-index:1800;width:min(350px,calc(100vw - 40px));background:#fff;border-radius:16px;padding:16px;box-shadow:0 15px 50px #0004;display:none}.ft-assistant-box.active{display:block}.ft-assistant-close{float:right;border:0;background:none;font-size:25px;cursor:pointer}.ft-assistant-box input{width:100%;box-sizing:border-box;padding:11px;border:1px solid #ddd;border-radius:8px;margin:10px 0}.checkout-extras{display:grid;gap:10px;margin-top:10px}.checkout-extras select,.checkout-extras input{padding:12px;border:1px solid #ddd;border-radius:8px;font:inherit}.reviews-container{flex-wrap:nowrap!important}@media(max-width:700px){.ft-store-tools{position:sticky;top:65px;z-index:20;flex-wrap:wrap}.ft-mobile-nav{display:flex;position:fixed;z-index:1700;bottom:0;left:0;right:0;justify-content:space-around;padding:9px;background:#152024;color:#fff}.ft-mobile-nav button{background:none;border:0;color:#fff;font:inherit}.ft-assistant{bottom:66px}.ft-wishlist-panel{bottom:66px}}`;
             document.head.appendChild(style);
-            const chatStyle=document.createElement('style'); chatStyle.textContent=`.ft-assistant-box{padding:0;overflow:hidden}.ft-chat-head{padding:15px 16px;background:#152024;color:#fff;display:flex;align-items:center;justify-content:space-between}.ft-chat-head p{font-size:12px;margin:3px 0 0;color:#d8ecee}.ft-chat-close,.ft-chat-new{border:0;background:transparent;color:#fff;cursor:pointer}.ft-chat-close{font-size:28px;margin-left:8px}.ft-chat-new{font-size:12px;font-weight:700;border:1px solid #ffffff88;border-radius:6px;padding:5px 7px}.ft-chat-messages{height:280px;overflow-y:auto;padding:14px;background:#f6f8f8;display:flex;flex-direction:column;gap:10px}.ft-chat-bubble{max-width:86%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.45;white-space:pre-wrap}.ft-chat-user{align-self:flex-end;background:#15803d;color:#fff;border-bottom-right-radius:3px}.ft-chat-ai{align-self:flex-start;background:#fff;color:#172025;border:1px solid #e1e6e6;border-bottom-left-radius:3px}.ft-chat-typing{font-style:italic;color:#64748b}.ft-chat-suggestions{display:flex;gap:7px;overflow-x:auto;padding:10px 14px;background:#fff}.ft-chat-suggestions button{white-space:nowrap;border:1px solid #d0dddd;background:#fff;border-radius:999px;padding:7px 10px;color:#152024;cursor:pointer}.ft-chat-compose{display:flex;gap:8px;padding:12px;background:#fff;border-top:1px solid #e5e7eb}.ft-chat-compose input{margin:0;flex:1}.ft-chat-send{border:0;border-radius:8px;background:#15803d;color:#fff;padding:0 14px;font-weight:700;cursor:pointer}.ft-chat-actions{padding:0 14px 14px;background:#fff}.ft-chat-actions a{font-size:13px;color:#087f3f;font-weight:700;text-decoration:none}`; document.head.appendChild(chatStyle);
-            const grid=document.querySelector('.products-grid');
-            if (grid) { const tools=document.createElement('div'); tools.className='ft-store-tools'; tools.innerHTML='<input id="ftProductSearch" class="ft-search" placeholder="🔍 Search products, brands or categories"><button class="ft-link-btn" type="button" onclick="showWishlistPanel()">♡ My Wishlist</button>'; grid.parentElement.insertBefore(tools,grid); document.getElementById('ftProductSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase(); document.querySelectorAll('.product-card').forEach(c=>c.style.display=(c.dataset.title+' '+c.dataset.brand+' '+c.dataset.categoryLabel).toLowerCase().includes(q)?'':'none');}); }
-            document.body.insertAdjacentHTML('beforeend','<aside id="ftWishlistPanel" class="ft-wishlist-panel" aria-live="polite"></aside><button class="ft-assistant" type="button" onclick="ftStartNewChat()">🤖 Ask FT</button><section id="ftAssistantBox" class="ft-assistant-box" aria-label="Friends Traders chat"><div class="ft-chat-head"><div><strong>Friends Traders Assistant</strong><p>Product, budget & delivery help</p></div><div><button class="ft-chat-new" type="button" aria-label="Start a new chat" onclick="ftStartNewChat()">New chat</button><button class="ft-chat-close" type="button" aria-label="Close chat" onclick="ftToggleChat(false)">×</button></div></div><div id="ftChatMessages" class="ft-chat-messages"></div><div class="ft-chat-suggestions"><button type="button" onclick="ftUseSuggestion(\'Best air fryer under 20000\')">Air fryer under 20k</button><button type="button" onclick="ftUseSuggestion(\'Gift set under 10000\')">Gift set under 10k</button><button type="button" onclick="ftUseSuggestion(\'Delivery in Multan\')">Delivery in Multan</button></div><div class="ft-chat-compose"><input id="ftAssistantQuestion" placeholder="Type your message..." onkeydown="if(event.key===\'Enter\'){ftAskAssistant()}"><button class="ft-chat-send" type="button" onclick="ftAskAssistant()">Send</button></div><div class="ft-chat-actions"><a target="_blank" href="https://wa.me/923007195451?text=Assalam%20o%20Alaikum%20Friends%20Traders%2C%20I%20need%20help%20with%20a%20product."><i class="fab fa-whatsapp"></i> Talk to our team on WhatsApp</a></div></section><nav class="ft-mobile-nav"><button onclick="window.scrollTo({top:0,behavior:\'smooth\'})">⌂ Home</button><button onclick="var p=document.querySelector(\'.products-grid\');if(p){p.scrollIntoView({behavior:\'smooth\'})}">Shop</button><button onclick="showWishlistPanel()">♡ Saved</button><button onclick="openCart()">🛒 Cart</button></nav>');
-            window.ftRenderChat=function(){var box=document.getElementById('ftChatMessages');if(!box)return;var history=chatHistory();if(!history.length){history=[{role:'assistant',content:'Assalam o Alaikum! Main Friends Traders assistant hoon. Aap product, budget, delivery ya stock ke bare mein pooch sakte hain.'}];}box.innerHTML=history.map(function(row){return '<div class="ft-chat-bubble '+(row.role==='user'?'ft-chat-user':'ft-chat-ai')+'">'+escapeHtml(row.content)+'</div>';}).join('');box.scrollTop=box.scrollHeight;};
-            window.ftToggleChat=function(force){var box=document.getElementById('ftAssistantBox');var open=typeof force==='boolean'?force:!box.classList.contains('active');box.classList.toggle('active',open);if(open)window.ftRenderChat();};
-            window.ftStartNewChat=function(){chatSessionId++;localStorage.removeItem(chatCacheKey);var box=document.getElementById('ftAssistantBox');box.classList.add('active');var input=document.getElementById('ftAssistantQuestion');if(input)input.value='';window.ftRenderChat();if(input)input.focus();};
-            window.ftUseSuggestion=function(text){document.getElementById('ftAssistantQuestion').value=text;window.ftAskAssistant();};
-            const checkout=document.querySelector('.checkout-form'); if (checkout && !document.getElementById('checkoutPayment')) { const extras=document.createElement('div'); extras.className='checkout-extras'; extras.innerHTML='<input id="customerEmail" type="email" placeholder="Email (optional)"><select id="checkoutPayment"><option value="cod">Cash on Delivery</option><option value="bank_transfer">Bank Transfer</option><option value="easypaisa">Easypaisa / JazzCash</option></select><input id="checkoutCoupon" placeholder="Coupon code (e.g. WELCOME5)"><small>Free delivery in Multan on orders above PKR 10,000.</small>'; checkout.appendChild(extras); }
+            style.textContent += '.ft-product-delivery-note{display:grid;gap:4px;margin:12px 0;padding:10px;border-radius:8px;background:#f4fbf6;color:#126838;font-size:13px;font-weight:700}.ft-info-pages{max-width:1180px;margin:45px auto;padding:0 20px}.ft-info-page{padding:28px;margin:20px 0;border:1px solid #ecd4a2;border-radius:14px;background:#fffaf0;color:#172025}.ft-info-page h2{margin-top:0;color:#8d5c10}.ft-info-page li{margin:10px 0}';
+            const chatStyle = document.createElement('style');
+            chatStyle.textContent = `.ft-assistant-box{padding:0;overflow:hidden}.ft-chat-head{padding:15px 16px;background:#152024;color:#fff;display:flex;align-items:center;justify-content:space-between}.ft-chat-head p{font-size:12px;margin:3px 0 0;color:#d8ecee}.ft-chat-close,.ft-chat-new{border:0;background:transparent;color:#fff;cursor:pointer}.ft-chat-close{font-size:28px;margin-left:8px}.ft-chat-new{font-size:12px;font-weight:700;border:1px solid #ffffff88;border-radius:6px;padding:5px 7px}.ft-chat-messages{height:280px;overflow-y:auto;padding:14px;background:#f6f8f8;display:flex;flex-direction:column;gap:10px}.ft-chat-bubble{max-width:86%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.45;white-space:pre-wrap}.ft-chat-user{align-self:flex-end;background:#15803d;color:#fff;border-bottom-right-radius:3px}.ft-chat-ai{align-self:flex-start;background:#fff;color:#172025;border:1px solid #e1e6e6;border-bottom-left-radius:3px}.ft-chat-typing{font-style:italic;color:#64748b}.ft-chat-suggestions{display:flex;gap:7px;overflow-x:auto;padding:10px 14px;background:#fff}.ft-chat-suggestions button{white-space:nowrap;border:1px solid #d0dddd;background:#fff;border-radius:999px;padding:7px 10px;color:#152024;cursor:pointer}.ft-chat-compose{display:flex;gap:8px;padding:12px;background:#fff;border-top:1px solid #e5e7eb}.ft-chat-compose input{margin:0;flex:1}.ft-chat-send{border:0;border-radius:8px;background:#15803d;color:#fff;padding:0 14px;font-weight:700;cursor:pointer}.ft-chat-actions{padding:0 14px 14px;background:#fff}.ft-chat-actions a{font-size:13px;color:#087f3f;font-weight:700;text-decoration:none}`;
+            document.head.appendChild(chatStyle);
+            const grid = document.querySelector('.products-grid');
+            if (grid) { const tools = document.createElement('div');
+                tools.className = 'ft-store-tools';
+                tools.innerHTML = '<input id="ftProductSearch" class="ft-search" placeholder="🔍 Search products, brands or categories"><button class="ft-link-btn" type="button" onclick="showWishlistPanel()">♡ My Wishlist</button>';
+                grid.parentElement.insertBefore(tools, grid);
+                document.getElementById('ftProductSearch').addEventListener('input', e => { const q = e.target.value.toLowerCase();
+                    document.querySelectorAll('.product-card').forEach(c => c.style.display = (c.dataset.title + ' ' + c.dataset.brand + ' ' + c.dataset.categoryLabel).toLowerCase().includes(q) ? '' : 'none'); }); }
+            document.body.insertAdjacentHTML('beforeend', '<aside id="ftWishlistPanel" class="ft-wishlist-panel" aria-live="polite"></aside><button class="ft-assistant" type="button" onclick="ftStartNewChat()">🤖 Ask FT</button><section id="ftAssistantBox" class="ft-assistant-box" aria-label="Friends Traders chat"><div class="ft-chat-head"><div><strong>Friends Traders Assistant</strong><p>Product, budget & delivery help</p></div><div><button class="ft-chat-new" type="button" aria-label="Start a new chat" onclick="ftStartNewChat()">New chat</button><button class="ft-chat-close" type="button" aria-label="Close chat" onclick="ftToggleChat(false)">×</button></div></div><div id="ftChatMessages" class="ft-chat-messages"></div><div class="ft-chat-suggestions"><button type="button" onclick="ftUseSuggestion(\'Best air fryer under 20000\')">Air fryer under 20k</button><button type="button" onclick="ftUseSuggestion(\'Gift set under 10000\')">Gift set under 10k</button><button type="button" onclick="ftUseSuggestion(\'Delivery in Multan\')">Delivery in Multan</button></div><div class="ft-chat-compose"><input id="ftAssistantQuestion" placeholder="Type your message..." onkeydown="if(event.key===\'Enter\'){ftAskAssistant()}"><button class="ft-chat-send" type="button" onclick="ftAskAssistant()">Send</button></div><div class="ft-chat-actions"><a target="_blank" href="https://wa.me/923007195451?text=Assalam%20o%20Alaikum%20Friends%20Traders%2C%20I%20need%20help%20with%20a%20product."><i class="fab fa-whatsapp"></i> Talk to our team on WhatsApp</a></div></section><nav class="ft-mobile-nav"><button onclick="window.scrollTo({top:0,behavior:\'smooth\'})">⌂ Home</button><button onclick="var p=document.querySelector(\'.products-grid\');if(p){p.scrollIntoView({behavior:\'smooth\'})}">Shop</button><button onclick="showWishlistPanel()">♡ Saved</button><button onclick="openCart()">🛒 Cart</button></nav>');
+            const footerContent = document.querySelector('.footer-content');
+            if (footerContent && !document.getElementById('ftCustomerSupport')) footerContent.insertAdjacentHTML('beforeend', '<div class="footer-column" id="ftCustomerSupport"><h3>Customer Support</h3><ul><li><a href="#delivery-information">Delivery Information</a></li><li><a href="#payment-methods">Payment Methods</a></li><li><a href="#return-exchange-policy">Return &amp; Exchange Policy</a></li><li><a href="#privacy-policy">Privacy Policy</a></li><li><a href="#terms-conditions">Terms &amp; Conditions</a></li><li><a href="#contact">Contact Us</a></li></ul></div>');
+            if (!document.getElementById('ftInfoPages')) { const pages = document.createElement('section'); pages.id = 'ftInfoPages'; pages.className = 'ft-info-pages'; pages.innerHTML = '<article class="ft-info-page" id="delivery-information"><h2>🚚 Delivery Information</h2><ul><li><strong>Delivery Area:</strong> Multan only — all areas in Multan</li><li><strong>Delivery Charges:</strong> FREE</li><li><strong>Delivery Time:</strong> 1–3 working days</li><li>Order confirm karne ke liye customer ko call/message kiya ja sakta hai.</li><li>Customer ko complete delivery address dena hoga.</li><li>Order dispatch hone ke baad customer ko inform kiya jayega.</li></ul></article><article class="ft-info-page" id="payment-methods"><h2>💳 Payment Information</h2><ul><li><strong>Cash on Delivery (COD):</strong> Available in Multan</li><li><strong>Online Payment:</strong> JazzCash / Easypaisa — 03007195451</li></ul></article><article class="ft-info-page" id="return-exchange-policy"><h2>Return &amp; Exchange Policy</h2><p>For return or exchange assistance, please contact us before sending any product back.</p></article><article class="ft-info-page" id="privacy-policy"><h2>Privacy Policy</h2><p>Your order information is used only to process and deliver your order.</p></article><article class="ft-info-page" id="terms-conditions"><h2>Terms &amp; Conditions</h2><p>Orders are subject to confirmation and product availability.</p></article>'; const footer = document.querySelector('footer'); if (footer) footer.insertAdjacentElement('beforebegin', pages); }
+            window.ftRenderChat = function() { var box = document.getElementById('ftChatMessages'); if (!box) return; var history = chatHistory(); if (!history.length) { history = [{ role: 'assistant', content: 'Assalam o Alaikum! Main Friends Traders assistant hoon. Aap product, budget, delivery ya stock ke bare mein pooch sakte hain.' }]; }
+                box.innerHTML = history.map(function(row) { return '<div class="ft-chat-bubble ' + (row.role === 'user' ? 'ft-chat-user' : 'ft-chat-ai') + '">' + escapeHtml(row.content) + '</div>'; }).join('');
+                box.scrollTop = box.scrollHeight; };
+            window.ftToggleChat = function(force) { var box = document.getElementById('ftAssistantBox'); var open = typeof force === 'boolean' ? force : !box.classList.contains('active');
+                box.classList.toggle('active', open); if (open) window.ftRenderChat(); };
+            window.ftStartNewChat = function() { chatSessionId++;
+                localStorage.removeItem(chatCacheKey); var box = document.getElementById('ftAssistantBox');
+                box.classList.add('active'); var input = document.getElementById('ftAssistantQuestion'); if (input) input.value = '';
+                window.ftRenderChat(); if (input) input.focus(); };
+            window.ftUseSuggestion = function(text) { document.getElementById('ftAssistantQuestion').value = text;
+                window.ftAskAssistant(); };
+            const checkout = document.querySelector('.checkout-form');
+            if (checkout && !document.getElementById('checkoutPayment')) { const name = document.getElementById('customerName'), phone = document.getElementById('customerPhone'), address = document.getElementById('customerAddress'); if (name) name.placeholder = 'Full Name *'; if (phone) phone.placeholder = 'Phone Number *'; if (address) address.placeholder = 'Complete Address *'; const extras = document.createElement('div');
+                extras.className = 'checkout-extras';
+                extras.innerHTML = '<input id="customerWhatsapp" type="tel" placeholder="WhatsApp Number (optional)"><input id="customerArea" placeholder="Area / Locality *"><input id="customerCity" value="Multan" readonly aria-label="City"><input id="customerNotes" placeholder="Order Notes (optional)"><select id="checkoutPayment"><option value="cod">Cash on Delivery (COD) — Available in Multan</option><option value="jazzcash">JazzCash — 03007195451</option><option value="easypaisa">Easypaisa — 03007195451</option></select><small>🚚 Free Delivery — Multan</small>';
+                checkout.appendChild(extras); }
         }
 
         let assistantRequestInFlight = false;
         let chatSessionId = 0;
-        window.ftAskAssistant = async function() { var input=document.getElementById('ftAssistantQuestion'); var q=(input ? input.value : '').trim(); if(!q || assistantRequestInFlight)return;var requestSessionId=chatSessionId;assistantRequestInFlight=true;var sendButton=document.querySelector('.ft-chat-send');if(sendButton)sendButton.disabled=true;var history=chatHistory();history.push({role:'user',content:q});saveChatHistory(history);input.value='';window.ftRenderChat();var box=document.getElementById('ftChatMessages');var typing=document.createElement('div');typing.className='ft-chat-bubble ft-chat-ai ft-chat-typing';typing.textContent='Friends Traders is typing...';box.appendChild(typing);box.scrollTop=box.scrollHeight;try { var data=await api('/api/assistant',{method:'POST',body:JSON.stringify({question:q,history:history.slice(-8)}),timeoutMs:30000});if(requestSessionId===chatSessionId)history.push({role:'assistant',content:data.answer || 'Please contact WhatsApp 03007195451 for help.'}); } catch (_) { if(requestSessionId===chatSessionId){var term=q.toLowerCase().split(/\s+/).find(function(word){return word.length>2;}) || '';var matches=Array.from(document.querySelectorAll('.product-card')).filter(function(card){return (card.dataset.title+' '+card.dataset.description+' '+card.dataset.categoryLabel).toLowerCase().includes(term);}).slice(0,3);history.push({role:'assistant',content:matches.length?'Available options: '+matches.map(function(card){return card.dataset.title;}).join(', ')+'. For ordering, WhatsApp 03007195451.':'Tell me your budget or product type. You can also contact WhatsApp 03007195451.'});}} finally { assistantRequestInFlight=false;if(sendButton)sendButton.disabled=false; }if(requestSessionId===chatSessionId){saveChatHistory(history);window.ftRenderChat();} };
+        window.ftAskAssistant = async function() { var input = document.getElementById('ftAssistantQuestion'); var q = (input ? input.value : '').trim(); if (!q || assistantRequestInFlight) return; var requestSessionId = chatSessionId;
+            assistantRequestInFlight = true; var sendButton = document.querySelector('.ft-chat-send'); if (sendButton) sendButton.disabled = true; var history = chatHistory();
+            history.push({ role: 'user', content: q });
+            saveChatHistory(history);
+            input.value = '';
+            window.ftRenderChat(); var box = document.getElementById('ftChatMessages'); var typing = document.createElement('div');
+            typing.className = 'ft-chat-bubble ft-chat-ai ft-chat-typing';
+            typing.textContent = 'Friends Traders is typing...';
+            box.appendChild(typing);
+            box.scrollTop = box.scrollHeight; try { var data = await api('/api/assistant', { method: 'POST', body: JSON.stringify({ question: q, history: history.slice(-8) }), timeoutMs: 30000 }); if (requestSessionId === chatSessionId) history.push({ role: 'assistant', content: data.answer || 'Please contact WhatsApp 03007195451 for help.' }); } catch (_) { if (requestSessionId === chatSessionId) { var term = q.toLowerCase().split(/\s+/).find(function(word) { return word.length > 2; }) || ''; var matches = Array.from(document.querySelectorAll('.product-card')).filter(function(card) { return (card.dataset.title + ' ' + card.dataset.description + ' ' + card.dataset.categoryLabel).toLowerCase().includes(term); }).slice(0, 3);
+                    history.push({ role: 'assistant', content: matches.length ? 'Available options: ' + matches.map(function(card) { return card.dataset.title; }).join(', ') + '. For ordering, WhatsApp 03007195451.' : 'Tell me your budget or product type. You can also contact WhatsApp 03007195451.' }); } } finally { assistantRequestInFlight = false; if (sendButton) sendButton.disabled = false; } if (requestSessionId === chatSessionId) { saveChatHistory(history);
+                window.ftRenderChat(); } };
 
         async function renderBackendCart() {
             renderCartData(cacheCart(await getCart()));
@@ -299,7 +346,7 @@
                 cart.items.push(item);
             }
             cart.subtotal = cart.items.reduce((sum, item) => sum + Number(item.unit_price || 0) * Number(item.quantity || 0), 0);
-            cart.shipping = cart.subtotal >= 10000 || cart.subtotal === 0 ? 0 : 300;
+            cart.shipping = 0;
             cart.total = cart.subtotal + cart.shipping;
             cart.items.forEach(item => item.line_total = Number(item.unit_price || 0) * Number(item.quantity || 0));
             return cacheCart(cart);
@@ -334,9 +381,15 @@
         window.updateCartQty = async function(productId, delta) {
             const cart = cachedCart() || await getCart();
             const item = cart.items.find(row => row.product_id === productId);
-            const quantity=Math.max(0,(item ? item.quantity : 0)+delta);
-            if(item){item.quantity=quantity;cart.items=cart.items.filter(row=>row.quantity>0);cart.subtotal=cart.items.reduce((sum,row)=>sum+Number(row.unit_price||0)*Number(row.quantity||0),0);cart.shipping=cart.subtotal>=10000||cart.subtotal===0?0:300;cart.total=cart.subtotal+cart.shipping;renderCartData(cacheCart(cart));}
-            try { const fresh=await api('/api/cart/items/' + encodeURIComponent(productId), { method: 'PATCH', body: JSON.stringify({ quantity: quantity }) }); renderCartData(cacheCart(fresh)); } catch (_) { renderCartData(cart); }
+            const quantity = Math.max(0, (item ? item.quantity : 0) + delta);
+            if (item) { item.quantity = quantity;
+                cart.items = cart.items.filter(row => row.quantity > 0);
+                cart.subtotal = cart.items.reduce((sum, row) => sum + Number(row.unit_price || 0) * Number(row.quantity || 0), 0);
+                cart.shipping = 0;
+                cart.total = cart.subtotal + cart.shipping;
+                renderCartData(cacheCart(cart)); }
+            try { const fresh = await api('/api/cart/items/' + encodeURIComponent(productId), { method: 'PATCH', body: JSON.stringify({ quantity: quantity }) });
+                renderCartData(cacheCart(fresh)); } catch (_) { renderCartData(cart); }
         };
 
         window.removeFromCart = async function(productId) {
@@ -381,21 +434,28 @@
             const customerAddress = document.getElementById('customerAddress').value.trim();
             const emailField = document.getElementById('customerEmail');
             const paymentField = document.getElementById('checkoutPayment');
-            const couponField = document.getElementById('checkoutCoupon');
+            const areaField = document.getElementById('customerArea');
+            const whatsappField = document.getElementById('customerWhatsapp');
+            const notesField = document.getElementById('customerNotes');
             const customerEmail = emailField ? emailField.value.trim() : '';
             const paymentMethod = paymentField ? paymentField.value : 'cod';
-            const couponCode = couponField ? couponField.value.trim() : '';
-            if (!customerName || !customerPhone || !customerAddress) { alert('Name, mobile number and complete address are compulsory.'); return; }
+            const customerArea = areaField ? areaField.value.trim() : '';
+            const customerWhatsapp = whatsappField ? whatsappField.value.trim() : '';
+            const customerNotes = notesField ? notesField.value.trim() : '';
+            if (!customerName || !customerPhone || !customerAddress || !customerArea) { alert('Full name, phone number, complete address and area are compulsory.'); return; }
             if (!customerAddress.toLowerCase().includes('multan')) { alert('Abhi delivery sirf Multan ke liye available hai. Address me Multan zaroor likhein.'); return; }
             try {
-                const data = await api('/api/checkout', { method: 'POST', body: JSON.stringify({ customer: { name: customerName, phone: customerPhone, email: customerEmail, address: customerAddress }, payment_method: paymentMethod, coupon_code: couponCode }) });
+                const data = await api('/api/checkout', { method: 'POST', body: JSON.stringify({ customer: { name: customerName, phone: customerPhone, email: customerEmail, address: customerAddress + '\nArea / Locality: ' + customerArea }, payment_method: paymentMethod }) });
                 document.getElementById('customerName').value = '';
                 document.getElementById('customerPhone').value = '';
                 document.getElementById('customerAddress').value = '';
+                if (areaField) areaField.value = '';
+                if (whatsappField) whatsappField.value = '';
+                if (notesField) notesField.value = '';
                 alert('Order saved permanently: ' + data.order.id + '. Owner panel me lazmi show ho ga.');
-                const lines=data.order.items.map(item=>item.name+' x '+item.quantity+' = PKR '+item.line_total).join('\n');
-                const message='Assalam o Alaikum Friends Traders, new website order '+data.order.id+'%0A%0A'+encodeURIComponent(lines)+'%0A%0ATotal: PKR '+data.order.total+'%0AName: '+encodeURIComponent(data.order.customer_name)+'%0APhone: '+encodeURIComponent(data.order.phone)+'%0AAddress: '+encodeURIComponent(data.order.address);
-                window.open('https://wa.me/923007195451?text='+message,'_blank');
+                const lines = data.order.items.map(item => item.name + ' x ' + item.quantity + ' = PKR ' + item.line_total).join('\n');
+                const message = 'Assalam o Alaikum Friends Traders, new website order ' + data.order.id + '%0A%0A' + encodeURIComponent(lines) + '%0A%0ATotal: PKR ' + data.order.total + '%0AName: ' + encodeURIComponent(data.order.customer_name) + '%0APhone: ' + encodeURIComponent(data.order.phone) + (customerWhatsapp ? '%0AWhatsApp: ' + encodeURIComponent(customerWhatsapp) : '') + '%0AAddress: ' + encodeURIComponent(data.order.address) + (customerNotes ? '%0AOrder Notes: ' + encodeURIComponent(customerNotes) : '');
+                window.open('https://wa.me/923007195451?text=' + message, '_blank');
                 await renderBackendCart();
                 await renderCustomerOrderStatus();
                 if (ownerMode) await renderOwnerDashboard();
