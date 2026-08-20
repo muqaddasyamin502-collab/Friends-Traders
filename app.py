@@ -421,8 +421,8 @@ def shopping_assistant():
         try:
             catalog='\n'.join(f"- {p['name']} | {p['category']} | PKR {p['final_price']} | stock {p['stock']}" for p in products)
             prompt=("You are Friends Traders Multan shopping assistant. Reply in short helpful Urdu/Roman Urdu or English matching the customer. "
-                    "Only recommend available catalog products and never invent prices, stock, policies, or delivery areas. "
-                    "If catalog is not enough, ask customer to contact WhatsApp 03007195451.\nCatalog:\n"+catalog+"\nCustomer: "+question)
+                    "Only recommend available catalog products and never invent prices or stock. Delivery is free, home delivery is only for Multan areas, and customers receive an update after confirmation. "
+                    "Payment methods are COD, JazzCash, and Easypaisa; payment number is 03007195451. If catalog is not enough, ask customer to contact WhatsApp 03007195451.\nCatalog:\n"+catalog+"\nCustomer: "+question)
             answer=groq_chat([{'role':'system','content':'You are a precise local-store assistant.'},*history,{'role':'user','content':prompt}]) or answer
             provider_used=True
         except HTTPError as exc:
@@ -582,7 +582,7 @@ def cart_payload():
     for r in rows:
         price=max(0,float(r['price'])-float(r['discount'])); qty=min(int(r['quantity']),int(r['stock'])) if r['status']=='active' else 0; subtotal += price*qty
         d=dict(r); d.update({'quantity':qty,'unit_price':price,'line_total':round(price*qty,2)}); items.append(d)
-    shipping=0 if subtotal>=10000 or subtotal==0 else 300
+    shipping=0
     return {'items':items,'subtotal':round(subtotal,2),'shipping':shipping,'total':round(subtotal+shipping,2)}
 @app.get('/api/cart')
 def get_cart(): return jsonify(cart_payload())
@@ -645,7 +645,7 @@ def checkout():
             unit=max(0,float(r['price'])-float(r['discount'])); subtotal += unit*int(r['quantity']); lines.append((r,unit))
         coupon=con.execute('select * from coupons where code=? and active=1',(coupon_code,)).fetchone() if coupon_code else None; disc=0
         if coupon and subtotal >= float(coupon['min_total']): disc = subtotal*float(coupon['value'])/100 if coupon['kind']=='percent' else float(coupon['value'])
-        ship=0 if subtotal>=10000 else 300; total=round(max(0,subtotal-disc)+ship,2); oid='FT-'+datetime.now().strftime('%y%m%d')+'-'+secrets.token_hex(3).upper()
+        ship=0; total=round(max(0,subtotal-disc)+ship,2); oid='FT-'+datetime.now().strftime('%y%m%d')+'-'+secrets.token_hex(3).upper()
         con.execute('insert into orders values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',(oid,(u or {}).get('id'),name,phone,email,addr,method,'pending' if method!='cod' else 'cod','pending',round(subtotal,2),round(disc,2),ship,total,coupon_code,now_iso(),now_iso()))
         for r,unit in lines:
             con.execute('insert into order_items values (?,?,?,?,?,?,?,?)',(uuid.uuid4().hex,oid,r['product_id'],r['sku'],r['name'],r['quantity'],unit,round(unit*r['quantity'],2)))
