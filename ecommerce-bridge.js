@@ -348,9 +348,17 @@
             box.scrollTop = box.scrollHeight;
             try { var data = await api('/api/assistant', { method: 'POST', body: JSON.stringify({ question: q, history: history.slice(-8) }), timeoutMs: 30000 }); if (requestSessionId === chatSessionId) history.push({ role: 'assistant', content: data.answer || 'Please contact WhatsApp 03007195451 for help.' }); } catch (_) {
                 if (requestSessionId === chatSessionId) {
-                    var term = q.toLowerCase().split(/\s+/).find(function(word) { return word.length > 2; }) || '';
-                    var matches = Array.from(document.querySelectorAll('.product-card')).filter(function(card) { return (card.dataset.title + ' ' + card.dataset.description + ' ' + card.dataset.categoryLabel).toLowerCase().includes(term); }).slice(0, 3);
-                    history.push({ role: 'assistant', content: matches.length ? 'Available options: ' + matches.map(function(card) { return card.dataset.title; }).join(', ') + '. For ordering, WhatsApp 03007195451.' : 'Tell me your budget or product type. You can also contact WhatsApp 03007195451.' });
+                    var query = q.toLowerCase();
+                    if (/delivery|multan|cash on delivery|\bcod\b|payment|jazzcash|easypaisa/.test(query)) {
+                        history.push({ role: 'assistant', content: 'Multan ke tamam areas mein free home delivery available hai. Cash on Delivery, JazzCash aur Easypaisa available hain. More details ke liye WhatsApp 03007195451 par contact karein.' });
+                    } else {
+                        var terms = query.split(/\s+/).filter(function(word) { return word.length > 2 && !['best','under','with','need','want','mujhe','chahiye','please'].includes(word); });
+                        var matches = Array.from(document.querySelectorAll('.product-card')).map(function(card) {
+                            var text = (card.dataset.title + ' ' + card.dataset.description + ' ' + card.dataset.categoryLabel).toLowerCase();
+                            return { card: card, score: terms.reduce(function(total, term) { return total + (text.includes(term) ? 1 : 0); }, 0) };
+                        }).filter(function(item) { return item.score > 0; }).sort(function(a, b) { return b.score - a.score; }).slice(0, 3).map(function(item) { return item.card; });
+                        history.push({ role: 'assistant', content: matches.length ? 'Website par available options: ' + matches.map(function(card) { return card.dataset.title; }).join(', ') + '. More details ya ordering ke liye WhatsApp 03007195451 par contact karein.' : 'Mujhe website par is ka clear jawab nahi mila. More details ke liye WhatsApp 03007195451 par contact karein.' });
+                    }
                 }
             } finally { assistantRequestInFlight = false; if (sendButton) sendButton.disabled = false; }
             if (requestSessionId === chatSessionId) {
@@ -359,8 +367,12 @@
             }
         };
 
+        let cartStateVersion = 0;
         async function renderBackendCart() {
-            renderCartData(cacheCart(await getCart()));
+            const requestedVersion = cartStateVersion;
+            const cart = await getCart();
+            // Do not let an older page-load request overwrite a newer cart update.
+            if (requestedVersion === cartStateVersion) renderCartData(cacheCart(cart));
         }
 
         function optimisticCartItem(productId) {
@@ -402,6 +414,7 @@
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
             }
             showCartPanel();
+            cartStateVersion += 1;
             const optimistic = addToCachedCart(productId);
             if (optimistic) renderCartData(optimistic);
             else if (cartItems) cartItems.innerHTML = '<p class="owner-note">Adding product...</p>';
@@ -420,6 +433,7 @@
         };
 
         window.updateCartQty = async function(productId, delta) {
+            cartStateVersion += 1;
             const cart = cachedCart() || await getCart();
             const item = cart.items.find(row => row.product_id === productId);
             const quantity = Math.max(0, (item ? item.quantity : 0) + delta);
@@ -438,8 +452,20 @@
         };
 
         window.removeFromCart = async function(productId) {
-            await api('/api/cart/items/' + encodeURIComponent(productId), { method: 'PATCH', body: JSON.stringify({ quantity: 0 }) });
-            await renderBackendCart();
+            cartStateVersion += 1;
+            const previous = cachedCart() || await getCart();
+            const optimistic = JSON.parse(JSON.stringify(previous));
+            optimistic.items = optimistic.items.filter(item => item.product_id !== productId);
+            optimistic.subtotal = optimistic.items.reduce((sum, item) => sum + Number(item.unit_price || 0) * Number(item.quantity || 0), 0);
+            optimistic.shipping = 0;
+            optimistic.total = optimistic.subtotal;
+            renderCartData(cacheCart(optimistic));
+            try {
+                const fresh = await api('/api/cart/items/' + encodeURIComponent(productId), { method: 'PATCH', body: JSON.stringify({ quantity: 0 }) });
+                renderCartData(cacheCart(fresh));
+            } catch (_) {
+                renderCartData(cacheCart(previous));
+            }
         };
 
         window.openCart = async function() {
