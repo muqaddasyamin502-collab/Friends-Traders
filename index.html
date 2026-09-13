@@ -1633,6 +1633,8 @@
                 <button class="category-card filter-btn" data-filter="new-arrivals"><i class="fas fa-cart-plus"></i><strong>New Arrivals</strong><span>0 products</span></button>
                 <button class="category-card filter-btn" data-filter="best-sellers"><i class="fas fa-star"></i><strong>Best Sellers</strong><span>0 products</span></button>
                 <button class="category-card filter-btn" data-filter="special-offers"><i class="fas fa-tags"></i><strong>Special Offers</strong><span>0 products</span></button>
+                <button class="category-card filter-btn" data-filter="anex"><i class="fas fa-blender"></i><strong>Anex</strong><span>0 products</span></button>
+                <button class="category-card filter-btn" data-filter="electric-kettles"><i class="fas fa-mug-hot"></i><strong>Electric Kettles</strong><span>0 products</span></button>
             </div>
 
             <div class="products-grid">
@@ -3263,6 +3265,8 @@
                     <option value="new-arrivals">New Arrivals</option>
                     <option value="best-sellers">Best Sellers</option>
                     <option value="special-offers">Special Offers</option>
+                    <option value="anex">Anex</option>
+                    <option value="electric-kettles">Electric Kettles</option>
                 </select>
                 <textarea id="ownerProductDescription" placeholder="Short product description"></textarea>
                 <button class="btn btn-secondary" type="button" onclick="saveOwnerProduct()"><i class="fas fa-plus"></i> Save Product Permanently</button>
@@ -3686,7 +3690,9 @@
                 'stainless-steel': 'Stainless Steel',
                 'air-fryers': 'Air Fryers',
                 random: 'Random Products',
-                misc: 'Other Brands / Miscellaneous'
+                misc: 'Other Brands / Miscellaneous',
+                anex: 'Anex',
+                'electric-kettles': 'Electric Kettles'
             };
             return labels[category] || 'Premium Products';
         }
